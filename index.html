@@ -293,15 +293,15 @@
         <!-- Dynamic Overlay Canvas (Skeleton & Guides) -->
         <canvas id="overlay-canvas" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"></canvas>
 
-        <!-- Full-Body Framing Bounding Box Box Overlay -->
-        <div id="framing-guide-box" class="absolute inset-y-8 inset-x-12 sm:inset-x-36 md:inset-x-48 border-2 border-dashed border-stone-600/60 rounded-3xl pointer-events-none transition-all duration-300 flex flex-col justify-between p-4 z-20">
-          <div class="flex justify-between items-center text-[10px] text-stone-400 font-mono">
-            <span class="bg-black/60 px-2 py-0.5 rounded backdrop-blur border border-white/10">CRANIAL ALIGNMENT</span>
-            <span id="framing-confidence-badge" class="bg-black/60 px-2 py-0.5 rounded backdrop-blur text-stone-400">SEARCHING</span>
+        <!-- Full-Body Framing Bounding Box Box Overlay (Starts Yellow, Locks Green) -->
+        <div id="framing-guide-box" class="absolute inset-y-8 inset-x-12 sm:inset-x-36 md:inset-x-48 border-2 border-dashed border-amber-400 rounded-3xl pointer-events-none transition-all duration-300 flex flex-col justify-between p-4 z-20 frame-adjust">
+          <div class="flex justify-between items-center text-[10px] text-stone-300 font-mono">
+            <span class="bg-black/75 px-2 py-0.5 rounded backdrop-blur border border-white/10">CRANIAL ALIGNMENT</span>
+            <span id="framing-confidence-badge" class="bg-amber-400 text-stone-950 px-2 py-0.5 rounded-full backdrop-blur font-bold">SEARCHING</span>
           </div>
-          <div class="flex justify-between items-center text-[10px] text-stone-400 font-mono">
-            <span class="bg-black/60 px-2 py-0.5 rounded backdrop-blur border border-white/10">ANKLE LEVEL</span>
-            <span id="framing-distance-badge" class="bg-black/60 px-2 py-0.5 rounded backdrop-blur">STEP BACK</span>
+          <div class="flex justify-between items-center text-[10px] text-stone-300 font-mono">
+            <span class="bg-black/75 px-2 py-0.5 rounded backdrop-blur border border-white/10">ANKLE LEVEL</span>
+            <span id="framing-distance-badge" class="bg-amber-400 text-stone-950 px-2 py-0.5 rounded-full backdrop-blur font-bold">STEP INTO BOX</span>
           </div>
         </div>
 
@@ -371,14 +371,23 @@
       <!-- Scanner Controls Footer -->
       <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-900/80 p-4 rounded-2xl border border-white/5">
         <div class="flex items-center space-x-2 text-xs text-stone-300">
-          <i data-lucide="info" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
-          <span>Hands-free active: Once the bounding frame turns green, recording commences automatically.</span>
+          <i data-lucide="info" class="w-4 h-4 text-amber-400" aria-hidden="true"></i>
+          <span>Yellow line: adjusting position. Green line: locked & auto-recording starts.</span>
         </div>
 
-        <button onclick="app.cancelScan()" 
-          class="px-4 py-2 rounded-full text-xs font-semibold text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
-          Cancel Scan
-        </button>
+        <div class="flex items-center space-x-2.5">
+          <button onclick="app.startAutomaticRecording()" 
+            class="px-4 py-2 rounded-full text-xs font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-500/20 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-amber-400"
+            title="Immediately trigger 360° scan and voice guidance">
+            <i data-lucide="play" class="w-3.5 h-3.5 fill-current" aria-hidden="true"></i>
+            <span>Start Scan Now</span>
+          </button>
+
+          <button onclick="app.cancelScan()" 
+            class="px-4 py-2 rounded-full text-xs font-semibold text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+            Cancel Scan
+          </button>
+        </div>
       </div>
     </section>
 

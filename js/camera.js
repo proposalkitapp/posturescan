@@ -15,7 +15,7 @@ class CameraManager {
 
     // Automatic trigger state
     this.consecutiveGreenFrames = 0;
-    this.greenLockedThreshold = 18; // ~0.8 to 1.0s of continuous stable green framing
+    this.greenLockedThreshold = 10; // ~0.4s of continuous stable green framing
     this.hasAutoTriggered = false;
   }
 
@@ -52,10 +52,17 @@ class CameraManager {
 
       if (promptCard) promptCard.classList.add('hidden');
 
+      // Instantly activate the yellow framing line on camera start
+      const box = document.getElementById('framing-guide-box');
+      if (box) {
+        box.classList.remove('frame-ready');
+        box.classList.add('frame-adjust');
+      }
+
       const statusText = document.getElementById('scanner-status-text');
       const statusDot = document.getElementById('status-indicator-dot');
-      if (statusText) statusText.innerText = 'Camera Active — Step back into the frame';
-      if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
+      if (statusText) statusText.innerText = 'Camera Active — Step into yellow frame';
+      if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
 
       this.startFrameLoop();
       return true;
@@ -88,10 +95,25 @@ class CameraManager {
   }
 
   startFrameLoop() {
+    // Hook onResults handler to pose detector
+    if (poseEngine.pose) {
+      poseEngine.pose.onResults((results) => {
+        this.handlePoseResults(results);
+      });
+    }
+
     const loop = async () => {
       if (!this.isStreaming || !this.video) return;
 
-      if (this.video.readyState >= 2) {
+      if (this.video.readyState >= 2 && this.video.videoWidth > 0) {
+        // Synchronize overlay canvas buffer dimensions to match video stream exactly
+        if (this.overlayCanvas) {
+          if (this.overlayCanvas.width !== this.video.videoWidth || this.overlayCanvas.height !== this.video.videoHeight) {
+            this.overlayCanvas.width = this.video.videoWidth;
+            this.overlayCanvas.height = this.video.videoHeight;
+          }
+        }
+
         if (poseEngine.pose && !poseEngine.isProcessing) {
           poseEngine.isProcessing = true;
           try {
@@ -107,12 +129,6 @@ class CameraManager {
       this.animationFrameId = requestAnimationFrame(loop);
     };
 
-    if (poseEngine.pose) {
-      poseEngine.pose.onResults((results) => {
-        this.handlePoseResults(results);
-      });
-    }
-
     this.animationFrameId = requestAnimationFrame(loop);
   }
 
@@ -123,9 +139,9 @@ class CameraManager {
     const framing = poseEngine.checkAthleteFraming(landmarks);
     this.updateFramingHUD(framing);
 
-    // Draw real-time skeleton overlay with subtle glow
+    // Draw real-time skeleton overlay with signature Green & Yellow lines
     if (this.overlayCanvas) {
-      skeletonRenderer.drawFramingGuide(this.overlayCanvas, landmarks, framing.isFramed);
+      skeletonRenderer.drawFramingGuide(this.overlayCanvas, landmarks, framing.isFramed, this.video);
     }
 
     // AUTOMATIC RECORDING TRIGGER:
@@ -141,7 +157,7 @@ class CameraManager {
         }
       }
     } else if (!framing.isFramed) {
-      this.consecutiveGreenFrames = Math.max(0, this.consecutiveGreenFrames - 2);
+      this.consecutiveGreenFrames = Math.max(0, this.consecutiveGreenFrames - 1);
     }
 
     // Frame hook during active spin
@@ -161,39 +177,39 @@ class CameraManager {
 
     if (framing.isFramed) {
       box.classList.remove('frame-adjust');
-      box.classList.add('frame-ready');
+      box.classList.add('frame-ready'); // Green glowing bounding box line!
 
       if (distBadge) {
         distBadge.innerText = 'LOCKED & READY';
-        distBadge.className = 'bg-emerald-500/90 text-white px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-bold tracking-wider';
+        distBadge.className = 'bg-emerald-500 text-stone-950 px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-black tracking-wider';
       }
       if (confBadge) {
         confBadge.innerText = 'AUTO-STARTING...';
-        confBadge.className = 'bg-emerald-500/90 text-white px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-bold tracking-wider';
+        confBadge.className = 'bg-emerald-500 text-stone-950 px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-black tracking-wider';
       }
       if (statusText && !app.isSpinning) {
-        statusText.innerText = 'Framing Locked — Commencing Scan';
+        statusText.innerText = 'Framing Locked (Green) — Commencing Scan';
       }
       if (statusDot) {
         statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400';
       }
     } else {
       box.classList.remove('frame-ready');
-      box.classList.add('frame-adjust');
+      box.classList.add('frame-adjust'); // Yellow glowing bounding box line!
 
       if (distBadge) {
         distBadge.innerText = framing.distanceFeedback;
-        distBadge.className = 'bg-amber-500/90 text-white px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-bold tracking-wider';
+        distBadge.className = 'bg-amber-400 text-stone-950 px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-black tracking-wider';
       }
       if (confBadge) {
         confBadge.innerText = framing.confidenceBadge;
-        confBadge.className = 'bg-stone-900/80 px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] text-stone-300';
+        confBadge.className = 'bg-stone-900/90 text-amber-300 px-2.5 py-0.5 rounded-full backdrop-blur text-[10px] font-bold border border-amber-400/30';
       }
       if (statusText && !app.isSpinning) {
-        statusText.innerText = 'Align your full body inside the frame';
+        statusText.innerText = 'Align full body inside the yellow frame';
       }
       if (statusDot) {
-        statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
+        statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
       }
     }
   }

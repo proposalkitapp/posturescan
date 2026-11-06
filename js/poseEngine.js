@@ -20,7 +20,15 @@ class PoseEngine {
   }
 
   async init() {
-    if (this.isReady) return true;
+    if (this.isReady && this.pose) return true;
+
+    // Retry loop to allow external CDN script to be parsed if loading
+    for (let attempt = 0; attempt < 25; attempt++) {
+      if (typeof window.Pose !== 'undefined') {
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, 80));
+    }
 
     try {
       if (typeof window.Pose !== 'undefined') {
@@ -29,14 +37,15 @@ class PoseEngine {
         });
 
         this.pose.setOptions({
-          modelComplexity: 1,
+          modelComplexity: 0, // Lite model: ultra fast initialization & smooth 60fps
           smoothLandmarks: true,
           enableSegmentation: false,
           smoothSegmentation: false,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5
+          minDetectionConfidence: 0.45,
+          minTrackingConfidence: 0.45
         });
 
+        await this.pose.initialize();
         this.isReady = true;
         console.log('MediaPipe Pose initialized successfully');
         return true;
@@ -45,8 +54,8 @@ class PoseEngine {
       console.warn('Could not initialize MediaPipe Pose, fallback active', err);
     }
 
-    this.isReady = true; // Fallback ready
-    return true;
+    this.isReady = true;
+    return false;
   }
 
   // Evaluate if athlete is well-positioned in frame
@@ -54,54 +63,65 @@ class PoseEngine {
     if (!landmarks || landmarks.length < 29) {
       return {
         isFramed: false,
-        distanceFeedback: 'NO ATHLETE DETECTED',
+        distanceFeedback: 'SEARCHING FOR ATHLETE',
         confidenceBadge: 'SEARCHING'
       };
     }
 
     const nose = landmarks[0];
-    const leftAnkle = landmarks[27];
-    const rightAnkle = landmarks[28];
     const leftShoulder = landmarks[11];
     const rightShoulder = landmarks[12];
+    const leftHip = landmarks[23];
+    const rightHip = landmarks[24];
+    const leftKnee = landmarks[25];
+    const rightKnee = landmarks[26];
+    const leftAnkle = landmarks[27];
+    const rightAnkle = landmarks[28];
+    const leftFoot = landmarks[31] || landmarks[29] || leftAnkle;
+    const rightFoot = landmarks[32] || landmarks[30] || rightAnkle;
 
-    const hasHead = nose && (nose.visibility === undefined || nose.visibility > 0.4);
-    const hasAnkles = (leftAnkle && (leftAnkle.visibility === undefined || leftAnkle.visibility > 0.3)) ||
-                      (rightAnkle && (rightAnkle.visibility === undefined || rightAnkle.visibility > 0.3));
+    const hasUpperBody = (nose && (nose.visibility === undefined || nose.visibility > 0.3)) ||
+                         (leftShoulder && rightShoulder);
+    const hasLowerBody = (leftFoot && (leftFoot.visibility === undefined || leftFoot.visibility > 0.2)) ||
+                         (rightFoot && (rightFoot.visibility === undefined || rightFoot.visibility > 0.2)) ||
+                         (leftKnee && rightKnee);
 
-    if (!hasHead || !hasAnkles) {
+    if (!hasUpperBody || !hasLowerBody) {
       return {
         isFramed: false,
         distanceFeedback: 'STEP BACK (FULL BODY NEEDED)',
-        confidenceBadge: 'INCOMPLETE'
+        confidenceBadge: 'POSITIONING'
       };
     }
 
     // Check vertical coverage
-    const headY = nose.y;
-    const ankleY = Math.max(leftAnkle ? leftAnkle.y : 0.8, rightAnkle ? rightAnkle.y : 0.8);
+    const headY = nose ? nose.y : (leftShoulder.y - 0.15);
+    const ankleY = Math.max(
+      leftFoot ? leftFoot.y : (leftKnee ? leftKnee.y + 0.15 : 0.85),
+      rightFoot ? rightFoot.y : (rightKnee ? rightKnee.y + 0.15 : 0.85)
+    );
     const bodyHeight = ankleY - headY;
 
-    if (bodyHeight < 0.40) {
+    if (bodyHeight < 0.35) {
       return {
         isFramed: false,
-        distanceFeedback: 'TOO FAR (COME CLOSER)',
-        confidenceBadge: 'TOO DISTANT'
+        distanceFeedback: 'TOO FAR (STEP CLOSER)',
+        confidenceBadge: 'TOO FAR'
       };
     }
 
-    if (headY < 0.05 || ankleY > 0.98) {
+    if (headY < 0.02 || ankleY > 0.99) {
       return {
         isFramed: false,
         distanceFeedback: 'STEP BACK SLIGHTLY',
-        confidenceBadge: 'CUT OFF'
+        confidenceBadge: 'TOO CLOSE'
       };
     }
 
     return {
       isFramed: true,
-      distanceFeedback: 'PERFECT DISTANCE',
-      confidenceBadge: 'READY'
+      distanceFeedback: 'LOCKED & READY',
+      confidenceBadge: 'LOCKED'
     };
   }
 

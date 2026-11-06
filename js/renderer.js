@@ -36,25 +36,36 @@ class SkeletonRenderer {
     return ctx;
   }
 
-  // Real-time camera framing skeleton with warm ambient glow
-  drawFramingGuide(canvas, landmarks, isFramedProperly) {
+  // Real-time camera framing skeleton with high-visibility green & yellow lines
+  drawFramingGuide(canvas, landmarks, isFramedProperly, videoElement) {
+    if (!canvas) return;
+
+    // Synchronize canvas internal bitmap dimensions to match the live video resolution or client dimensions
+    const targetW = (videoElement && videoElement.videoWidth > 0) ? videoElement.videoWidth : (canvas.clientWidth || 640);
+    const targetH = (videoElement && videoElement.videoHeight > 0) ? videoElement.videoHeight : (canvas.clientHeight || 480);
+
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+    }
+
     const ctx = canvas.getContext('2d');
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!landmarks || landmarks.length < 29) return;
 
-    // Warm minimalist line colors: Green when locked, soft terracotta when adjusting
-    const lineColor = isFramedProperly ? 'rgba(34, 197, 94, 0.75)' : 'rgba(251, 146, 60, 0.45)';
-    const jointColor = isFramedProperly ? '#22c55e' : '#f97316';
+    // High-visibility Green & Yellow line feedback:
+    // Green (#22c55e) when full-body alignment is locked
+    // Bright Yellow (#fbbf24) when adjusting distance and posture
+    const lineColor = isFramedProperly ? 'rgba(34, 197, 94, 0.92)' : 'rgba(251, 191, 36, 0.92)';
+    const jointColor = isFramedProperly ? '#22c55e' : '#fbbf24';
 
-    this.drawSkeleton(ctx, landmarks, w, h, {
+    this.drawSkeleton(ctx, landmarks, canvas.width, canvas.height, {
       lineColor,
       jointColor,
-      lineWidth: 2.5,
-      jointRadius: 3.5,
-      glow: isFramedProperly
+      lineWidth: 3.5,
+      jointRadius: 5.0,
+      glow: true
     });
   }
 
@@ -319,12 +330,16 @@ class SkeletonRenderer {
   }
 
   drawSkeleton(ctx, landmarks, w, h, style = {}) {
-    const lineColor = style.lineColor || 'rgba(255, 237, 213, 0.7)';
-    const jointColor = style.jointColor || '#ea580c';
-    const lineWidth = style.lineWidth || 2;
-    const jointRadius = style.jointRadius || 3.5;
+    const lineColor = style.lineColor || 'rgba(251, 191, 36, 0.90)';
+    const jointColor = style.jointColor || '#fbbf24';
+    const lineWidth = style.lineWidth || 3.5;
+    const jointRadius = style.jointRadius || 5.0;
 
     ctx.save();
+    if (style.glow) {
+      ctx.shadowColor = jointColor;
+      ctx.shadowBlur = 12;
+    }
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
     ctx.lineCap = 'round';
@@ -333,7 +348,7 @@ class SkeletonRenderer {
     this.CONNECTIONS.forEach(([i, j]) => {
       const p1 = landmarks[i];
       const p2 = landmarks[j];
-      if (p1 && p2 && (p1.visibility === undefined || p1.visibility > 0.35) && (p2.visibility === undefined || p2.visibility > 0.35)) {
+      if (p1 && p2 && (p1.visibility === undefined || p1.visibility > 0.25) && (p2.visibility === undefined || p2.visibility > 0.25)) {
         const x1 = p1.x > 1 ? p1.x : p1.x * w;
         const y1 = p1.y > 1 ? p1.y : p1.y * h;
         const x2 = p2.x > 1 ? p2.x : p2.x * w;
@@ -348,9 +363,13 @@ class SkeletonRenderer {
     ctx.restore();
 
     ctx.save();
+    if (style.glow) {
+      ctx.shadowColor = jointColor;
+      ctx.shadowBlur = 10;
+    }
     ctx.fillStyle = jointColor;
     landmarks.forEach((p, idx) => {
-      if (p && idx >= 7 && (p.visibility === undefined || p.visibility > 0.35)) {
+      if (p && idx >= 7 && (p.visibility === undefined || p.visibility > 0.25)) {
         const x = p.x > 1 ? p.x : p.x * w;
         const y = p.y > 1 ? p.y : p.y * h;
         ctx.beginPath();
