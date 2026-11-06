@@ -1,38 +1,45 @@
 /**
- * KineticScan 360 Main Application Controller
+ * KineticScan 360 Master Controller
+ * Implements Orbix Studio warm minimalist aesthetic, hands-free auto-recording, and WCAG AA accessibility.
  */
 
 class AppController {
   constructor() {
     this.currentView = 'home';
     this.selectedSport = 'runner';
-    this.scanMode = 'continuous'; // 'continuous' or 'stepped'
     this.isSpinning = false;
     this.currentScanResults = null;
     this.activeMilestoneAngle = 90; // Default to right profile in results
     this.spinTimer = null;
-    this.spinDurationMs = 10000; // 10 seconds for 360 spin
+    this.spinDurationMs = 11000; // 11s smooth slow 360 spin
+    this.pendingCameraAction = null;
   }
 
   init() {
-    // Render sports buttons
     this.renderSportSelectors();
-
-    // Init camera manager bindings
+    privacyManager.init();
     cameraManager.init('webcam-video', 'overlay-canvas');
 
-    // Setup resize observer for crisp canvas redrawing
     window.addEventListener('resize', () => {
       if (this.currentView === 'results' && this.currentScanResults) {
         this.renderMilestoneInspection();
+        this.renderScoreArc(this.currentScanResults.compositeScore);
       }
     });
 
-    // Icons
+    // Check if previous scan exists in local storage
+    const cached = localStorage.getItem('ks_saved_scan');
+    if (cached) {
+      try {
+        this.currentScanResults = JSON.parse(cached);
+        const reportBtn = document.getElementById('nav-btn-results');
+        if (reportBtn) reportBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+      } catch (e) {}
+    }
+
     if (window.lucide) lucide.createIcons();
   }
 
-  // Navigate between views: 'home', 'scan', 'results'
   navigate(view) {
     this.currentView = view;
     document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
@@ -40,21 +47,19 @@ class AppController {
     const target = document.getElementById(`view-${view}`);
     if (target) target.classList.remove('hidden');
 
-    // Update nav active states
+    // Update bottom dock / header navigation states
     ['home', 'scan', 'results'].forEach(v => {
-      const btn = document.getElementById(`nav-btn-${v}`);
+      const btn = document.getElementById(`dock-btn-${v}`);
       if (btn) {
         if (v === view) {
-          btn.className = 'px-3 py-1.5 rounded-md transition-all text-white bg-surface-700 shadow-sm flex items-center space-x-1.5 font-bold';
+          btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all bg-amber-500 text-stone-950 shadow-lg shadow-amber-500/30';
         } else {
-          btn.className = 'px-3 py-1.5 rounded-md transition-all text-slate-400 hover:text-white flex items-center space-x-1.5 font-medium';
+          btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all text-stone-400 hover:text-stone-100 hover:bg-stone-800/60';
         }
       }
     });
 
-    if (view === 'scan') {
-      audioGuide.speak('Position your device upright and step back.');
-    } else {
+    if (view !== 'scan') {
       cameraManager.stopCamera();
     }
 
@@ -72,16 +77,22 @@ class AppController {
 
     container.innerHTML = SPORT_PROFILES.map(sport => {
       const isSelected = sport.id === this.selectedSport;
-      const borderClass = isSelected ? 'border-brand-500 bg-brand-500/10 text-white' : 'border-surface-700/80 bg-surface-850 text-slate-300 hover:border-slate-500';
+      const borderClass = isSelected
+        ? 'border-amber-500/80 bg-gradient-to-b from-amber-500/15 to-transparent text-white shadow-lg shadow-amber-500/10'
+        : 'border-white/5 bg-stone-900/60 text-stone-300 hover:border-stone-700 hover:bg-stone-900/90';
       return `
-        <button onclick="app.setSport('${sport.id}')" class="p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between space-y-2 ${borderClass}">
+        <button onclick="app.setSport('${sport.id}')"
+          class="p-4 rounded-2xl border text-left transition-all flex flex-col justify-between space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${borderClass}"
+          role="radio" aria-checked="${isSelected}">
           <div class="flex items-center justify-between w-full">
-            <i data-lucide="${sport.icon}" class="w-5 h-5 ${isSelected ? 'text-brand-400' : 'text-slate-400'}"></i>
-            ${isSelected ? '<span class="w-2 h-2 rounded-full bg-brand-400"></span>' : ''}
+            <div class="w-8 h-8 rounded-full ${isSelected ? 'bg-amber-500/20 text-amber-400' : 'bg-stone-800 text-stone-400'} flex items-center justify-center">
+              <i data-lucide="${sport.icon}" class="w-4 h-4"></i>
+            </div>
+            ${isSelected ? '<span class="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400"></span>' : ''}
           </div>
           <div>
-            <div class="font-display font-bold text-xs sm:text-sm text-white">${sport.name}</div>
-            <div class="text-[10px] text-slate-400 line-clamp-1 mt-0.5">${sport.description}</div>
+            <div class="font-display font-bold text-sm text-stone-100">${sport.name}</div>
+            <div class="text-[11px] text-stone-400 line-clamp-1 mt-0.5">${sport.description}</div>
           </div>
         </button>
       `;
@@ -94,69 +105,30 @@ class AppController {
     this.selectedSport = sportId;
     this.renderSportSelectors();
     if (this.currentScanResults) {
-      // Re-evaluate results under new sport weighting
       this.currentScanResults = biomechanics.evaluateFullScan(poseEngine.milestones, this.selectedSport);
       this.renderResultsDashboard();
     }
   }
 
-  setScanMode(mode) {
-    this.scanMode = mode;
-    const contBtn = document.getElementById('scan-mode-continuous');
-    const stepBtn = document.getElementById('scan-mode-stepped');
-    if (mode === 'continuous') {
-      contBtn.className = 'px-2.5 py-1 rounded bg-brand-500/20 text-brand-400 font-bold';
-      stepBtn.className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white font-medium';
-    } else {
-      stepBtn.className = 'px-2.5 py-1 rounded bg-brand-500/20 text-brand-400 font-bold';
-      contBtn.className = 'px-2.5 py-1 rounded text-slate-400 hover:text-white font-medium';
-    }
+  // Camera initialization with COPPA Age Gate check
+  startScanFlow() {
+    privacyManager.requireAgeVerificationBeforeCamera(async () => {
+      this.navigate('scan');
+      await cameraManager.startCamera();
+    });
   }
 
-  async startScanFlow() {
-    this.navigate('scan');
-    await cameraManager.startCamera();
-  }
-
-  // Countdown & Trigger 360 Spin Recording
-  initiateSpinCountdown() {
+  // ==========================================
+  // HANDS-FREE AUTOMATIC RECORDING
+  // ==========================================
+  startAutomaticRecording() {
     if (this.isSpinning) return;
-
-    audioGuide.init();
-    const overlay = document.getElementById('countdown-overlay');
-    const number = document.getElementById('countdown-number');
-    const instr = document.getElementById('countdown-instruction');
-    const triggerBtn = document.getElementById('trigger-scan-btn');
-
-    if (triggerBtn) triggerBtn.disabled = true;
-    if (overlay) overlay.classList.remove('hidden');
-    if (overlay) overlay.style.display = 'flex';
-
-    let count = 3;
-    number.innerText = count;
-    instr.innerText = 'GET READY';
-    audioGuide.playCountdownBeep(count);
-
-    const interval = setInterval(() => {
-      count--;
-      if (count > 0) {
-        number.innerText = count;
-        audioGuide.playCountdownBeep(count);
-      } else {
-        clearInterval(interval);
-        if (overlay) overlay.classList.add('hidden');
-        if (overlay) overlay.style.display = 'none';
-        this.start360SpinExecution();
-      }
-    }, 1000);
-  }
-
-  start360SpinExecution() {
     this.isSpinning = true;
     poseEngine.resetMilestones();
 
-    audioGuide.playStartSpinTone();
-    audioGuide.speak('Start spinning slowly clockwise now.', true);
+    // Voice announcement immediately as requested:
+    // "Recording Commenced" + instructions to turn 360 degrees slowly
+    audioGuide.announceRecordingCommenced();
 
     const hud = document.getElementById('spin-progress-hud');
     const circle = document.getElementById('spin-progress-circle');
@@ -166,13 +138,12 @@ class AppController {
     const statusDot = document.getElementById('status-indicator-dot');
 
     if (hud) hud.classList.remove('hidden');
-    if (statusText) statusText.innerText = 'Scanning 360° Spin...';
-    if (statusDot) statusDot.className = 'w-3 h-3 rounded-full bg-brand-400 animate-spin';
+    if (statusText) statusText.innerText = 'Recording Commenced — Rotate slowly 360°';
+    if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-spin';
 
     const startTime = Date.now();
-    const circumference = 2 * Math.PI * 24; // r = 24 => ~150.8
+    const circumference = 2 * Math.PI * 26; // r = 26 => ~163.36
 
-    // Frame hook
     cameraManager.onFrameCallback = (landmarks) => {
       if (!this.isSpinning) return;
 
@@ -181,7 +152,6 @@ class AppController {
         if (angleText) angleText.innerText = `${result.yaw}°`;
         if (sectorText) sectorText.innerText = result.sector;
 
-        // Update badge states
         ['front', 'right', 'back', 'left'].forEach(sec => {
           const badge = document.getElementById(`badge-${sec}`);
           if (badge && poseEngine.milestones[sec === 'front' ? 0 : sec === 'right' ? 90 : sec === 'back' ? 180 : 270]) {
@@ -196,17 +166,16 @@ class AppController {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(1, elapsed / this.spinDurationMs);
 
-      // Radial circle progress
       if (circle) {
         const offset = circumference - (progress * circumference);
         circle.style.strokeDashoffset = offset;
       }
 
-      // Voice coaching checkpoints
-      if (elapsed > 4800 && elapsed < 5200) {
-        audioGuide.speak('Halfway there, keep rotating.');
-      } else if (elapsed > 8000 && elapsed < 8400) {
-        audioGuide.speak('Almost done, finish the turn.');
+      // Smooth spoken cues
+      if (elapsed > 5200 && elapsed < 5700) {
+        audioGuide.speak('Halfway through. Continue turning.');
+      } else if (elapsed > 8800 && elapsed < 9300) {
+        audioGuide.speak('Almost complete. Complete the full circle.');
       }
 
       if (progress >= 1) {
@@ -224,9 +193,8 @@ class AppController {
     if (hud) hud.classList.add('hidden');
 
     audioGuide.playCompleteChime();
-    audioGuide.speak('Scan complete! Generating your kinetic report.', true);
+    audioGuide.speak('Scan complete. Evaluating your kinetic alignment.', true);
 
-    // If live camera didn't catch all milestones, fill with synthetic reference data
     const captured = poseEngine.milestones;
     const synthetic = poseEngine.generateSyntheticAthlete(this.selectedSport);
 
@@ -236,8 +204,12 @@ class AppController {
       }
     });
 
-    // Evaluate full biomechanics
     this.currentScanResults = biomechanics.evaluateFullScan(captured, this.selectedSport);
+
+    // Save locally
+    try {
+      localStorage.setItem('ks_saved_scan', JSON.stringify(this.currentScanResults));
+    } catch (e) {}
 
     setTimeout(() => {
       this.navigate('results');
@@ -248,62 +220,70 @@ class AppController {
     this.isSpinning = false;
     if (this.spinTimer) clearInterval(this.spinTimer);
     cameraManager.onFrameCallback = null;
+    cameraManager.hasAutoTriggered = false;
     const hud = document.getElementById('spin-progress-hud');
     if (hud) hud.classList.add('hidden');
-    const overlay = document.getElementById('countdown-overlay');
-    if (overlay) overlay.style.display = 'none';
     this.navigate('home');
   }
 
   retakeScan() {
+    cameraManager.hasAutoTriggered = false;
     this.startScanFlow();
   }
 
-  // Load sample athlete for instant demo testing
   loadDemoAthlete(sport = 'runner') {
     this.selectedSport = sport;
     const synthetic = poseEngine.generateSyntheticAthlete(sport);
     poseEngine.milestones = synthetic;
     this.currentScanResults = biomechanics.evaluateFullScan(synthetic, sport);
-    audioGuide.speak('Loaded sample athlete assessment.', true);
+    try {
+      localStorage.setItem('ks_saved_scan', JSON.stringify(this.currentScanResults));
+    } catch (e) {}
+    audioGuide.speak('Loaded sample alignment scan.', true);
     this.navigate('results');
   }
 
-  // Render the comprehensive athletic results report
+  // ==========================================
+  // ATHLETIC RESULTS & MINIMALIST SCORE ARC
+  // ==========================================
   renderResultsDashboard() {
     const res = this.currentScanResults;
     if (!res) return;
 
-    // Header Info
     const sportPill = document.getElementById('report-sport-pill');
     const dateSpan = document.getElementById('report-timestamp');
     if (sportPill) sportPill.innerText = res.sport.name;
     if (dateSpan) dateSpan.innerText = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
-    // Composite Score Card
-    const scoreText = document.getElementById('composite-score-text');
+    // Render warm minimalist score arc (matching Aivo reference image)
+    this.renderScoreArc(res.compositeScore);
+
     const ratingBadge = document.getElementById('composite-rating-badge');
     const scoreTransfer = document.getElementById('score-transfer');
     const barTransfer = document.getElementById('bar-transfer');
     const scoreBalance = document.getElementById('score-balance');
     const barBalance = document.getElementById('bar-balance');
 
-    if (scoreText) scoreText.innerHTML = `${res.compositeScore}<span class="text-xl font-bold text-slate-400">/100</span>`;
     if (ratingBadge) {
       ratingBadge.innerText = res.rating;
-      ratingBadge.className = `px-2.5 py-1 rounded-lg text-xs font-bold bg-${res.ratingColor}/10 text-${res.ratingColor} border border-${res.ratingColor}/20`;
+      ratingBadge.className = res.compositeScore >= 85
+        ? 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+        : res.compositeScore >= 75
+          ? 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30'
+          : 'px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30';
     }
+
     if (scoreTransfer) scoreTransfer.innerText = `${res.metrics.forceTransferScore}%`;
     if (barTransfer) barTransfer.style.width = `${res.metrics.forceTransferScore}%`;
     if (scoreBalance) scoreBalance.innerText = `${res.metrics.bilateralBalanceScore}%`;
     if (barBalance) barBalance.style.width = `${res.metrics.bilateralBalanceScore}%`;
 
-    // 3 Quick Highlights
+    // Highlight metrics
     const badgeApt = document.getElementById('badge-pelvic-tilt');
     const descApt = document.getElementById('desc-pelvic-tilt');
     if (badgeApt) badgeApt.innerText = `Dev ${res.metrics.pelvicDev}°`;
     if (descApt && res.metrics.pelvicDev > 7) {
-      descApt.innerText = 'Shortened hip flexors inhibit full glute drive during hip extension.';
+      descApt.innerText = 'Shortened hip flexors limit terminal hip extension in the drive phase.';
     }
 
     const badgeValgus = document.getElementById('badge-knee-valgus');
@@ -311,8 +291,8 @@ class AppController {
     if (badgeValgus) badgeValgus.innerText = `Valgus ${res.metrics.valgusAngle}°`;
     if (descValgus) {
       descValgus.innerText = res.metrics.valgusAngle > 5.5
-        ? 'Medial deviation during load indicates weak gluteus medius stabilizers.'
-        : 'Symmetric knee tracking aligned with mid-foot line.';
+        ? 'Medial tracking points to underactive gluteus medius hip stabilizers.'
+        : 'Neutral knee alignment tracked along the second toe axis.';
     }
 
     const badgeKyphosis = document.getElementById('badge-kyphosis');
@@ -320,29 +300,88 @@ class AppController {
     if (badgeKyphosis) badgeKyphosis.innerText = `Kyphotic ${res.metrics.thoracicTilt}°`;
     if (descKyphosis) {
       descKyphosis.innerText = res.metrics.thoracicTilt > 7.5
-        ? 'Protracted scapulae limit overhead shoulder range and thoracic rotation.'
-        : 'Neutral thoracic curvature with optimal ribcage stacking.';
+        ? 'Scapular protraction restricts overhead reach and thoracic rotation.'
+        : 'Upright thoracic stacking supporting deep respiratory volume.';
     }
 
-    // Render Milestone Canvas
     this.renderMilestoneInspection();
-
-    // Render Prescribed Pre-Hab Drill Cards
     this.renderDrillCards(res.prescribedDrills);
 
     if (window.lucide) lucide.createIcons();
   }
 
-  // Switch between 0, 90, 180, 270 angles in results
+  // Replicates the sleek glowing sunset arc from the reference image
+  renderScoreArc(score) {
+    const canvas = document.getElementById('score-arc-canvas');
+    if (!canvas) return;
+
+    const ctx = skeletonRenderer.setupCanvas(canvas, 240, 150);
+    const w = 240;
+    const h = 150;
+    ctx.clearRect(0, 0, w, h);
+
+    const centerX = w / 2;
+    const centerY = h - 20;
+    const radius = 95;
+    const startAngle = Math.PI * 0.9;
+    const endAngle = Math.PI * 2.1;
+    const totalAngle = endAngle - startAngle;
+
+    // Background track
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.strokeStyle = '#292524';
+    ctx.lineWidth = 14;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.restore();
+
+    // Active warm sunset gradient
+    const pct = Math.max(0, Math.min(1, score / 100));
+    const activeEndAngle = startAngle + totalAngle * pct;
+
+    const grad = ctx.createLinearGradient(centerX - radius, centerY, centerX + radius, centerY - radius);
+    grad.addColorStop(0, '#c2410c');
+    grad.addColorStop(0.5, '#ea580c');
+    grad.addColorStop(1, '#fdba74');
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, startAngle, activeEndAngle);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 14;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.restore();
+
+    // Indicator pill / needle at end of arc
+    const pillX = centerX + Math.cos(activeEndAngle) * radius;
+    const pillY = centerY + Math.sin(activeEndAngle) * radius;
+
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(253, 186, 116, 0.6)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(pillX, pillY, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Score text in center
+    const scoreVal = document.getElementById('composite-score-text');
+    if (scoreVal) scoreVal.innerHTML = `${score}<span class="text-xl font-normal text-stone-400">/100</span>`;
+  }
+
   selectMilestoneAngle(angle) {
     this.activeMilestoneAngle = angle;
     [0, 90, 180, 270].forEach(deg => {
       const tab = document.getElementById(`tab-angle-${deg}`);
       if (tab) {
         if (deg === angle) {
-          tab.className = 'px-3 py-1.5 rounded-md bg-brand-500 text-white font-bold transition';
+          tab.className = 'px-3.5 py-1.5 rounded-full bg-amber-500 text-stone-950 font-bold transition-all';
         } else {
-          tab.className = 'px-3 py-1.5 rounded-md text-slate-400 hover:text-white font-medium transition';
+          tab.className = 'px-3.5 py-1.5 rounded-full text-stone-400 hover:text-stone-200 transition-all';
         }
       }
     });
@@ -357,10 +396,8 @@ class AppController {
     const angle = this.activeMilestoneAngle;
     const landmarkData = poseEngine.milestones[angle];
 
-    // Draw on canvas
     skeletonRenderer.drawMilestoneInspection(canvas, landmarkData, angle);
 
-    // Update details sidebar
     const planeTitle = document.getElementById('active-plane-title');
     const vectorList = document.getElementById('vector-details-list');
     const insightText = document.getElementById('coach-insight-text');
@@ -369,101 +406,100 @@ class AppController {
 
     if (angle === 90 || angle === 270) {
       const sideName = angle === 90 ? 'Right' : 'Left';
-      if (planeTitle) planeTitle.innerText = `Sagittal Profile Alignment (${sideName} Side - ${angle}°)`;
+      if (planeTitle) planeTitle.innerText = `Sagittal Profile Stack (${sideName} Side - ${angle}°)`;
       if (vectorList) {
         vectorList.innerHTML = `
-          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-800 border border-surface-700/70">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
             <div>
-              <div class="text-xs font-bold text-white">Forward Head Angle (CVA)</div>
-              <div class="text-[10px] text-slate-400">Tragus relative to C7 shoulder line</div>
+              <div class="text-xs font-bold text-stone-200">Forward Head Angle (CVA)</div>
+              <div class="text-[11px] text-stone-400">Tragus relative to shoulder acromion</div>
             </div>
-            <span class="text-xs font-bold px-2 py-0.5 rounded ${m.forwardHead > 12 ? 'bg-accent-warning/10 text-accent-warning' : 'bg-brand-500/10 text-brand-400'}">${m.forwardHead}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.forwardHead > 12 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.forwardHead}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-800 border border-surface-700/70">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
             <div>
-              <div class="text-xs font-bold text-white">Thoracic Kyphosis Curvature</div>
-              <div class="text-[10px] text-slate-400">Mid-back thoracic flexion index</div>
+              <div class="text-xs font-bold text-stone-200">Thoracic Spine Curvature</div>
+              <div class="text-[11px] text-stone-400">Mid-back kyphosis deviation</div>
             </div>
-            <span class="text-xs font-bold px-2 py-0.5 rounded ${m.thoracicTilt > 8 ? 'bg-accent-warning/10 text-accent-warning' : 'bg-brand-500/10 text-brand-400'}">${m.thoracicTilt}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.thoracicTilt > 8 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.thoracicTilt}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-800 border border-surface-700/70">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
             <div>
-              <div class="text-xs font-bold text-white">Pelvic Girdle Tilt Vector</div>
-              <div class="text-[10px] text-slate-400">Anterior / Posterior tilt deviation</div>
+              <div class="text-xs font-bold text-stone-200">Pelvic Girdle Tilt Vector</div>
+              <div class="text-[11px] text-stone-400">ASIS to PSIS deviation from horizontal</div>
             </div>
-            <span class="text-xs font-bold px-2 py-0.5 rounded ${m.pelvicDev > 8 ? 'bg-accent-warning/10 text-accent-warning' : 'bg-brand-500/10 text-brand-400'}">${m.pelvicDev}° APT</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.pelvicDev > 8 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.pelvicDev}° APT</span>
           </div>
         `;
       }
 
       if (insightText) {
         insightText.innerText = m.pelvicDev > 7
-          ? `Your ${sideName} profile displays an anterior pelvic tilt (${m.pelvicDev}°). In sprint extension, this cuts stride length short and forces the lumbar erectors to absorb shear stress.`
-          : `Your ${sideName} sagittal plumb line demonstrates good joint stacking from ear to lateral ankle. Maintain this with posterior chain reinforcement.`;
+          ? `Your ${sideName} profile displays an anterior pelvic tilt (${m.pelvicDev}°). During acceleration and squats, this places shear stress on the lumbar erectors rather than transferring force through the glutes.`
+          : `Your ${sideName} sagittal plumb line demonstrates balanced joint stacking from tragus down to lateral ankle.`;
       }
     } else {
       const planeName = angle === 0 ? 'Anterior (Front)' : 'Posterior (Back)';
       if (planeTitle) planeTitle.innerText = `Coronal Alignment (${planeName} - ${angle}°)`;
       if (vectorList) {
         vectorList.innerHTML = `
-          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-800 border border-surface-700/70">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
             <div>
-              <div class="text-xs font-bold text-white">Bilateral Shoulder Delta</div>
-              <div class="text-[10px] text-slate-400">Horizontal tilt between clavicles</div>
+              <div class="text-xs font-bold text-stone-200">Bilateral Shoulder Delta</div>
+              <div class="text-[11px] text-stone-400">Horizontal tilt between clavicles</div>
             </div>
-            <span class="text-xs font-bold px-2 py-0.5 rounded ${m.shoulderAsymmetry > 2.5 ? 'bg-accent-warning/10 text-accent-warning' : 'bg-brand-500/10 text-brand-400'}">${m.shoulderAsymmetry}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.shoulderAsymmetry > 2.5 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.shoulderAsymmetry}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-800 border border-surface-700/70">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
             <div>
-              <div class="text-xs font-bold text-white">Pelvic Crest Symmetry</div>
-              <div class="text-[10px] text-slate-400">Left vs right iliac crest elevation</div>
+              <div class="text-xs font-bold text-stone-200">Pelvic Crest Symmetry</div>
+              <div class="text-[11px] text-stone-400">Left vs right iliac crest elevation</div>
             </div>
-            <span class="text-xs font-bold px-2 py-0.5 rounded ${m.pelvicAsymmetry > 2.5 ? 'bg-accent-warning/10 text-accent-warning' : 'bg-brand-500/10 text-brand-400'}">${m.pelvicAsymmetry}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.pelvicAsymmetry > 2.5 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.pelvicAsymmetry}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3 rounded-xl bg-surface-800 border border-surface-700/70">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
             <div>
-              <div class="text-xs font-bold text-white">Medial Knee Valgus (Q-Angle)</div>
-              <div class="text-[10px] text-slate-400">Inward collapse angle relative to straight</div>
+              <div class="text-xs font-bold text-stone-200">Knee Tracking Alignment</div>
+              <div class="text-[11px] text-stone-400">Medial angle deviation relative to vertical</div>
             </div>
-            <span class="text-xs font-bold px-2 py-0.5 rounded ${m.valgusAngle > 5.5 ? 'bg-accent-danger/10 text-accent-danger' : 'bg-brand-500/10 text-brand-400'}">${m.valgusAngle}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.valgusAngle > 5.5 ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.valgusAngle}°</span>
           </div>
         `;
       }
 
       if (insightText) {
         insightText.innerText = m.valgusAngle > 5.5
-          ? `Notice the ${m.valgusAngle}° medial knee deviation. When accelerating, changing direction, or landing from a jump, this vector increases tensile load on the ACL. Target the prescribed banded drills.`
-          : `Frontal plane symmetry is solid with balanced shoulder levels and aligned knees.`;
+          ? `Notice the ${m.valgusAngle}° inward medial knee deviation. Incorporate the lateral monster walks and single-leg RDLs to reinforce the gluteus medius.`
+          : `Frontal plane symmetry is solid with level shoulder horizontal axes.`;
       }
     }
   }
 
-  // Render Prescribed Drill Cards
   renderDrillCards(drills) {
     const container = document.getElementById('drill-cards-container');
     if (!container || !drills) return;
 
     container.innerHTML = drills.map((drill, idx) => `
-      <div class="bg-surface-850 rounded-2xl p-5 border border-surface-700 flex flex-col justify-between space-y-4 hover:border-brand-500/40 transition">
+      <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-4 hover:border-amber-500/30 transition-all">
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-brand-500/10 text-brand-400 border border-brand-500/20">Drill 0${idx + 1}</span>
-            <span class="text-[11px] text-slate-400 font-medium">${drill.frequency}</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/20">Protocol 0${idx + 1}</span>
+            <span class="text-[11px] text-stone-400 font-medium">${drill.frequency}</span>
           </div>
           <div>
-            <h4 class="font-display font-bold text-white text-sm sm:text-base">${drill.name}</h4>
-            <div class="text-[11px] text-accent-cyan font-semibold mt-0.5">Target: ${drill.target}</div>
+            <h4 class="font-display font-bold text-stone-100 text-sm sm:text-base">${drill.name}</h4>
+            <div class="text-[11px] text-amber-400 font-semibold mt-0.5">${drill.target}</div>
           </div>
-          <p class="text-xs text-slate-300 leading-relaxed">${drill.impact}</p>
+          <p class="text-xs text-stone-300 leading-relaxed">${drill.impact}</p>
         </div>
 
-        <div class="space-y-2 pt-2 border-t border-surface-700/60">
-          <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Key Execution Cue</div>
-          <div class="text-xs text-slate-300 italic">"${drill.instructions[1] || drill.instructions[0]}"</div>
+        <div class="space-y-1.5 pt-3 border-t border-stone-800">
+          <div class="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Coach Execution Cue</div>
+          <div class="text-xs text-stone-300 italic">"${drill.instructions[1] || drill.instructions[0]}"</div>
         </div>
       </div>
     `).join('');
@@ -472,10 +508,8 @@ class AppController {
   }
 }
 
-// Instantiate global app instance
 const app = new AppController();
 
-// Auto initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   app.init();
 });

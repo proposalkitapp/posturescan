@@ -1,18 +1,18 @@
 /**
- * Canvas Skeleton & Biomechanical Overlay Visualizer
- * Renders anatomical landmarks, plumb lines, and kinetic vectors with high precision.
+ * Minimalist Canvas Skeleton & Biomechanical Overlay Visualizer
+ * Inspired by Orbix Studio / Aivo warm-glow minimalist aesthetic.
  */
 
 class SkeletonRenderer {
   constructor() {
     this.CONNECTIONS = [
       // Head
-      [7, 8], // ears
+      [7, 8],
       // Upper Torso
-      [11, 12], // shoulders
-      [11, 23], // left shoulder to left hip
-      [12, 24], // right shoulder to right hip
-      [23, 24], // hips
+      [11, 12],
+      [11, 23],
+      [12, 24],
+      [23, 24],
       // Left Arm
       [11, 13], [13, 15],
       // Right Arm
@@ -24,7 +24,6 @@ class SkeletonRenderer {
     ];
   }
 
-  // Set up crisp canvas rendering with high-DPI support
   setupCanvas(canvas, width, height) {
     const dpr = window.devicePixelRatio || 1;
     canvas.width = width * dpr;
@@ -37,7 +36,7 @@ class SkeletonRenderer {
     return ctx;
   }
 
-  // Draw real-time framing feedback during active camera feed
+  // Real-time camera framing skeleton with warm ambient glow
   drawFramingGuide(canvas, landmarks, isFramedProperly) {
     const ctx = canvas.getContext('2d');
     const w = canvas.clientWidth;
@@ -46,55 +45,52 @@ class SkeletonRenderer {
 
     if (!landmarks || landmarks.length < 29) return;
 
-    // Draw subtle translucent skeleton
+    // Warm minimalist line colors: Green when locked, soft terracotta when adjusting
+    const lineColor = isFramedProperly ? 'rgba(34, 197, 94, 0.75)' : 'rgba(251, 146, 60, 0.45)';
+    const jointColor = isFramedProperly ? '#22c55e' : '#f97316';
+
     this.drawSkeleton(ctx, landmarks, w, h, {
-      lineColor: isFramedProperly ? 'rgba(52, 211, 153, 0.65)' : 'rgba(245, 158, 11, 0.5)',
-      jointColor: isFramedProperly ? '#10b981' : '#f59e0b',
+      lineColor,
+      jointColor,
       lineWidth: 2.5,
-      jointRadius: 3.5
+      jointRadius: 3.5,
+      glow: isFramedProperly
     });
   }
 
-  // Draw detailed posture report skeleton with plumb lines and vectors
+  // Draw milestone posture view with warm atmospheric aesthetic
   drawMilestoneInspection(canvas, landmarkData, angle) {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     const ctx = this.setupCanvas(canvas, w, h);
 
-    // Dark athletic background with grid lines
-    ctx.fillStyle = '#0a0d14';
+    // Deep obsidian background
+    ctx.fillStyle = '#0e0d0c';
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle athletic grid
-    ctx.strokeStyle = '#161d2d';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < w; x += 40) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += 40) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
+    // Subtle warm radial ambient glow in center
+    const radial = ctx.createRadialGradient(w / 2, h * 0.42, 10, w / 2, h * 0.42, w * 0.55);
+    radial.addColorStop(0, 'rgba(234, 88, 12, 0.12)');
+    radial.addColorStop(0.6, 'rgba(234, 88, 12, 0.03)');
+    radial.addColorStop(1, 'rgba(14, 13, 12, 0)');
+    ctx.fillStyle = radial;
+    ctx.fillRect(0, 0, w, h);
 
     if (!landmarkData || !landmarkData.landmarks) {
-      ctx.fillStyle = '#64748b';
-      ctx.font = '14px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#78716c';
+      ctx.font = '13px "Plus Jakarta Sans"';
       ctx.textAlign = 'center';
-      ctx.fillText('No milestone capture available for this angle', w / 2, h / 2);
+      ctx.fillText('Capturing landmark view...', w / 2, h / 2);
       return;
     }
 
     const lm = landmarkData.landmarks;
-
-    // Scale landmarks to fit canvas bounding area centered
     const scaled = this.normalizeLandmarksToCanvas(lm, w, h);
 
-    // 1. Draw Biomechanical Reference Lines
+    // Draw ethereal translucent silhouette body backdrop
+    this.drawEtherealBodySilhoutte(ctx, scaled, w, h);
+
+    // 1. Reference Vectors & Plumb Lines
     if (angle === 90 || angle === 270) {
       // Sagittal View: Vertical Plumb Line through Ankle
       const isRight = angle === 90;
@@ -104,97 +100,166 @@ class SkeletonRenderer {
       const hip = isRight ? scaled[24] : scaled[23];
 
       if (ankle) {
-        // True Plumb Line (Cyan dashed)
+        // Warm Gravity Plumb Line
         ctx.save();
-        ctx.strokeStyle = '#06b6d4';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = 'rgba(251, 146, 60, 0.65)';
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([5, 4]);
         ctx.beginPath();
-        ctx.moveTo(ankle.x, 30);
-        ctx.lineTo(ankle.x, h - 30);
+        ctx.moveTo(ankle.x, 35);
+        ctx.lineTo(ankle.x, h - 35);
         ctx.stroke();
 
-        // Plumb line label
-        ctx.fillStyle = '#06b6d4';
-        ctx.font = '10px monospace';
+        ctx.fillStyle = 'rgba(251, 146, 60, 0.9)';
+        ctx.font = '10px "Plus Jakarta Sans"';
         ctx.textAlign = 'left';
-        ctx.fillText('GRAVITY PLUMB LINE', ankle.x + 8, 45);
+        ctx.fillText('VERTICAL GRAVITY AXIS', ankle.x + 8, 48);
         ctx.restore();
 
-        // Kinetic Chain Deviations
         if (ear && shoulder) {
-          this.drawDeviationOffset(ctx, shoulder.x, ear.x, ear.y, '#f59e0b', 'Head Protraction');
+          this.drawDeviationOffset(ctx, shoulder.x, ear.x, ear.y, '#f59e0b', 'Head CVA');
         }
         if (hip && shoulder) {
-          this.drawDeviationOffset(ctx, hip.x, shoulder.x, shoulder.y, '#f59e0b', 'Thoracic Kyphosis');
+          this.drawDeviationOffset(ctx, hip.x, shoulder.x, shoulder.y, '#f59e0b', 'Thoracic Stack');
         }
       }
     } else {
-      // Coronal View (0° or 180°): Horizontal Shoulder & Hip Lines
+      // Coronal Front / Back
       const ls = scaled[11];
       const rs = scaled[12];
       const lh = scaled[23];
       const rh = scaled[24];
 
       if (ls && rs) {
-        // Shoulder line
         ctx.save();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(214, 211, 209, 0.4)';
+        ctx.lineWidth = 1.5;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
-        ctx.moveTo(rs.x - 20, rs.y);
-        ctx.lineTo(ls.x + 20, ls.y);
+        ctx.moveTo(rs.x - 25, rs.y);
+        ctx.lineTo(ls.x + 25, ls.y);
         ctx.stroke();
         ctx.restore();
       }
 
       if (lh && rh) {
-        // Hip line
         ctx.save();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(214, 211, 209, 0.4)';
+        ctx.lineWidth = 1.5;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
-        ctx.moveTo(rh.x - 20, rh.y);
-        ctx.lineTo(lh.x + 20, lh.y);
+        ctx.moveTo(rh.x - 25, rh.y);
+        ctx.lineTo(lh.x + 25, lh.y);
         ctx.stroke();
         ctx.restore();
       }
 
-      // Knee Valgus Inward Vector Guide
+      // Knee tracking indicators
       const lk = scaled[25];
       const rk = scaled[26];
       if (lk && rk) {
-        ctx.strokeStyle = '#ef4444';
-        ctx.lineWidth = 1.5;
-        // Marker circles at knees
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.18)';
         ctx.beginPath();
-        ctx.arc(lk.x, lk.y, 8, 0, Math.PI * 2);
+        ctx.arc(lk.x, lk.y, 9, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(rk.x, rk.y, 8, 0, Math.PI * 2);
+        ctx.arc(rk.x, rk.y, 9, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
-    // 2. Draw Anatomical Skeleton
+    // 2. Draw Skeleton with warm tones
     this.drawSkeleton(ctx, scaled, w, h, {
-      lineColor: '#10b981',
-      jointColor: '#34d399',
-      lineWidth: 3,
-      jointRadius: 4.5
+      lineColor: 'rgba(255, 237, 213, 0.75)',
+      jointColor: '#ea580c',
+      lineWidth: 2.5,
+      jointRadius: 4.5,
+      glow: true
     });
 
-    // 3. Draw Watermark Badge
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.font = '11px "Outfit"';
-    ctx.textAlign = 'right';
-    ctx.fillText(`KINETICSCAN 360 • ${angle}° INSPECTION`, w - 16, 24);
+    // 3. Floating Anatomical Callouts (Aivo style)
+    this.drawAnatomicalCalloutNodes(ctx, scaled, angle);
   }
 
-  // Draw horizontal deviation arrow
+  // Draw ethereal human silhouette with soft glow
+  drawEtherealBodySilhoutte(ctx, scaled, w, h) {
+    if (!scaled || scaled.length < 29) return;
+    const nose = scaled[0];
+    const ls = scaled[11];
+    const rs = scaled[12];
+    const lh = scaled[23];
+    const rh = scaled[24];
+    const la = scaled[27];
+    const ra = scaled[28];
+
+    if (!nose || !ls || !rs || !lh || !rh) return;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 247, 237, 0.04)';
+    ctx.strokeStyle = 'rgba(255, 247, 237, 0.1)';
+    ctx.lineWidth = 1.5;
+
+    // Torso contour
+    ctx.beginPath();
+    ctx.moveTo(ls.x, ls.y);
+    ctx.lineTo(rs.x, rs.y);
+    ctx.lineTo(rh.x + 6, rh.y);
+    ctx.lineTo(lh.x - 6, lh.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Head glow oval
+    ctx.beginPath();
+    ctx.ellipse(nose.x, nose.y + 4, 16, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  drawAnatomicalCalloutNodes(ctx, scaled, angle) {
+    const isProfile = angle === 90 || angle === 270;
+    const isRight = angle === 90;
+
+    const head = scaled[0];
+    const shoulder = isProfile ? (isRight ? scaled[12] : scaled[11]) : scaled[12];
+    const hip = isProfile ? (isRight ? scaled[24] : scaled[23]) : scaled[24];
+    const knee = isProfile ? (isRight ? scaled[26] : scaled[25]) : scaled[26];
+
+    const nodes = [
+      { pt: head, label: 'Cervical' },
+      { pt: shoulder, label: 'Thoracic' },
+      { pt: hip, label: 'Pelvis' },
+      { pt: knee, label: 'Knee' }
+    ];
+
+    nodes.forEach(({ pt, label }) => {
+      if (!pt) return;
+      ctx.save();
+      // Glowing dot
+      ctx.fillStyle = '#fdba74';
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Frosted pill label
+      const tagX = pt.x + 14;
+      const tagY = pt.y - 4;
+      ctx.fillStyle = 'rgba(23, 21, 19, 0.85)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1;
+      this.drawRoundedRect(ctx, tagX - 4, tagY - 10, 52, 17, 5);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '10px "Plus Jakarta Sans"';
+      ctx.fillStyle = '#f5f5f4';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, tagX + 3, tagY + 2);
+      ctx.restore();
+    });
+  }
+
   drawDeviationOffset(ctx, targetX, sourceX, y, color, label) {
     if (Math.abs(targetX - sourceX) < 4) return;
     ctx.save();
@@ -205,7 +270,6 @@ class SkeletonRenderer {
     ctx.lineTo(sourceX, y);
     ctx.stroke();
 
-    // Small arrow tick
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(sourceX, y, 2.5, 0, Math.PI * 2);
@@ -219,7 +283,6 @@ class SkeletonRenderer {
     ctx.restore();
   }
 
-  // Normalize landmarks to fit canvas bounds nicely
   normalizeLandmarksToCanvas(landmarks, canvasW, canvasH) {
     if (!landmarks || landmarks.length === 0) return [];
 
@@ -234,10 +297,7 @@ class SkeletonRenderer {
     });
 
     const bodyH = maxY - minY;
-    const bodyW = maxX - minX;
-
-    // Target height ~80% of canvas height
-    const targetH = canvasH * 0.82;
+    const targetH = canvasH * 0.78;
     const scale = bodyH > 0 ? targetH / (bodyH * canvasH) : 1;
 
     const centerX = (minX + maxX) / 2 * canvasW;
@@ -259,12 +319,11 @@ class SkeletonRenderer {
   }
 
   drawSkeleton(ctx, landmarks, w, h, style = {}) {
-    const lineColor = style.lineColor || '#10b981';
-    const jointColor = style.jointColor || '#34d399';
+    const lineColor = style.lineColor || 'rgba(255, 237, 213, 0.7)';
+    const jointColor = style.jointColor || '#ea580c';
     const lineWidth = style.lineWidth || 2;
-    const jointRadius = style.jointRadius || 3;
+    const jointRadius = style.jointRadius || 3.5;
 
-    // Draw bones
     ctx.save();
     ctx.strokeStyle = lineColor;
     ctx.lineWidth = lineWidth;
@@ -288,7 +347,6 @@ class SkeletonRenderer {
     });
     ctx.restore();
 
-    // Draw joints
     ctx.save();
     ctx.fillStyle = jointColor;
     landmarks.forEach((p, idx) => {
@@ -301,6 +359,20 @@ class SkeletonRenderer {
       }
     });
     ctx.restore();
+  }
+
+  drawRoundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
   }
 }
 

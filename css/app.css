@@ -1,65 +1,82 @@
-/* Athletic KineticScan 360 Custom Styles */
+/* Orbix Studio / Aivo Warm Minimalist Aesthetic Styles */
 
-@keyframes pulseGlow {
+:root {
+  --bg-deep: #0a0908;
+  --bg-card: #141210;
+  --accent-amber: #f97316;
+  --accent-sunset: #ea580c;
+  --accent-peach: #fed7aa;
+}
+
+/* Warm Sunset Radial Glow */
+.bg-ambient-aura {
+  background: radial-gradient(circle at 50% -10%, rgba(234, 88, 12, 0.28) 0%, rgba(194, 65, 12, 0.12) 40%, rgba(10, 9, 8, 0) 80%);
+}
+
+.bg-ambient-card-glow {
+  background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.15) 0%, rgba(20, 18, 16, 0.95) 60%);
+}
+
+/* Ethereal Glow Animation */
+@keyframes etherealPulse {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2), inset 0 0 15px rgba(16, 185, 129, 0.1);
+    filter: drop-shadow(0 0 16px rgba(249, 115, 22, 0.25));
+    opacity: 0.92;
   }
   50% {
-    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4), inset 0 0 25px rgba(16, 185, 129, 0.2);
+    filter: drop-shadow(0 0 28px rgba(249, 115, 22, 0.45));
+    opacity: 1;
   }
 }
 
-@keyframes pingOnce {
-  0% { transform: scale(0.7); opacity: 0.2; }
-  50% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+.animate-ethereal {
+  animation: etherealPulse 4s infinite ease-in-out;
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 2s infinite ease-in-out;
-}
-
-.animate-ping-once {
-  animation: pingOnce 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Custom Framing Guides */
+/* Framing Box Guides */
 #framing-guide-box.frame-ready {
-  border-color: #10b981 !important;
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+  border-color: #22c55e !important;
+  box-shadow: 0 0 35px rgba(34, 197, 94, 0.35);
 }
 
 #framing-guide-box.frame-adjust {
-  border-color: #f59e0b !important;
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+  border-color: #f97316 !important;
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.25);
 }
 
 /* Milestone badges */
 .milestone-badge.active {
-  color: #34d399 !important;
+  color: #fdba74 !important;
 }
 .milestone-badge.active div {
-  background-color: #10b981 !important;
-  box-shadow: 0 0 8px #10b981;
+  background-color: #f97316 !important;
+  box-shadow: 0 0 10px #f97316;
+}
+
+/* Focus Visible for Keyboard Accessibility (WCAG 2.1 AA) */
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #0a0908, 0 0 0 4px #f97316 !important;
+}
+
+/* Smooth fade-in */
+.animate-fade-in {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Print Styles for Athletic PDF Export */
 @media print {
-  header, footer, #milestones-bar, button, #nav-btn-home, #nav-btn-scan {
+  header, footer, #bottom-dock, button, #cookie-consent-banner, #framing-guide-box {
     display: none !important;
   }
   body {
-    background: white !important;
-    color: black !important;
+    background: #ffffff !important;
+    color: #1c1917 !important;
   }
   .view-panel {
     display: block !important;
@@ -70,15 +87,15 @@
   #view-results {
     display: block !important;
   }
-  .bg-surface-850, .bg-surface-800, .bg-surface-900 {
-    background: #f8fafc !important;
-    border-color: #cbd5e1 !important;
-    color: #0f172a !important;
+  .bg-stone-900, .bg-stone-900\/70, .bg-stone-950 {
+    background: #fafaf9 !important;
+    border-color: #e7e5e4 !important;
+    color: #1c1917 !important;
   }
-  .text-white {
-    color: #0f172a !important;
+  .text-stone-100, .text-white {
+    color: #1c1917 !important;
   }
-  .text-slate-300, .text-slate-400 {
-    color: #475569 !important;
+  .text-stone-400, .text-stone-300 {
+    color: #57534e !important;
   }
 }

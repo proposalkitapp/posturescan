@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KineticScan 360 | Athletic Posture & Biomechanics Scanner</title>
+  <title>KineticScan 360 | Movement & Postural Alignment</title>
+  <meta name="description" content="Local-first, on-device 360° athletic posture screening with hands-free automated recording and kinetic pre-hab protocols.">
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,24 +23,27 @@
             display: ['"Outfit"', 'sans-serif'],
           },
           colors: {
-            brand: {
-              50: '#ecfdf5',
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
+            stone: {
+              950: '#0a0908',
+              900: '#141210',
+              850: '#1c1917',
+              800: '#292524',
+              700: '#44403c',
+              400: '#a8a29e',
+              300: '#d6d3d1',
+              100: '#f5f5f4',
             },
-            accent: {
-              cyan: '#06b6d4',
-              neon: '#22c55e',
-              warning: '#f59e0b',
-              danger: '#ef4444',
+            amber: {
+              300: '#fde68a',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
             },
-            surface: {
-              900: '#0a0d14',
-              850: '#0f1420',
-              800: '#161d2d',
-              700: '#212a3e',
-              600: '#323d57',
+            sunset: {
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
             }
           }
         }
@@ -50,401 +54,425 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- MediaPipe Pose and Camera Utils -->
+  <!-- MediaPipe Pose and Camera Utils (Audited Official Edge Libraries) -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="bg-surface-900 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+<body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col font-sans selection:bg-sunset-500 selection:text-white antialiased relative">
+
+  <!-- Accessibility Skip Link -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-sunset-500 text-stone-950 font-bold rounded-lg shadow-lg">
+    Skip to main content
+  </a>
+
+  <!-- Ambient Sunset Aura Glow -->
+  <div class="fixed top-0 inset-x-0 h-96 bg-ambient-aura pointer-events-none z-0"></div>
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 border-b border-surface-700/60 bg-surface-900/90 backdrop-blur-md px-4 lg:px-8 py-3.5 transition-all">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigate('home')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent-cyan flex items-center justify-center shadow-lg shadow-brand-500/20">
-          <i data-lucide="activity" class="w-6 h-6 text-white stroke-[2.5]"></i>
+  <header class="sticky top-0 z-40 border-b border-white/5 bg-stone-950/80 backdrop-blur-xl px-4 lg:px-8 py-3.5 transition-all">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="app.navigate('home')" tabindex="0" role="button" aria-label="KineticScan 360 Home">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-sunset-600 to-sunset-400 flex items-center justify-center shadow-lg shadow-sunset-500/25">
+          <i data-lucide="activity" class="w-5 h-5 text-stone-950 stroke-[2.5]" aria-hidden="true"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="font-display font-extrabold text-xl tracking-tight text-white">KINETIC<span class="text-brand-400">SCAN</span></span>
-            <span class="px-1.5 py-0.5 text-[10px] font-bold tracking-widest uppercase rounded bg-brand-500/10 text-brand-400 border border-brand-500/20">360° Ath-Bio</span>
+            <span class="font-display font-extrabold text-lg tracking-tight text-stone-100">KINETIC<span class="text-sunset-400">SCAN</span></span>
+            <span class="px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase rounded-full bg-sunset-500/10 text-sunset-300 border border-sunset-500/20">Local 360°</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">Sports Posture & Kinetic Chain Analysis</p>
         </div>
       </div>
 
-      <!-- Header Action & Navigation -->
-      <div class="flex items-center space-x-3">
-        <div class="flex items-center bg-surface-800 rounded-lg p-1 border border-surface-700 text-xs font-medium">
-          <button id="nav-btn-home" onclick="app.navigate('home')" class="px-3 py-1.5 rounded-md transition-all text-white bg-surface-700 shadow-sm flex items-center space-x-1.5">
-            <i data-lucide="home" class="w-3.5 h-3.5"></i>
-            <span class="hidden md:inline">Dashboard</span>
-          </button>
-          <button id="nav-btn-scan" onclick="app.navigate('scan')" class="px-3 py-1.5 rounded-md transition-all text-slate-400 hover:text-white flex items-center space-x-1.5">
-            <i data-lucide="scan" class="w-3.5 h-3.5 text-brand-400"></i>
-            <span>360° Scan</span>
-          </button>
-          <button id="nav-btn-results" onclick="app.navigate('results')" class="px-3 py-1.5 rounded-md transition-all text-slate-400 hover:text-white flex items-center space-x-1.5">
-            <i data-lucide="line-chart" class="w-3.5 h-3.5"></i>
-            <span class="hidden md:inline">Report</span>
-          </button>
-        </div>
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-2.5">
+        <button onclick="privacyManager.openModal('data-deletion-modal')" 
+          class="px-3 py-1.5 rounded-full text-xs font-medium text-stone-400 hover:text-stone-200 hover:bg-stone-900 border border-white/5 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-sunset-500"
+          aria-label="Privacy and Data Rights">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sunset-400" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Privacy Hub</span>
+        </button>
 
-        <button id="sound-toggle-btn" onclick="audioGuide.toggleMute()" class="p-2 rounded-lg bg-surface-800 border border-surface-700 text-slate-300 hover:text-white hover:bg-surface-700 transition" title="Toggle Audio Coaching">
-          <i id="sound-icon" data-lucide="volume-2" class="w-4 h-4"></i>
+        <button id="sound-toggle-btn" onclick="audioGuide.toggleMute()" 
+          class="p-2 rounded-full bg-stone-900/90 border border-white/5 text-stone-300 hover:text-white hover:bg-stone-850 transition focus-visible:ring-2 focus-visible:ring-sunset-500" 
+          aria-label="Toggle Voice & Audio Coaching">
+          <i id="sound-icon" data-lucide="volume-2" class="w-4 h-4" aria-hidden="true"></i>
         </button>
       </div>
     </div>
   </header>
 
   <!-- MAIN APP CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col">
+  <main id="main-content" class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col relative z-10 pb-28">
 
-    <!-- VIEW 1: HOME / ONBOARDING -->
-    <section id="view-home" class="view-panel space-y-8 animate-fade-in">
-      <!-- Hero Banner -->
-      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-850 via-surface-800 to-surface-850 border border-surface-700/80 p-6 sm:p-10 shadow-2xl">
-        <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-20 -top-20 w-80 h-80 bg-accent-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="max-w-2xl relative z-10 space-y-4">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
-            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-            <span>ELITE ATHLETE KINETIC CHAIN SCANNER</span>
-          </div>
-          <h1 class="text-3xl sm:text-5xl font-display font-black tracking-tight text-white leading-tight">
-            Fix Power Leaks. <br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 via-accent-neon to-accent-cyan">Unlock 360° Athletic Alignment.</span>
-          </h1>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Prop your phone, step back, and perform a slow 10-second 360° rotation. Our on-device computer vision analyzes your plumb line, pelvic tilt, knee valgus, and bilateral asymmetries to prescribe tailored pre-hab drills.
-          </p>
+    <!-- VIEW 1: HOME (Orbix Studio / Aivo Minimalist Inspiration) -->
+    <section id="view-home" class="view-panel space-y-8 animate-fade-in" aria-label="Home Overview">
+      
+      <!-- Hero Card with Ethereal Body Glow -->
+      <div class="relative overflow-hidden rounded-3xl bg-ambient-card-glow border border-white/5 p-6 sm:p-10 shadow-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           
-          <div class="pt-2 flex flex-wrap gap-3">
-            <button onclick="app.startScanFlow()" class="px-6 py-3.5 rounded-xl font-bold bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-400 hover:to-brand-500 text-white shadow-xl shadow-brand-500/25 transition-all transform active:scale-95 flex items-center space-x-2 text-sm sm:text-base">
-              <i data-lucide="play-circle" class="w-5 h-5"></i>
-              <span>Start 360° Spin Scan</span>
-            </button>
-            <button onclick="app.loadDemoAthlete('runner')" class="px-5 py-3.5 rounded-xl font-semibold bg-surface-700/80 hover:bg-surface-700 text-slate-200 border border-surface-600 transition flex items-center space-x-2 text-sm">
-              <i data-lucide="sparkles" class="w-4 h-4 text-accent-cyan"></i>
-              <span>Load Sample Athlete Scan</span>
-            </button>
+          <!-- Left Text Column -->
+          <div class="md:col-span-7 space-y-4">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sunset-500/10 border border-sunset-500/20 text-sunset-400 text-xs font-semibold">
+              <i data-lucide="compass" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>HANDS-FREE BIOMECHANICAL SCREENING</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-5xl font-display font-extrabold tracking-tight text-stone-100 leading-[1.15]">
+              Harmonize Your Body. <br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-sunset-400 via-amber-300 to-amber-400">Restore Neutral Alignment.</span>
+            </h1>
+            
+            <p class="text-stone-300 text-sm sm:text-base leading-relaxed max-w-xl">
+              Prop your phone at waist height and step back. The scanner detects when you are fully in frame, automatically initiates the scan with voice guidance, and charts your kinetic chain as you rotate 360 degrees.
+            </p>
+            
+            <!-- CTAs -->
+            <div class="pt-2 flex flex-wrap gap-3">
+              <button onclick="app.startScanFlow()" 
+                class="px-6 py-3.5 rounded-full font-bold bg-gradient-to-r from-sunset-600 via-sunset-500 to-amber-500 hover:from-sunset-500 hover:to-amber-400 text-stone-950 shadow-xl shadow-sunset-500/20 transition-all transform active:scale-95 flex items-center space-x-2 text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-sunset-400">
+                <i data-lucide="play" class="w-4 h-4 fill-stone-950" aria-hidden="true"></i>
+                <span>Begin Automatic Scan</span>
+              </button>
+              
+              <button onclick="app.loadDemoAthlete('runner')" 
+                class="px-5 py-3.5 rounded-full font-semibold bg-stone-900/80 hover:bg-stone-850 text-stone-300 border border-white/5 transition flex items-center space-x-2 text-sm focus-visible:ring-2 focus-visible:ring-sunset-500">
+                <i data-lucide="eye" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+                <span>Preview Alignment Report</span>
+              </button>
+            </div>
+
+            <!-- Privacy Guarantee Badge -->
+            <div class="pt-2 flex items-center space-x-2 text-xs text-stone-400">
+              <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-400" aria-hidden="true"></i>
+              <span>100% on-device WebAssembly • Zero video saved or uploaded</span>
+            </div>
           </div>
+
+          <!-- Right Column: Ethereal Glowing Human Silhouette (Aivo Style) -->
+          <div class="md:col-span-5 flex items-center justify-center">
+            <div class="relative w-64 h-80 sm:w-72 sm:h-96 flex items-center justify-center">
+              <!-- Soft ambient back-glow -->
+              <div class="absolute inset-0 bg-sunset-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+              <!-- Glowing Body Silhouette Graphic -->
+              <svg viewBox="0 0 200 320" class="w-full h-full object-contain animate-ethereal" aria-label="Ethereal human posture silhouette illustration" role="img">
+                <defs>
+                  <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#fdba74" stop-opacity="0.75" />
+                    <stop offset="40%" stop-color="#f97316" stop-opacity="0.35" />
+                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0.15" />
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+                <!-- Head -->
+                <circle cx="100" cy="42" r="18" fill="url(#bodyGrad)" filter="url(#glow)" />
+                <!-- Neck & Shoulders -->
+                <path d="M 94 62 L 106 62 L 118 78 L 140 92 L 132 145 L 122 145 L 122 195 L 114 265 L 104 305 L 96 305 L 86 265 L 78 195 L 78 145 L 68 145 L 60 92 L 82 78 Z" fill="url(#bodyGrad)" filter="url(#glow)" />
+                <!-- Central Gravity Axis Plumb Line -->
+                <line x1="100" y1="20" x2="100" y2="310" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.65" />
+              </svg>
+
+              <!-- Anatomical Highlight Nodes (Matching Reference Image) -->
+              <div class="absolute top-10 left-12 bg-stone-900/90 border border-white/10 px-2.5 py-1 rounded-full text-[10px] text-stone-200 backdrop-blur shadow flex items-center space-x-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-sunset-400"></span>
+                <span>Cervical Axis</span>
+              </div>
+              <div class="absolute top-32 right-6 bg-stone-900/90 border border-white/10 px-2.5 py-1 rounded-full text-[10px] text-stone-200 backdrop-blur shadow flex items-center space-x-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                <span>Thoracic Stack</span>
+              </div>
+              <div class="absolute bottom-28 left-8 bg-stone-900/90 border border-white/10 px-2.5 py-1 rounded-full text-[10px] text-stone-200 backdrop-blur shadow flex items-center space-x-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-sunset-400"></span>
+                <span>Pelvic Vector</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- Sport Focus Selector -->
+      <!-- Movement Discipline Selector -->
       <div class="space-y-3">
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-display font-bold text-white flex items-center space-x-2">
-            <i data-lucide="target" class="w-5 h-5 text-brand-400"></i>
-            <span>Select Your Athletic Discipline</span>
+          <h2 class="text-base font-display font-bold text-stone-100 flex items-center space-x-2">
+            <i data-lucide="layers" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+            <span>Movement Screening Discipline</span>
           </h2>
-          <span class="text-xs text-slate-400">Tailors risk thresholds & drills</span>
+          <span class="text-xs text-stone-400">Adapts anatomical risk criteria</span>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="sport-selector-container">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="sport-selector-container" role="radiogroup" aria-label="Movement Screening Discipline">
           <!-- Dynamically populated via JS -->
         </div>
       </div>
 
-      <!-- Feature Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-surface-850 p-5 rounded-xl border border-surface-700/70 space-y-2.5">
-          <div class="w-10 h-10 rounded-lg bg-accent-cyan/10 border border-accent-cyan/20 flex items-center justify-center text-accent-cyan">
-            <i data-lucide="rotate-3d" class="w-5 h-5"></i>
-          </div>
-          <h3 class="font-display font-bold text-white text-base">360° Rotational Sampling</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Continuous video sampling captures anterior, posterior, and lateral profiles automatically using 3D shoulder/hip yaw estimation.
-          </p>
-        </div>
-
-        <div class="bg-surface-850 p-5 rounded-xl border border-surface-700/70 space-y-2.5">
-          <div class="w-10 h-10 rounded-lg bg-accent-warning/10 border border-accent-warning/20 flex items-center justify-center text-accent-warning">
-            <i data-lucide="shield-alert" class="w-5 h-5"></i>
-          </div>
-          <h3 class="font-display font-bold text-white text-base">Kinetic Chain Risk Detection</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Identifies ACL tear risk from knee valgus, sprint power leak from anterior pelvic tilt, and overhead mobility impingements.
-          </p>
-        </div>
-
-        <div class="bg-surface-850 p-5 rounded-xl border border-surface-700/70 space-y-2.5">
-          <div class="w-10 h-10 rounded-lg bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400">
-            <i data-lucide="dumbbell" class="w-5 h-5"></i>
-          </div>
-          <h3 class="font-display font-bold text-white text-base">Targeted Pre-Hab Prescription</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Get an immediate, customized 5-minute daily drill protocol addressing weak links, overactive muscles, and unilateral imbalances.
-          </p>
-        </div>
-      </div>
-
-      <!-- Preparation Checklist -->
-      <div class="bg-surface-800/60 rounded-xl p-5 border border-surface-700">
-        <h3 class="font-display font-semibold text-white text-sm mb-3 flex items-center space-x-2">
-          <i data-lucide="check-circle-2" class="w-4 h-4 text-brand-400"></i>
-          <span>Checklist for an Accurate 360° Scan</span>
+      <!-- Preparation Checklist & Safe Environment -->
+      <div class="bg-stone-900/60 rounded-3xl p-6 border border-white/5 space-y-4">
+        <h3 class="font-display font-semibold text-stone-200 text-sm flex items-center space-x-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+          <span>How Hands-Free Automatic Scanning Works</span>
         </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs text-slate-300">
-          <div class="flex items-start space-x-2 bg-surface-850/80 p-3 rounded-lg border border-surface-700/50">
-            <span class="text-brand-400 font-bold">1.</span>
-            <span><strong>Fitted Gear:</strong> Shorts & athletic shirt so joints & pelvic lines are visible.</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs text-stone-300">
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold">1. Device Placement</div>
+            <p class="text-stone-400">Prop device upright at waist height on a table or stand, 7 to 8 feet away.</p>
           </div>
-          <div class="flex items-start space-x-2 bg-surface-850/80 p-3 rounded-lg border border-surface-700/50">
-            <span class="text-brand-400 font-bold">2.</span>
-            <span><strong>Phone Position:</strong> Prop upright at waist height, 7 to 8 feet away.</span>
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold">2. Automatic Trigger</div>
+            <p class="text-stone-400">Step back into the frame. As soon as the box turns green, recording commences automatically.</p>
           </div>
-          <div class="flex items-start space-x-2 bg-surface-850/80 p-3 rounded-lg border border-surface-700/50">
-            <span class="text-brand-400 font-bold">3.</span>
-            <span><strong>Full Body View:</strong> Ensure head to ankles fit inside the camera frame.</span>
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold">3. 360° Slow Turn</div>
+            <p class="text-stone-400">Following the voice prompt, complete one smooth slow rotation clockwise over ~10 seconds.</p>
           </div>
-          <div class="flex items-start space-x-2 bg-surface-850/80 p-3 rounded-lg border border-surface-700/50">
-            <span class="text-brand-400 font-bold">4.</span>
-            <span><strong>Slow 10s Spin:</strong> Complete one smooth 360° rotation clockwise when signaled.</span>
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold">4. Actionable Drills</div>
+            <p class="text-stone-400">View your kinetic plumb lines, pelvic tilt angle, and receive tailored pre-hab exercises.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 2: 360° SCANNER -->
-    <section id="view-scan" class="view-panel hidden flex-1 flex flex-col space-y-4 animate-fade-in">
+    <!-- VIEW 2: AUTOMATIC 360° SCANNER -->
+    <section id="view-scan" class="view-panel hidden flex-1 flex flex-col space-y-4 animate-fade-in" aria-label="Live Camera Scanner">
       
       <!-- Scan Header Control Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-surface-850 px-4 py-3 rounded-xl border border-surface-700/80">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-900/80 px-5 py-3.5 rounded-2xl border border-white/5">
         <div class="flex items-center space-x-3">
-          <div id="status-indicator-dot" class="w-3 h-3 rounded-full bg-slate-500 animate-pulse"></div>
+          <div id="status-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" aria-hidden="true"></div>
           <div>
-            <h2 id="scanner-status-text" class="font-display font-bold text-sm sm:text-base text-white">Scanner Standby</h2>
-            <p id="scanner-subtext" class="text-xs text-slate-400">Position yourself in full frame</p>
+            <h2 id="scanner-status-text" class="font-display font-bold text-sm sm:text-base text-stone-100">Aligning Athlete...</h2>
+            <p id="scanner-subtext" class="text-xs text-stone-400">Step back until the bounding guide locks green</p>
           </div>
         </div>
 
         <div class="flex items-center space-x-2">
-          <!-- Mode Switcher -->
-          <div class="flex bg-surface-800 rounded-lg p-0.5 border border-surface-700 text-xs">
-            <button id="scan-mode-continuous" onclick="app.setScanMode('continuous')" class="px-2.5 py-1 rounded bg-brand-500/20 text-brand-400 font-medium">360° Spin Video</button>
-            <button id="scan-mode-stepped" onclick="app.setScanMode('stepped')" class="px-2.5 py-1 rounded text-slate-400 hover:text-white">4-Angle Step</button>
-          </div>
-
-          <button id="switch-camera-btn" onclick="cameraManager.switchCamera()" class="p-2 rounded-lg bg-surface-800 border border-surface-700 text-slate-300 hover:text-white" title="Flip Camera">
-            <i data-lucide="flip-horizontal" class="w-4 h-4"></i>
+          <button id="switch-camera-btn" onclick="cameraManager.switchCamera()" 
+            class="p-2.5 rounded-full bg-stone-800 text-stone-300 hover:text-white transition focus-visible:ring-2 focus-visible:ring-sunset-500" 
+            aria-label="Switch between front and back camera">
+            <i data-lucide="flip-horizontal" class="w-4 h-4" aria-hidden="true"></i>
           </button>
         </div>
       </div>
 
       <!-- Video Feed & HUD Stage -->
-      <div class="relative flex-1 min-h-[460px] sm:min-h-[520px] bg-black rounded-2xl overflow-hidden border border-surface-700 shadow-2xl flex items-center justify-center">
+      <div class="relative flex-1 min-h-[460px] sm:min-h-[520px] bg-black rounded-3xl overflow-hidden border border-white/5 shadow-2xl flex items-center justify-center">
         <!-- Live Video Element -->
-        <video id="webcam-video" playsinline autoplay muted class="absolute inset-0 w-full h-full object-contain"></video>
+        <video id="webcam-video" playsinline autoplay muted class="absolute inset-0 w-full h-full object-contain" aria-label="Webcam feed for posture screening"></video>
 
-        <!-- Dynamic Overlay Canvas (Skeleton & Alignment Guides) -->
+        <!-- Dynamic Overlay Canvas (Skeleton & Guides) -->
         <canvas id="overlay-canvas" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"></canvas>
 
         <!-- Full-Body Framing Bounding Box Box Overlay -->
-        <div id="framing-guide-box" class="absolute inset-y-8 inset-x-12 sm:inset-x-36 md:inset-x-48 border-2 border-dashed border-slate-500/50 rounded-2xl pointer-events-none transition-all duration-300 flex flex-col justify-between p-4 z-20">
-          <div class="flex justify-between items-center text-[11px] text-slate-400 font-mono">
-            <span class="bg-black/60 px-2 py-0.5 rounded backdrop-blur border border-slate-700">HEAD LEVEL</span>
-            <span id="framing-confidence-badge" class="bg-black/60 px-2 py-0.5 rounded backdrop-blur text-slate-400">FRAME CHECK</span>
+        <div id="framing-guide-box" class="absolute inset-y-8 inset-x-12 sm:inset-x-36 md:inset-x-48 border-2 border-dashed border-stone-600/60 rounded-3xl pointer-events-none transition-all duration-300 flex flex-col justify-between p-4 z-20">
+          <div class="flex justify-between items-center text-[10px] text-stone-400 font-mono">
+            <span class="bg-black/60 px-2 py-0.5 rounded backdrop-blur border border-white/10">CRANIAL ALIGNMENT</span>
+            <span id="framing-confidence-badge" class="bg-black/60 px-2 py-0.5 rounded backdrop-blur text-stone-400">SEARCHING</span>
           </div>
-          <div class="flex justify-between items-center text-[11px] text-slate-400 font-mono">
-            <span class="bg-black/60 px-2 py-0.5 rounded backdrop-blur border border-slate-700">ANKLE LEVEL</span>
+          <div class="flex justify-between items-center text-[10px] text-stone-400 font-mono">
+            <span class="bg-black/60 px-2 py-0.5 rounded backdrop-blur border border-white/10">ANKLE LEVEL</span>
             <span id="framing-distance-badge" class="bg-black/60 px-2 py-0.5 rounded backdrop-blur">STEP BACK</span>
           </div>
         </div>
 
-        <!-- Big Countdown Overlay -->
-        <div id="countdown-overlay" class="absolute inset-0 bg-black/70 backdrop-blur-sm z-30 hidden flex-col items-center justify-center space-y-3">
-          <div id="countdown-number" class="text-8xl sm:text-9xl font-display font-black text-brand-400 animate-ping-once">3</div>
-          <p id="countdown-instruction" class="text-lg sm:text-xl font-bold text-white uppercase tracking-wider">Get in position</p>
-        </div>
-
         <!-- Spin Progress HUD (Radial 360 Ring during active spin) -->
-        <div id="spin-progress-hud" class="absolute top-6 left-6 z-20 hidden bg-surface-900/85 backdrop-blur border border-surface-700 p-3 rounded-xl flex items-center space-x-3 shadow-xl">
+        <div id="spin-progress-hud" class="absolute top-6 left-6 z-20 hidden bg-stone-900/90 backdrop-blur-md border border-white/10 p-3.5 rounded-2xl flex items-center space-x-3 shadow-2xl">
           <div class="relative w-14 h-14 flex items-center justify-center">
             <svg class="w-14 h-14 transform -rotate-90">
-              <circle cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" class="text-surface-700" fill="transparent" />
-              <circle id="spin-progress-circle" cx="28" cy="28" r="24" stroke="currentColor" stroke-width="4" stroke-dasharray="150.8" stroke-dashoffset="150.8" class="text-brand-400 transition-all duration-150" fill="transparent" stroke-linecap="round" />
+              <circle cx="28" cy="28" r="26" stroke="currentColor" stroke-width="4" class="text-stone-800" fill="transparent" />
+              <circle id="spin-progress-circle" cx="28" cy="28" r="26" stroke="currentColor" stroke-width="4" stroke-dasharray="163.36" stroke-dashoffset="163.36" class="text-sunset-500 transition-all duration-150" fill="transparent" stroke-linecap="round" />
             </svg>
-            <span id="spin-angle-text" class="absolute text-xs font-mono font-bold text-white">0°</span>
+            <span id="spin-angle-text" class="absolute text-xs font-mono font-bold text-stone-100">0°</span>
           </div>
           <div>
-            <div class="text-[11px] uppercase font-bold text-brand-400 tracking-wider">Spin In Progress</div>
-            <div id="spin-current-sector" class="text-xs font-semibold text-white">Anterior (Front)</div>
-            <div class="text-[10px] text-slate-400">Keep rotating smoothly...</div>
+            <div class="text-[10px] uppercase font-bold text-sunset-400 tracking-wider">Automated Capture</div>
+            <div id="spin-current-sector" class="text-xs font-semibold text-stone-100">Anterior (Front)</div>
+            <div class="text-[10px] text-stone-400">Rotating in slow motion...</div>
           </div>
         </div>
 
         <!-- Captured Milestones Mini Bar -->
         <div id="milestones-bar" class="absolute bottom-4 inset-x-4 sm:inset-x-8 z-20 flex justify-center">
-          <div class="bg-surface-900/90 backdrop-blur-md border border-surface-700/80 px-4 py-2 rounded-xl flex items-center space-x-4 shadow-xl">
-            <div id="badge-front" class="milestone-badge flex items-center space-x-1.5 text-xs text-slate-400">
-              <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+          <div class="bg-stone-900/90 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center space-x-4 shadow-xl">
+            <div id="badge-front" class="milestone-badge flex items-center space-x-1.5 text-xs text-stone-400">
+              <div class="w-2 h-2 rounded-full bg-stone-700"></div>
               <span>Front (0°)</span>
             </div>
-            <div id="badge-right" class="milestone-badge flex items-center space-x-1.5 text-xs text-slate-400">
-              <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
-              <span>Right Profile (90°)</span>
+            <div id="badge-right" class="milestone-badge flex items-center space-x-1.5 text-xs text-stone-400">
+              <div class="w-2 h-2 rounded-full bg-stone-700"></div>
+              <span>Right (90°)</span>
             </div>
-            <div id="badge-back" class="milestone-badge flex items-center space-x-1.5 text-xs text-slate-400">
-              <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
+            <div id="badge-back" class="milestone-badge flex items-center space-x-1.5 text-xs text-stone-400">
+              <div class="w-2 h-2 rounded-full bg-stone-700"></div>
               <span>Back (180°)</span>
             </div>
-            <div id="badge-left" class="milestone-badge flex items-center space-x-1.5 text-xs text-slate-400">
-              <div class="w-2.5 h-2.5 rounded-full bg-slate-600"></div>
-              <span>Left Profile (270°)</span>
+            <div id="badge-left" class="milestone-badge flex items-center space-x-1.5 text-xs text-stone-400">
+              <div class="w-2 h-2 rounded-full bg-stone-700"></div>
+              <span>Left (270°)</span>
             </div>
           </div>
         </div>
 
-        <!-- Camera Off / Permission State -->
-        <div id="camera-prompt-card" class="absolute inset-0 bg-surface-900/95 flex flex-col items-center justify-center p-6 text-center space-y-4 z-20">
-          <div class="w-16 h-16 rounded-2xl bg-surface-800 border border-surface-700 flex items-center justify-center text-brand-400">
-            <i data-lucide="camera" class="w-8 h-8"></i>
+        <!-- Camera Permission Initial State -->
+        <div id="camera-prompt-card" class="absolute inset-0 bg-stone-950/95 flex flex-col items-center justify-center p-6 text-center space-y-4 z-20">
+          <div class="w-14 h-14 rounded-full bg-stone-900 border border-white/5 flex items-center justify-center text-sunset-400">
+            <i data-lucide="camera" class="w-7 h-7" aria-hidden="true"></i>
           </div>
-          <div class="max-w-md space-y-1">
-            <h3 class="font-display font-bold text-lg text-white">Enable Camera for Posture Scan</h3>
-            <p class="text-xs text-slate-400">
-              We process everything locally inside your browser using WebAssembly. No video footage is ever stored or uploaded to any server.
+          <div class="max-w-md space-y-1.5">
+            <h3 class="font-display font-bold text-lg text-stone-100">Initialize Camera Access</h3>
+            <p class="text-xs text-stone-400 leading-relaxed">
+              Your camera stream runs exclusively through client-side WebAssembly in your browser. No video is ever recorded, stored, or sent to any cloud server.
             </p>
           </div>
-          <div class="flex flex-col sm:flex-row gap-2 pt-2">
-            <button onclick="cameraManager.startCamera()" class="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-bold text-sm shadow-lg shadow-brand-500/20 transition flex items-center justify-center space-x-2">
-              <i data-lucide="video" class="w-4 h-4"></i>
+          <div class="flex flex-col sm:flex-row gap-3 pt-2">
+            <button onclick="cameraManager.startCamera()" 
+              class="px-5 py-2.5 rounded-full bg-sunset-500 hover:bg-sunset-400 text-stone-950 font-bold text-xs shadow-lg shadow-sunset-500/20 transition flex items-center justify-center space-x-2 focus-visible:ring-2 focus-visible:ring-sunset-400">
+              <i data-lucide="video" class="w-3.5 h-3.5" aria-hidden="true"></i>
               <span>Allow Camera Access</span>
             </button>
-            <button onclick="app.loadDemoAthlete('runner')" class="px-4 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-300 font-semibold text-xs border border-surface-700 transition">
-              Use Synthetic Demo Scan Instead
+            <button onclick="app.loadDemoAthlete('runner')" 
+              class="px-4 py-2.5 rounded-full bg-stone-900 hover:bg-stone-850 text-stone-300 font-medium text-xs border border-white/5 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+              View Sample Scan Instead
             </button>
           </div>
         </div>
       </div>
 
       <!-- Scanner Controls Footer -->
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-surface-850 p-4 rounded-xl border border-surface-700/80">
-        <div class="flex items-center space-x-2 text-xs text-slate-400">
-          <i data-lucide="info" class="w-4 h-4 text-brand-400"></i>
-          <span id="scan-hint-text">Step back until your body turns the framing box green.</span>
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-900/80 p-4 rounded-2xl border border-white/5">
+        <div class="flex items-center space-x-2 text-xs text-stone-300">
+          <i data-lucide="info" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+          <span>Hands-free active: Once the bounding frame turns green, recording commences automatically.</span>
         </div>
 
-        <div class="flex items-center space-x-3">
-          <button id="cancel-scan-btn" onclick="app.cancelScan()" class="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-surface-800 transition">
-            Cancel
-          </button>
-          <button id="trigger-scan-btn" onclick="app.initiateSpinCountdown()" disabled class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-400 text-white shadow-lg shadow-brand-500/20 transition flex items-center space-x-2">
-            <i data-lucide="circle-dot" class="w-4 h-4"></i>
-            <span>Start 10s Spin</span>
-          </button>
-        </div>
+        <button onclick="app.cancelScan()" 
+          class="px-4 py-2 rounded-full text-xs font-semibold text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          Cancel Scan
+        </button>
       </div>
     </section>
 
-    <!-- VIEW 3: ATHLETIC RESULTS & PRE-HAB DASHBOARD -->
-    <section id="view-results" class="view-panel hidden space-y-6 animate-fade-in">
+    <!-- VIEW 3: KINETIC REPORT & PRE-HAB DASHBOARD -->
+    <section id="view-results" class="view-panel hidden space-y-6 animate-fade-in" aria-label="Kinetic Report Results">
       
       <!-- Top Action Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-4 bg-surface-850 p-4 sm:p-5 rounded-2xl border border-surface-700">
-        <div class="space-y-0.5">
-          <div class="flex items-center space-x-2">
-            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-white">Athletic Posture & Kinetic Chain Report</h2>
-            <span id="report-sport-pill" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">Running / Sprinting</span>
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-stone-900/70 p-5 rounded-3xl border border-white/5">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2.5">
+            <h2 class="font-display font-extrabold text-xl sm:text-2xl text-stone-100">Kinetic Alignment Report</h2>
+            <span id="report-sport-pill" class="px-3 py-0.5 rounded-full text-xs font-semibold bg-sunset-500/15 text-sunset-300 border border-sunset-500/30">Running / Sprinting</span>
           </div>
-          <p class="text-xs text-slate-400">Scan captured on <span id="report-timestamp">Today</span> • 4 Milestone Views Analyzed</p>
+          <p class="text-xs text-stone-400">Captured on <span id="report-timestamp">Today</span> • 4 Milestone Anatomical Planes Screened</p>
         </div>
 
-        <div class="flex items-center space-x-2">
-          <button onclick="app.retakeScan()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-surface-800 hover:bg-surface-700 text-slate-200 border border-surface-700 transition flex items-center space-x-1.5">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+        <div class="flex items-center space-x-2.5">
+          <button onclick="app.retakeScan()" 
+            class="px-4 py-2 rounded-full text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-stone-200 border border-white/5 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-sunset-500">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5" aria-hidden="true"></i>
             <span>Retake Scan</span>
           </button>
-          <button onclick="window.print()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-brand-500/10 hover:bg-brand-500/20 text-brand-400 border border-brand-500/30 transition flex items-center space-x-1.5">
-            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-            <span>Print / Save PDF</span>
+          <button onclick="window.print()" 
+            class="px-4 py-2 rounded-full text-xs font-semibold bg-sunset-500/10 hover:bg-sunset-500/20 text-sunset-400 border border-sunset-500/25 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-sunset-500">
+            <i data-lucide="download" class="w-3.5 h-3.5" aria-hidden="true"></i>
+            <span>Export Report (PDF)</span>
           </button>
         </div>
       </div>
 
-      <!-- Primary Metrics & Score Hero -->
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <!-- Primary Metrics & Score Arc Hero (Matching Aivo Reference Image) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         
-        <!-- Posture Index Card -->
-        <div class="bg-gradient-to-br from-surface-850 to-surface-800 rounded-2xl p-6 border border-surface-700 flex flex-col justify-between shadow-xl">
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Kinetic Score</span>
-              <h3 class="font-display font-black text-4xl sm:text-5xl text-white mt-1" id="composite-score-text">78<span class="text-xl font-bold text-slate-400">/100</span></h3>
-            </div>
-            <div id="composite-rating-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-accent-warning/10 text-accent-warning border border-accent-warning/20">
+        <!-- Score Arc Card (Replicating the reference design arc) -->
+        <div class="lg:col-span-5 bg-stone-900/80 rounded-3xl p-6 border border-white/5 flex flex-col items-center justify-between text-center relative overflow-hidden shadow-xl">
+          <div class="w-full flex justify-between items-center text-xs text-stone-400">
+            <span class="font-bold uppercase tracking-wider text-[11px] text-sunset-400">Kinetic Score</span>
+            <div id="composite-rating-badge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/25">
               Mild Compensation
             </div>
           </div>
 
-          <div class="mt-4 space-y-2 text-xs">
-            <div class="flex justify-between text-slate-400">
-              <span>Ground Force Transfer</span>
-              <span id="score-transfer" class="text-white font-semibold">82%</span>
+          <!-- Arc Canvas -->
+          <div class="relative w-60 h-40 my-2 flex items-center justify-center">
+            <canvas id="score-arc-canvas" class="w-60 h-36"></canvas>
+            <div class="absolute bottom-2 flex flex-col items-center">
+              <h3 class="font-display font-black text-4xl text-stone-100" id="composite-score-text">82<span class="text-xl font-normal text-stone-400">/100</span></h3>
+              <p class="text-[11px] text-stone-400 mt-0.5">Your alignment score</p>
             </div>
-            <div class="w-full h-1.5 bg-surface-700 rounded-full overflow-hidden">
-              <div id="bar-transfer" class="h-full bg-brand-500 rounded-full" style="width: 82%"></div>
-            </div>
+          </div>
 
-            <div class="flex justify-between text-slate-400">
-              <span>Bilateral Balance</span>
-              <span id="score-balance" class="text-white font-semibold">74%</span>
+          <!-- Sub-metrics -->
+          <div class="w-full grid grid-cols-2 gap-3 pt-3 border-t border-stone-800/80 text-left">
+            <div>
+              <div class="text-[10px] text-stone-400 uppercase font-bold">Force Transfer</div>
+              <div id="score-transfer" class="text-sm font-bold text-stone-100">82%</div>
+              <div class="w-full h-1 bg-stone-800 rounded-full mt-1.5 overflow-hidden">
+                <div id="bar-transfer" class="h-full bg-sunset-500 rounded-full" style="width: 82%"></div>
+              </div>
             </div>
-            <div class="w-full h-1.5 bg-surface-700 rounded-full overflow-hidden">
-              <div id="bar-balance" class="h-full bg-accent-warning rounded-full" style="width: 74%"></div>
+            <div>
+              <div class="text-[10px] text-stone-400 uppercase font-bold">Bilateral Stack</div>
+              <div id="score-balance" class="text-sm font-bold text-stone-100">74%</div>
+              <div class="w-full h-1 bg-stone-800 rounded-full mt-1.5 overflow-hidden">
+                <div id="bar-balance" class="h-full bg-amber-400 rounded-full" style="width: 74%"></div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 3 Quick Kinetic Summary Highlights -->
-        <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- 3 Highlight Findings -->
+        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
           
-          <div class="bg-surface-850 rounded-2xl p-5 border border-surface-700/80 space-y-3">
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pelvic Vector</span>
-              <span id="badge-pelvic-tilt" class="px-2 py-0.5 rounded text-[11px] font-bold bg-accent-warning/10 text-accent-warning border border-accent-warning/20">APT (14°)</span>
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Pelvic Vector</span>
+              <span id="badge-pelvic-tilt" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">APT (14°)</span>
             </div>
             <div>
-              <div class="text-sm font-bold text-white" id="title-pelvic-tilt">Anterior Pelvic Tilt</div>
-              <p class="text-xs text-slate-400 mt-1" id="desc-pelvic-tilt">Shortened hip flexors inhibit full glute drive during hip extension.</p>
+              <div class="text-sm font-bold text-stone-100">Anterior Pelvic Tilt</div>
+              <p class="text-xs text-stone-400 mt-1" id="desc-pelvic-tilt">Shortened hip flexors limit terminal hip extension.</p>
             </div>
-            <div class="text-[11px] text-accent-cyan font-semibold flex items-center space-x-1">
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              <span>Power leak in sprint cycle</span>
+            <div class="text-[11px] text-sunset-400 font-semibold flex items-center space-x-1 pt-1">
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>Sprint extension leak</span>
             </div>
           </div>
 
-          <div class="bg-surface-850 rounded-2xl p-5 border border-surface-700/80 space-y-3">
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Knee Tracking</span>
-              <span id="badge-knee-valgus" class="px-2 py-0.5 rounded text-[11px] font-bold bg-accent-danger/10 text-accent-danger border border-accent-danger/20">Valgus (6°)</span>
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Knee Tracking</span>
+              <span id="badge-knee-valgus" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/25">Valgus (6°)</span>
             </div>
             <div>
-              <div class="text-sm font-bold text-white" id="title-knee-valgus">Inward Knee Collapse</div>
-              <p class="text-xs text-slate-400 mt-1" id="desc-knee-valgus">Medial deviation during load points to weak gluteus medius stabilizers.</p>
+              <div class="text-sm font-bold text-stone-100">Medial Collapse</div>
+              <p class="text-xs text-stone-400 mt-1" id="desc-knee-valgus">Inward tracking points to weak lateral glute stabilizers.</p>
             </div>
-            <div class="text-[11px] text-accent-danger font-semibold flex items-center space-x-1">
-              <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
-              <span>Elevated non-contact ACL strain</span>
+            <div class="text-[11px] text-rose-400 font-semibold flex items-center space-x-1 pt-1">
+              <i data-lucide="alert-circle" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>Elevated knee stress</span>
             </div>
           </div>
 
-          <div class="bg-surface-850 rounded-2xl p-5 border border-surface-700/80 space-y-3">
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-2">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Upper Quadrant</span>
-              <span id="badge-kyphosis" class="px-2 py-0.5 rounded text-[11px] font-bold bg-accent-warning/10 text-accent-warning border border-accent-warning/20">Kyphotic (18°)</span>
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Upper Quadrant</span>
+              <span id="badge-kyphosis" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">Kyphotic (18°)</span>
             </div>
             <div>
-              <div class="text-sm font-bold text-white" id="title-kyphosis">Thoracic Kyphosis</div>
-              <p class="text-xs text-slate-400 mt-1" id="desc-kyphosis">Protracted scapulae limit overhead shoulder range and thoracic rotation.</p>
+              <div class="text-sm font-bold text-stone-100">Thoracic Kyphosis</div>
+              <p class="text-xs text-stone-400 mt-1" id="desc-kyphosis">Scapular protraction restricts overhead reach.</p>
             </div>
-            <div class="text-[11px] text-accent-warning font-semibold flex items-center space-x-1">
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-              <span>Limits rotational power & punch</span>
+            <div class="text-[11px] text-amber-400 font-semibold flex items-center space-x-1 pt-1">
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>Limits rotational whip</span>
             </div>
           </div>
 
@@ -452,87 +480,84 @@
       </div>
 
       <!-- Interactive 360° Milestone Viewer with Visual Skeleton -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-surface-850 p-6 rounded-2xl border border-surface-700">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-stone-900/70 p-6 rounded-3xl border border-white/5">
         
-        <!-- Left 7 Cols: Interactive Visual Inspection Stage -->
+        <!-- Left Column: Visual Inspection Canvas -->
         <div class="lg:col-span-7 space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="space-y-0.5">
-              <h3 class="font-display font-bold text-base text-white">Milestone Angle Inspection</h3>
-              <p class="text-xs text-slate-400">Click angles to view biomechanical plumb lines & vectors</p>
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="font-display font-bold text-base text-stone-100">Milestone Angle Inspection</h3>
+              <p class="text-xs text-stone-400">Screening captured across 4 canonical planes</p>
             </div>
 
             <!-- Angle Switcher Tabs -->
-            <div class="flex bg-surface-800 rounded-lg p-1 border border-surface-700 text-xs">
-              <button id="tab-angle-0" onclick="app.selectMilestoneAngle(0)" class="px-3 py-1.5 rounded-md bg-brand-500 text-white font-bold transition">Front (0°)</button>
-              <button id="tab-angle-90" onclick="app.selectMilestoneAngle(90)" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-white font-medium transition">Right (90°)</button>
-              <button id="tab-angle-180" onclick="app.selectMilestoneAngle(180)" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-white font-medium transition">Back (180°)</button>
-              <button id="tab-angle-270" onclick="app.selectMilestoneAngle(270)" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-white font-medium transition">Left (270°)</button>
+            <div class="flex bg-stone-950 rounded-full p-1 border border-white/5 text-xs" role="tablist">
+              <button id="tab-angle-0" onclick="app.selectMilestoneAngle(0)" class="px-3.5 py-1.5 rounded-full text-stone-400 hover:text-white transition font-medium">Front (0°)</button>
+              <button id="tab-angle-90" onclick="app.selectMilestoneAngle(90)" class="px-3.5 py-1.5 rounded-full bg-sunset-500 text-stone-950 font-bold transition">Right (90°)</button>
+              <button id="tab-angle-180" onclick="app.selectMilestoneAngle(180)" class="px-3.5 py-1.5 rounded-full text-stone-400 hover:text-white transition font-medium">Back (180°)</button>
+              <button id="tab-angle-270" onclick="app.selectMilestoneAngle(270)" class="px-3.5 py-1.5 rounded-full text-stone-400 hover:text-white transition font-medium">Left (270°)</button>
             </div>
           </div>
 
           <!-- Canvas Visualizer Frame -->
-          <div class="relative w-full aspect-[4/5] max-h-[500px] bg-surface-900 rounded-xl overflow-hidden border border-surface-700 flex items-center justify-center">
+          <div class="relative w-full aspect-[4/5] max-h-[480px] bg-stone-950 rounded-2xl overflow-hidden border border-white/5 flex items-center justify-center">
             <canvas id="results-skeleton-canvas" class="w-full h-full object-contain"></canvas>
             
             <!-- Angle Legend Floating HUD -->
-            <div class="absolute bottom-3 left-3 bg-black/75 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-700 text-[11px] space-y-1">
+            <div class="absolute bottom-3 left-3 bg-stone-900/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/10 text-[10px] space-y-1">
               <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
-                <span class="text-slate-300">Neutral Alignment (&lt; 5° deviation)</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span class="text-stone-300">Optimal Neutral (&lt; 5° deviation)</span>
               </div>
               <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-accent-warning"></span>
-                <span class="text-slate-300">Moderate Compensation (5° - 12°)</span>
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span class="text-stone-300">Moderate Compensation (5° - 12°)</span>
               </div>
               <div class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-accent-danger"></span>
-                <span class="text-slate-300">Significant Power Leak (&gt; 12°)</span>
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                <span class="text-stone-300">Kinetic Leak (&gt; 12°)</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Right 5 Cols: Detailed Vector Breakdown -->
+        <!-- Right Column: Vector Breakdown & Coach Insight -->
         <div class="lg:col-span-5 space-y-4 flex flex-col justify-between">
           <div class="space-y-3">
-            <h3 class="font-display font-bold text-base text-white flex items-center space-x-2">
-              <i data-lucide="gauge" class="w-4 h-4 text-brand-400"></i>
+            <h3 class="font-display font-bold text-base text-stone-100 flex items-center space-x-2">
+              <i data-lucide="sliders" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
               <span id="active-plane-title">Sagittal Profile Alignment (90°)</span>
             </h3>
             
             <div id="vector-details-list" class="space-y-2.5">
-              <!-- Dynamically populated per angle view -->
+              <!-- Dynamically populated -->
             </div>
           </div>
 
-          <!-- Coach's Kinetic Insight Card -->
-          <div class="bg-surface-800/80 rounded-xl p-4 border border-surface-700 space-y-2">
-            <div class="flex items-center space-x-2 text-xs font-bold text-brand-400">
-              <i data-lucide="sparkles" class="w-4 h-4"></i>
-              <span>BIOMECHANICAL PERFORMANCE AUDIT</span>
+          <!-- Coach's Kinetic Audit Card -->
+          <div class="bg-stone-950/80 rounded-2xl p-4.5 border border-white/5 space-y-2">
+            <div class="flex items-center space-x-2 text-xs font-bold text-sunset-400">
+              <i data-lucide="activity" class="w-4 h-4" aria-hidden="true"></i>
+              <span>BIOMECHANICAL SUMMARY</span>
             </div>
-            <p id="coach-insight-text" class="text-xs text-slate-300 leading-relaxed">
-              Your forward head posture and anterior pelvic tilt create a classic "crossed-syndrome" posture. Under barbell squats or sprint acceleration, this forces lumbar spinal compensation instead of pure gluteal force drive.
+            <p id="coach-insight-text" class="text-xs text-stone-300 leading-relaxed">
+              Your forward head posture and anterior pelvic tilt create a crossed pattern. Targeted mobility on the psoas paired with gluteus medius activation will re-establish neutral stacking under movement load.
             </p>
           </div>
         </div>
 
       </div>
 
-      <!-- Prescribed Athletic Pre-Hab & Corrective Protocols -->
+      <!-- Prescribed Pre-Hab Protocol Cards -->
       <div class="space-y-4">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="font-display font-bold text-xl text-white flex items-center space-x-2">
-              <i data-lucide="dumbbell" class="w-5 h-5 text-brand-400"></i>
-              <span>Prescribed Athletic Pre-Hab Protocol (5-8 Mins/Day)</span>
+            <h3 class="font-display font-bold text-lg sm:text-xl text-stone-100 flex items-center space-x-2">
+              <i data-lucide="shield" class="w-5 h-5 text-sunset-400" aria-hidden="true"></i>
+              <span>Prescribed Pre-Hab Protocols (5-8 Mins/Day)</span>
             </h3>
-            <p class="text-xs text-slate-400">Perform before warmups or as daily corrective homework</p>
+            <p class="text-xs text-stone-400">Targeted movement homework to address identified compensations</p>
           </div>
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-surface-800 border border-surface-700 text-slate-300">
-            4 Tailored Drills
-          </span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="drill-cards-container">
@@ -544,21 +569,189 @@
 
   </main>
 
-  <!-- APP FOOTER -->
-  <footer class="border-t border-surface-800 bg-surface-900/90 py-4 px-4 lg:px-8 mt-auto text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div class="flex items-center space-x-2">
-        <span class="font-semibold text-slate-400">KineticScan 360</span>
-        <span>•</span>
-        <span>Client-Side Computer Vision Biomechanics</span>
+  <!-- FLOATING MINIMALIST BOTTOM DOCK (Orbix Studio / Aivo Style) -->
+  <nav id="bottom-dock" class="fixed bottom-5 inset-x-0 z-30 flex justify-center pointer-events-none" aria-label="Quick Navigation">
+    <div class="bg-stone-900/90 backdrop-blur-2xl border border-white/10 rounded-full px-4 py-2 shadow-2xl flex items-center space-x-5 pointer-events-auto">
+      <button id="dock-btn-home" onclick="app.navigate('home')" 
+        class="w-10 h-10 rounded-full flex items-center justify-center transition-all bg-sunset-500 text-stone-950 shadow-lg shadow-sunset-500/30 focus-visible:ring-2 focus-visible:ring-sunset-400" 
+        aria-label="Dashboard Overview">
+        <i data-lucide="home" class="w-4 h-4" aria-hidden="true"></i>
+      </button>
+
+      <!-- Center Action Button (Glows in warm amber) -->
+      <button id="dock-btn-scan" onclick="app.startScanFlow()" 
+        class="w-12 h-12 rounded-full flex items-center justify-center transition-all bg-gradient-to-tr from-sunset-600 via-sunset-500 to-amber-400 text-stone-950 shadow-xl shadow-sunset-500/40 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-sunset-400" 
+        aria-label="Start Automatic 360 Scan">
+        <i data-lucide="scan" class="w-5 h-5 stroke-[2.5]" aria-hidden="true"></i>
+      </button>
+
+      <button id="dock-btn-results" onclick="app.navigate('results')" 
+        class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-stone-400 hover:text-stone-100 hover:bg-stone-800/60 focus-visible:ring-2 focus-visible:ring-sunset-500" 
+        aria-label="View Movement Report">
+        <i data-lucide="bar-chart-2" class="w-4 h-4" aria-hidden="true"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- COOKIE CONSENT BANNER (Zero Dark Patterns) -->
+  <aside id="cookie-consent-banner" class="fixed bottom-0 inset-x-0 z-50 p-4 bg-stone-950/95 border-t border-white/10 backdrop-blur-2xl shadow-2xl hidden" role="region" aria-label="Cookie and Privacy Consent">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="space-y-1 text-center md:text-left">
+        <div class="font-display font-bold text-sm text-stone-100 flex items-center justify-center md:justify-start space-x-2">
+          <i data-lucide="shield" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+          <span>Privacy & Essential Local Storage</span>
+        </div>
+        <p class="text-xs text-stone-400 max-w-2xl">
+          KineticScan 360 uses zero advertising or tracking cookies. We only use essential local browser storage to save your preference selections and scan history on this device.
+        </p>
       </div>
-      <div class="text-[11px] text-slate-500 text-center sm:text-right">
-        Athletic performance & movement screening tool. Not a medical diagnostic device.
+
+      <div class="flex items-center space-x-3 w-full md:w-auto justify-center">
+        <!-- Equal visual weight: no dark patterns -->
+        <button onclick="privacyManager.setCookieConsent(false)" 
+          class="flex-1 md:flex-none px-4 py-2 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-850 text-stone-300 border border-white/10 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          Reject Non-Essential
+        </button>
+        <button onclick="privacyManager.setCookieConsent(true)" 
+          class="flex-1 md:flex-none px-5 py-2 rounded-full text-xs font-semibold bg-sunset-500 hover:bg-sunset-400 text-stone-950 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          Accept Essential Storage
+        </button>
+        <button onclick="privacyManager.showPolicy('cookies')" 
+          class="text-xs text-stone-400 hover:text-stone-200 underline focus-visible:ring-2 focus-visible:ring-sunset-500">
+          Cookie Policy
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- LEGAL & COMPLIANCE MODAL (Privacy, Terms, Cookies) -->
+  <div id="policy-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="p-6 border-b border-stone-800 flex items-center justify-between">
+        <div>
+          <h3 id="policy-modal-title" class="font-display font-extrabold text-xl text-stone-100">Legal Policy</h3>
+          <p id="policy-modal-date" class="text-xs text-stone-400 mt-0.5">Effective: November 2026</p>
+        </div>
+        <button onclick="privacyManager.closeModal('policy-modal')" 
+          class="p-2 rounded-full bg-stone-800 text-stone-400 hover:text-white transition focus-visible:ring-2 focus-visible:ring-sunset-500" 
+          aria-label="Close dialog">
+          <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 overflow-y-auto space-y-4">
+        <p id="policy-modal-summary" class="text-xs text-sunset-400 font-medium leading-relaxed bg-sunset-500/10 p-3.5 rounded-2xl border border-sunset-500/20"></p>
+        <div id="policy-modal-body" class="space-y-4 text-xs text-stone-300"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="p-4 border-t border-stone-800 bg-stone-950/60 flex justify-end">
+        <button onclick="privacyManager.closeModal('policy-modal')" 
+          class="px-5 py-2 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGE VERIFICATION GATE MODAL (COPPA / GDPR-K Protection) -->
+  <div id="age-gate-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 rounded-full bg-sunset-500/10 border border-sunset-500/25 flex items-center justify-center text-sunset-400 mx-auto">
+        <i data-lucide="user-check" class="w-6 h-6" aria-hidden="true"></i>
+      </div>
+      <div class="space-y-1.5">
+        <h3 id="age-gate-title" class="font-display font-bold text-lg text-stone-100">Age Verification & Safety</h3>
+        <p class="text-xs text-stone-400 leading-relaxed">
+          In compliance with minor privacy standards (COPPA and GDPR-K), body movement scanning requires confirming you are at least 16 years of age, or have active parental or guardian supervision.
+        </p>
+      </div>
+      <div class="space-y-2 pt-2">
+        <button onclick="privacyManager.verifyAge(true)" 
+          class="w-full py-3 rounded-full bg-sunset-500 hover:bg-sunset-400 text-stone-950 font-bold text-xs transition shadow-lg shadow-sunset-500/20 focus-visible:ring-2 focus-visible:ring-sunset-400">
+          I am 16+ or have Parental Supervision
+        </button>
+        <button onclick="privacyManager.verifyAge(false)" 
+          class="w-full py-2.5 rounded-full bg-stone-800 hover:bg-stone-750 text-stone-300 font-medium text-xs transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          I am under 16 without supervision
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA DELETION & PRIVACY RIGHTS MODAL -->
+  <div id="data-deletion-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="data-deletion-title">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-800">
+        <h3 id="data-deletion-title" class="font-display font-bold text-base text-stone-100 flex items-center space-x-2">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+          <span>Privacy Rights & Data Deletion</span>
+        </h3>
+        <button onclick="privacyManager.closeModal('data-deletion-modal')" 
+          class="p-1.5 rounded-full text-stone-400 hover:text-white" aria-label="Close dialog">
+          <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-stone-300 leading-relaxed">
+        KineticScan 360 is built local-first. We do NOT maintain remote user databases or store your body scans in the cloud. However, you have complete control over all data stored on this browser:
+      </p>
+
+      <!-- Instant 1-Click Wipe -->
+      <div class="p-4 rounded-2xl bg-stone-950/70 border border-white/5 space-y-2 text-left">
+        <div class="text-xs font-bold text-stone-100">1-Click Local Data Purge</div>
+        <p class="text-[11px] text-stone-400">Permanently erases all saved scores, scan milestones, and stored preferences on this device.</p>
+        <button onclick="privacyManager.purgeAllLocalData()" 
+          class="mt-1 px-4 py-2 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 transition">
+          Purge All Local Data Now
+        </button>
+      </div>
+
+      <!-- Formal Request Form -->
+      <form onsubmit="privacyManager.submitDeletionRequest(event)" class="space-y-3 pt-2">
+        <div class="space-y-1">
+          <label for="deletion-email-input" class="text-xs font-medium text-stone-300">Request Subject Access or Deletion Confirmation:</label>
+          <input type="email" id="deletion-email-input" placeholder="Enter your email" required
+            class="w-full px-4 py-2 rounded-full bg-stone-950 border border-stone-800 text-xs text-stone-200 placeholder-stone-500 focus-visible:ring-2 focus-visible:ring-sunset-500">
+        </div>
+        <button type="submit" 
+          class="w-full py-2.5 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-200 font-semibold text-xs transition">
+          Confirm Deletion Request
+        </button>
+      </form>
+
+      <div id="deletion-result-box" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- APP FOOTER WITH COMPLIANCE LINKS -->
+  <footer class="border-t border-white/5 bg-stone-950/90 py-6 px-4 lg:px-8 mt-auto text-xs text-stone-400">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2 text-stone-400">
+        <span class="font-semibold text-stone-300">KineticScan 360</span>
+        <span>•</span>
+        <span>Local-First Biomechanics</span>
+      </div>
+
+      <!-- Legal Links -->
+      <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
+        <button onclick="privacyManager.showPolicy('privacy')" class="hover:text-stone-200 underline focus-visible:ring-2 focus-visible:ring-sunset-500">Privacy Policy</button>
+        <button onclick="privacyManager.showPolicy('terms')" class="hover:text-stone-200 underline focus-visible:ring-2 focus-visible:ring-sunset-500">Terms of Service</button>
+        <button onclick="privacyManager.showPolicy('cookies')" class="hover:text-stone-200 underline focus-visible:ring-2 focus-visible:ring-sunset-500">Cookie Policy</button>
+        <button onclick="privacyManager.openModal('data-deletion-modal')" class="hover:text-stone-200 underline focus-visible:ring-2 focus-visible:ring-sunset-500">Data Deletion</button>
+      </div>
+
+      <div class="text-[11px] text-stone-400 text-center sm:text-right">
+        Movement screening tool. Not a medical diagnostic device.
       </div>
     </div>
   </footer>
 
   <!-- App Core Scripts -->
+  <script src="js/policyContent.js"></script>
+  <script src="js/privacyManager.js"></script>
   <script src="js/exercises.js"></script>
   <script src="js/audioGuide.js"></script>
   <script src="js/biomechanics.js"></script>
