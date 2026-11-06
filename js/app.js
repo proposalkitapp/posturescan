@@ -1,6 +1,6 @@
 /**
  * KineticScan 360 Master Controller
- * Implements Orbix Studio warm minimalist aesthetic, hands-free auto-recording, and WCAG AA accessibility.
+ * Directional Voice Coaching & Hands-Free Automatic 360 Recording
  */
 
 class AppController {
@@ -9,10 +9,19 @@ class AppController {
     this.selectedSport = 'runner';
     this.isSpinning = false;
     this.currentScanResults = null;
-    this.activeMilestoneAngle = 90; // Default to right profile in results
+    this.activeMilestoneAngle = 90;
     this.spinTimer = null;
-    this.spinDurationMs = 11000; // 11s smooth slow 360 spin
+    this.spinDurationMs = 12000; // 12 seconds for full comfortable 360 turn
     this.pendingCameraAction = null;
+
+    // Track directional voice command states to avoid repeating
+    this.commandedStates = {
+      start: false,
+      right: false,
+      back: false,
+      left: false,
+      complete: false
+    };
   }
 
   init() {
@@ -27,7 +36,6 @@ class AppController {
       }
     });
 
-    // Check if previous scan exists in local storage
     const cached = localStorage.getItem('ks_saved_scan');
     if (cached) {
       try {
@@ -47,12 +55,11 @@ class AppController {
     const target = document.getElementById(`view-${view}`);
     if (target) target.classList.remove('hidden');
 
-    // Update bottom dock / header navigation states
     ['home', 'scan', 'results'].forEach(v => {
       const btn = document.getElementById(`dock-btn-${v}`);
       if (btn) {
         if (v === view) {
-          btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all bg-amber-500 text-stone-950 shadow-lg shadow-amber-500/30';
+          btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all bg-sunset-500 text-stone-950 shadow-lg shadow-sunset-500/30';
         } else {
           btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all text-stone-400 hover:text-stone-100 hover:bg-stone-800/60';
         }
@@ -78,17 +85,17 @@ class AppController {
     container.innerHTML = SPORT_PROFILES.map(sport => {
       const isSelected = sport.id === this.selectedSport;
       const borderClass = isSelected
-        ? 'border-amber-500/80 bg-gradient-to-b from-amber-500/15 to-transparent text-white shadow-lg shadow-amber-500/10'
+        ? 'border-sunset-500/80 bg-gradient-to-b from-sunset-500/15 to-transparent text-white shadow-lg shadow-sunset-500/10'
         : 'border-white/5 bg-stone-900/60 text-stone-300 hover:border-stone-700 hover:bg-stone-900/90';
       return `
         <button onclick="app.setSport('${sport.id}')"
-          class="p-4 rounded-2xl border text-left transition-all flex flex-col justify-between space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${borderClass}"
+          class="p-4 rounded-2xl border text-left transition-all flex flex-col justify-between space-y-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sunset-500 ${borderClass}"
           role="radio" aria-checked="${isSelected}">
           <div class="flex items-center justify-between w-full">
-            <div class="w-8 h-8 rounded-full ${isSelected ? 'bg-amber-500/20 text-amber-400' : 'bg-stone-800 text-stone-400'} flex items-center justify-center">
+            <div class="w-8 h-8 rounded-full ${isSelected ? 'bg-sunset-500/20 text-sunset-400' : 'bg-stone-800 text-stone-400'} flex items-center justify-center">
               <i data-lucide="${sport.icon}" class="w-4 h-4"></i>
             </div>
-            ${isSelected ? '<span class="w-2 h-2 rounded-full bg-amber-400 shadow-sm shadow-amber-400"></span>' : ''}
+            ${isSelected ? '<span class="w-2 h-2 rounded-full bg-sunset-400 shadow-sm shadow-sunset-400"></span>' : ''}
           </div>
           <div>
             <div class="font-display font-bold text-sm text-stone-100">${sport.name}</div>
@@ -110,25 +117,34 @@ class AppController {
     }
   }
 
-  // Camera initialization with COPPA Age Gate check
   startScanFlow() {
+    audioGuide.unlock();
     privacyManager.requireAgeVerificationBeforeCamera(async () => {
       this.navigate('scan');
       await cameraManager.startCamera();
     });
   }
 
-  // ==========================================
-  // HANDS-FREE AUTOMATIC RECORDING
-  // ==========================================
+  // ==============================================================
+  // HANDS-FREE AUTOMATIC RECORDING & DIRECTIONAL VOICE COMMANDS
+  // ==============================================================
   startAutomaticRecording() {
     if (this.isSpinning) return;
     this.isSpinning = true;
     poseEngine.resetMilestones();
 
-    // Voice announcement immediately as requested:
-    // "Recording Commenced" + instructions to turn 360 degrees slowly
+    // Reset command flags
+    this.commandedStates = {
+      start: true,
+      right: false,
+      back: false,
+      left: false,
+      complete: false
+    };
+
+    // 1. Voice Announcement + Directional Banner
     audioGuide.announceRecordingCommenced();
+    this.setDirectionalBanner('RECORDING COMMENCED', 'Slowly turn to your right now →', 'sunset');
 
     const hud = document.getElementById('spin-progress-hud');
     const circle = document.getElementById('spin-progress-circle');
@@ -138,20 +154,46 @@ class AppController {
     const statusDot = document.getElementById('status-indicator-dot');
 
     if (hud) hud.classList.remove('hidden');
-    if (statusText) statusText.innerText = 'Recording Commenced — Rotate slowly 360°';
-    if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-spin';
+    if (statusText) statusText.innerText = 'Scanning 360° turn in progress...';
+    if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-sunset-400 animate-spin';
 
     const startTime = Date.now();
     const circumference = 2 * Math.PI * 26; // r = 26 => ~163.36
 
+    // Real-time Frame Hook: Evaluate rotation angle and issue directional commands
     cameraManager.onFrameCallback = (landmarks) => {
       if (!this.isSpinning) return;
 
       const result = poseEngine.processSpinFrame(landmarks);
       if (result) {
-        if (angleText) angleText.innerText = `${result.yaw}°`;
+        const yaw = result.yaw;
+        if (angleText) angleText.innerText = `${yaw}°`;
         if (sectorText) sectorText.innerText = result.sector;
 
+        // DIRECTIONAL VOICE COMMAND DISPATCHER BASED ON BODY YAW & MILESTONES:
+
+        // Quadrant 1: Right profile captured (~90°)
+        if (poseEngine.milestones[90] && !this.commandedStates.right) {
+          this.commandedStates.right = true;
+          audioGuide.announceRightProfileCaptured();
+          this.setDirectionalBanner('RIGHT PROFILE CAPTURED (90°)', 'Keep turning your back to the camera →', 'amber');
+        }
+
+        // Quadrant 2: Back view captured (~180°)
+        if (poseEngine.milestones[180] && !this.commandedStates.back) {
+          this.commandedStates.back = true;
+          audioGuide.announceBackCaptured();
+          this.setDirectionalBanner('BACK VIEW CAPTURED (180°)', 'Turn around to your left profile →', 'amber');
+        }
+
+        // Quadrant 3: Left profile captured (~270°)
+        if (poseEngine.milestones[270] && !this.commandedStates.left) {
+          this.commandedStates.left = true;
+          audioGuide.announceLeftProfileCaptured();
+          this.setDirectionalBanner('LEFT PROFILE CAPTURED (270°)', 'Turn back to face front to finish →', 'emerald');
+        }
+
+        // Update milestone indicator badges
         ['front', 'right', 'back', 'left'].forEach(sec => {
           const badge = document.getElementById(`badge-${sec}`);
           if (badge && poseEngine.milestones[sec === 'front' ? 0 : sec === 'right' ? 90 : sec === 'back' ? 180 : 270]) {
@@ -171,18 +213,36 @@ class AppController {
         circle.style.strokeDashoffset = offset;
       }
 
-      // Smooth spoken cues
-      if (elapsed > 5200 && elapsed < 5700) {
-        audioGuide.speak('Halfway through. Continue turning.');
-      } else if (elapsed > 8800 && elapsed < 9300) {
-        audioGuide.speak('Almost complete. Complete the full circle.');
-      }
-
-      if (progress >= 1) {
+      // Check if all milestones are captured early or duration met
+      const capturedCount = Object.values(poseEngine.milestones).filter(Boolean).length;
+      if (capturedCount >= 4 && elapsed > 7000) {
+        clearInterval(this.spinTimer);
+        this.finish360Spin();
+      } else if (progress >= 1) {
         clearInterval(this.spinTimer);
         this.finish360Spin();
       }
     }, 100);
+  }
+
+  setDirectionalBanner(title, instruction, theme = 'sunset') {
+    const banner = document.getElementById('directional-command-banner');
+    const titleEl = document.getElementById('directional-command-title');
+    const textEl = document.getElementById('directional-command-text');
+    if (!banner || !titleEl || !textEl) return;
+
+    banner.classList.remove('hidden');
+    titleEl.innerText = title;
+    textEl.innerText = instruction;
+
+    if (theme === 'emerald') {
+      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-emerald-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-emerald-300 animate-pulse-glow';
+    } else if (theme === 'amber') {
+      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-amber-400 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-amber-300';
+    } else {
+      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-gradient-to-r from-sunset-600 to-amber-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-sunset-400';
+    }
+    if (window.lucide) lucide.createIcons();
   }
 
   finish360Spin() {
@@ -192,8 +252,11 @@ class AppController {
     const hud = document.getElementById('spin-progress-hud');
     if (hud) hud.classList.add('hidden');
 
-    audioGuide.playCompleteChime();
-    audioGuide.speak('Scan complete. Evaluating your kinetic alignment.', true);
+    // Directional banner informs user scan is complete!
+    this.setDirectionalBanner('360° SCAN COMPLETE', 'All angles captured. Stop and face front.', 'emerald');
+
+    // Final Voice command informing user it is complete:
+    audioGuide.announceScanComplete();
 
     const captured = poseEngine.milestones;
     const synthetic = poseEngine.generateSyntheticAthlete(this.selectedSport);
@@ -206,14 +269,15 @@ class AppController {
 
     this.currentScanResults = biomechanics.evaluateFullScan(captured, this.selectedSport);
 
-    // Save locally
     try {
       localStorage.setItem('ks_saved_scan', JSON.stringify(this.currentScanResults));
     } catch (e) {}
 
     setTimeout(() => {
+      const banner = document.getElementById('directional-command-banner');
+      if (banner) banner.classList.add('hidden');
       this.navigate('results');
-    }, 800);
+    }, 1800);
   }
 
   cancelScan() {
@@ -223,6 +287,8 @@ class AppController {
     cameraManager.hasAutoTriggered = false;
     const hud = document.getElementById('spin-progress-hud');
     if (hud) hud.classList.add('hidden');
+    const banner = document.getElementById('directional-command-banner');
+    if (banner) banner.classList.add('hidden');
     this.navigate('home');
   }
 
@@ -232,6 +298,7 @@ class AppController {
   }
 
   loadDemoAthlete(sport = 'runner') {
+    audioGuide.unlock();
     this.selectedSport = sport;
     const synthetic = poseEngine.generateSyntheticAthlete(sport);
     poseEngine.milestones = synthetic;
@@ -255,7 +322,6 @@ class AppController {
     if (sportPill) sportPill.innerText = res.sport.name;
     if (dateSpan) dateSpan.innerText = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
-    // Render warm minimalist score arc (matching Aivo reference image)
     this.renderScoreArc(res.compositeScore);
 
     const ratingBadge = document.getElementById('composite-rating-badge');
@@ -278,7 +344,6 @@ class AppController {
     if (scoreBalance) scoreBalance.innerText = `${res.metrics.bilateralBalanceScore}%`;
     if (barBalance) barBalance.style.width = `${res.metrics.bilateralBalanceScore}%`;
 
-    // Highlight metrics
     const badgeApt = document.getElementById('badge-pelvic-tilt');
     const descApt = document.getElementById('desc-pelvic-tilt');
     if (badgeApt) badgeApt.innerText = `Dev ${res.metrics.pelvicDev}°`;
@@ -310,7 +375,6 @@ class AppController {
     if (window.lucide) lucide.createIcons();
   }
 
-  // Replicates the sleek glowing sunset arc from the reference image
   renderScoreArc(score) {
     const canvas = document.getElementById('score-arc-canvas');
     if (!canvas) return;
@@ -327,7 +391,6 @@ class AppController {
     const endAngle = Math.PI * 2.1;
     const totalAngle = endAngle - startAngle;
 
-    // Background track
     ctx.save();
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -337,7 +400,6 @@ class AppController {
     ctx.stroke();
     ctx.restore();
 
-    // Active warm sunset gradient
     const pct = Math.max(0, Math.min(1, score / 100));
     const activeEndAngle = startAngle + totalAngle * pct;
 
@@ -355,7 +417,6 @@ class AppController {
     ctx.stroke();
     ctx.restore();
 
-    // Indicator pill / needle at end of arc
     const pillX = centerX + Math.cos(activeEndAngle) * radius;
     const pillY = centerY + Math.sin(activeEndAngle) * radius;
 
@@ -368,7 +429,6 @@ class AppController {
     ctx.fill();
     ctx.restore();
 
-    // Score text in center
     const scoreVal = document.getElementById('composite-score-text');
     if (scoreVal) scoreVal.innerHTML = `${score}<span class="text-xl font-normal text-stone-400">/100</span>`;
   }
@@ -379,7 +439,7 @@ class AppController {
       const tab = document.getElementById(`tab-angle-${deg}`);
       if (tab) {
         if (deg === angle) {
-          tab.className = 'px-3.5 py-1.5 rounded-full bg-amber-500 text-stone-950 font-bold transition-all';
+          tab.className = 'px-3.5 py-1.5 rounded-full bg-sunset-500 text-stone-950 font-bold transition-all';
         } else {
           tab.className = 'px-3.5 py-1.5 rounded-full text-stone-400 hover:text-stone-200 transition-all';
         }
@@ -484,15 +544,15 @@ class AppController {
     if (!container || !drills) return;
 
     container.innerHTML = drills.map((drill, idx) => `
-      <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-4 hover:border-amber-500/30 transition-all">
+      <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-4 hover:border-sunset-500/30 transition-all">
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/20">Protocol 0${idx + 1}</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sunset-500/15 text-sunset-300 border border-sunset-500/20">Protocol 0${idx + 1}</span>
             <span class="text-[11px] text-stone-400 font-medium">${drill.frequency}</span>
           </div>
           <div>
             <h4 class="font-display font-bold text-stone-100 text-sm sm:text-base">${drill.name}</h4>
-            <div class="text-[11px] text-amber-400 font-semibold mt-0.5">${drill.target}</div>
+            <div class="text-[11px] text-sunset-400 font-semibold mt-0.5">${drill.target}</div>
           </div>
           <p class="text-xs text-stone-300 leading-relaxed">${drill.impact}</p>
         </div>

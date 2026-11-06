@@ -256,6 +256,13 @@
         </div>
 
         <div class="flex items-center space-x-2">
+          <button onclick="audioGuide.testVoice()" 
+            class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sunset-500/15 hover:bg-sunset-500/25 text-sunset-300 border border-sunset-500/30 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-sunset-500"
+            title="Test Voice Commands & Sound">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-sunset-400" aria-hidden="true"></i>
+            <span>Test Voice Guidance</span>
+          </button>
+
           <button id="switch-camera-btn" onclick="cameraManager.switchCamera()" 
             class="p-2.5 rounded-full bg-stone-800 text-stone-300 hover:text-white transition focus-visible:ring-2 focus-visible:ring-sunset-500" 
             aria-label="Switch between front and back camera">
@@ -266,6 +273,20 @@
 
       <!-- Video Feed & HUD Stage -->
       <div class="relative flex-1 min-h-[460px] sm:min-h-[520px] bg-black rounded-3xl overflow-hidden border border-white/5 shadow-2xl flex items-center justify-center">
+        
+        <!-- High-Visibility Directional Command Banner (Commands where to turn and informs when complete) -->
+        <div id="directional-command-banner" class="absolute top-5 inset-x-4 sm:inset-x-16 z-30 hidden bg-gradient-to-r from-sunset-600 to-amber-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-sunset-400 animate-fade-in" role="status" aria-live="assertive">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-stone-950/20 flex items-center justify-center">
+              <i data-lucide="compass" class="w-4 h-4 text-stone-950 stroke-[2.5]" aria-hidden="true"></i>
+            </div>
+            <div>
+              <div id="directional-command-title" class="text-[10px] uppercase font-black tracking-wider text-stone-950/80">Command Direction</div>
+              <div id="directional-command-text" class="text-sm sm:text-base font-extrabold tracking-tight">Slowly turn to your right now →</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-full bg-stone-950/20 text-[10px] uppercase font-black tracking-widest text-stone-950 hidden sm:inline">Active Turn</span>
+        </div>
         <!-- Live Video Element -->
         <video id="webcam-video" playsinline autoplay muted class="absolute inset-0 w-full h-full object-contain" aria-label="Webcam feed for posture screening"></video>
 

@@ -1,6 +1,7 @@
 /**
- * Audio Guidance & Voice Coaching Engine
- * Uses Web Audio API for warm harmonic feedback and SpeechSynthesis for hands-free coaching.
+ * Audio Guidance & Voice Command Engine
+ * Uses Web Audio API for harmonic chimes and SpeechSynthesis for directional coaching.
+ * Completely handles browser autoplay restrictions, voice loading, and sequential cues.
  */
 
 class AudioGuide {
@@ -8,7 +9,14 @@ class AudioGuide {
     this.isMuted = false;
     this.audioCtx = null;
     this.synth = window.speechSynthesis;
+    this.selectedVoice = null;
+    this.isUnlocked = false;
     this.lastVoiceCueTime = 0;
+    this.speechQueue = [];
+    this.isSpeaking = false;
+
+    // Load available system voices
+    this.initVoices();
   }
 
   init() {
@@ -23,6 +31,37 @@ class AudioGuide {
     }
   }
 
+  initVoices() {
+    if (!this.synth) return;
+
+    const setVoice = () => {
+      const voices = this.synth.getVoices();
+      if (!voices || voices.length === 0) return;
+
+      // Prefer high-quality natural English voices
+      this.selectedVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Zira'))) ||
+                           voices.find(v => v.lang.startsWith('en')) ||
+                           voices[0];
+    };
+
+    setVoice();
+    if (this.synth.onvoiceschanged !== undefined) {
+      this.synth.onvoiceschanged = setVoice;
+    }
+  }
+
+  // Unlocks browser audio and speech synthesis on user interaction
+  unlock() {
+    this.init();
+    if (this.synth) {
+      try {
+        this.synth.resume();
+        this.initVoices();
+      } catch (e) {}
+    }
+    this.isUnlocked = true;
+  }
+
   toggleMute() {
     this.isMuted = !this.isMuted;
     const btn = document.getElementById('sound-toggle-btn');
@@ -34,7 +73,9 @@ class AudioGuide {
     } else {
       if (btn) btn.classList.remove('opacity-40');
       if (icon) icon.setAttribute('data-lucide', 'volume-2');
-      this.playHarmonicChime([440, 554.37, 659.25]); // A major triad welcome
+      this.unlock();
+      this.playHarmonicChime([440, 554.37, 659.25], 0.35);
+      this.speak('Voice commands enabled.', true);
     }
     if (window.lucide) lucide.createIcons();
     return this.isMuted;
@@ -53,7 +94,7 @@ class AudioGuide {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime + idx * 0.08);
 
-        gain.gain.setValueAtTime(0.08, this.audioCtx.currentTime + idx * 0.08);
+        gain.gain.setValueAtTime(0.09, this.audioCtx.currentTime + idx * 0.08);
         gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + idx * 0.08 + duration);
 
         osc.connect(gain);
@@ -67,46 +108,101 @@ class AudioGuide {
     }
   }
 
-  playRecordingCommencedCue() {
-    // Warm 3-tone ascending chord
-    this.playHarmonicChime([392, 523.25, 659.25], 0.5);
-  }
+  // DIRECTIONAL VOICE COMMANDS & AUDIO CUES
 
-  playMilestoneSector() {
-    this.playHarmonicChime([523.25, 659.25], 0.15);
-  }
-
-  playCompleteChime() {
-    // Warm harmonic resolution
-    this.playHarmonicChime([392, 523.25, 659.25, 783.99], 0.8);
-  }
-
-  // Mandatory prompt immediately upon green framing:
-  // "Recording Commenced" + "Turn 360 degrees in a slow motion."
+  // 1. Initial trigger: Immediately upon green framing
   announceRecordingCommenced() {
-    this.playRecordingCommencedCue();
-    this.speak('Recording commenced. Turn 360 degrees in a slow motion.', true);
+    this.unlock();
+    this.playHarmonicChime([392, 523.25, 659.25], 0.45);
+    this.speak('Recording commenced! Slowly turn to your right now.', true);
   }
 
-  speak(text, priority = false) {
+  // 2. Right profile captured (90°) -> command turn to back
+  announceRightProfileCaptured() {
+    this.playHarmonicChime([523.25, 659.25], 0.25);
+    this.speak('Right side captured! Continue turning your back to the camera.', true);
+  }
+
+  // 3. Back view captured (180°) -> command turn to left profile
+  announceBackCaptured() {
+    this.playHarmonicChime([587.33, 739.99], 0.25);
+    this.speak('Back view captured! Keep turning around to your left side.', true);
+  }
+
+  // 4. Left profile captured (270°) -> command turn to front
+  announceLeftProfileCaptured() {
+    this.playHarmonicChime([659.25, 783.99], 0.25);
+    this.speak('Left side captured! Now turn back to face the camera to finish.', true);
+  }
+
+  // 5. Complete (360° / Front Returned)
+  announceScanComplete() {
+    this.playHarmonicChime([392, 523.25, 659.25, 783.99, 1046.50], 0.85);
+    this.speak('Scan complete! All angles captured. Stop and face front.', true);
+  }
+
+  // Test voice button
+  testVoice() {
+    this.unlock();
+    this.playHarmonicChime([440, 659.25], 0.3);
+    this.speak('Voice commands are working. When your frame turns green, turn slowly 360 degrees.', true);
+  }
+
+  speak(text, forceImmediate = false) {
     if (this.isMuted || !this.synth) return;
+    this.unlock();
+
     const now = Date.now();
-    if (!priority && now - this.lastVoiceCueTime < 2400) {
+    if (!forceImmediate && now - this.lastVoiceCueTime < 2200) {
       return;
     }
     this.lastVoiceCueTime = now;
 
     try {
-      this.synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.volume = 0.95;
-      this.synth.speak(utterance);
+      if (this.synth.paused) {
+        this.synth.resume();
+      }
+
+      // Safe asynchronous cancellation to avoid Chromium audio thread hang
+      if (forceImmediate && (this.synth.speaking || this.synth.pending)) {
+        this.synth.cancel();
+      }
+
+      setTimeout(() => {
+        try {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-US';
+          utterance.rate = 0.95; // Clear, commanding cadence
+          utterance.pitch = 1.0;
+          utterance.volume = 1.0;
+
+          if (this.selectedVoice) {
+            utterance.voice = this.selectedVoice;
+          }
+
+          utterance.onend = () => {
+            this.isSpeaking = false;
+          };
+
+          utterance.onerror = (err) => {
+            console.warn('Speech error', err);
+            this.isSpeaking = false;
+          };
+
+          this.isSpeaking = true;
+          this.synth.speak(utterance);
+        } catch (err) {
+          console.warn('Utterance error', err);
+        }
+      }, forceImmediate ? 40 : 0);
     } catch (e) {
-      console.warn('Speech error', e);
+      console.warn('Speech synthesis call failed', e);
     }
   }
 }
 
 const audioGuide = new AudioGuide();
+
+// Auto unlock on first user click or tap anywhere on page
+document.addEventListener('pointerdown', () => audioGuide.unlock(), { once: true });
+document.addEventListener('keydown', () => audioGuide.unlock(), { once: true });
