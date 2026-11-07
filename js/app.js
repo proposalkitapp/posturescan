@@ -259,15 +259,16 @@ class AppController {
     audioGuide.announceScanComplete();
 
     const captured = poseEngine.milestones;
-    const synthetic = poseEngine.generateSyntheticAthlete(this.selectedSport);
+    const hasAnyRealMilestone = Object.values(captured).some(m => m !== null && m.landmarks);
 
-    [0, 90, 180, 270].forEach(deg => {
-      if (!captured[deg]) {
-        captured[deg] = synthetic[deg];
-      }
-    });
-
-    this.currentScanResults = biomechanics.evaluateFullScan(captured, this.selectedSport);
+    if (hasAnyRealMilestone) {
+      // Evaluate strictly from real user frames without injecting synthetic mocks
+      this.currentScanResults = biomechanics.evaluateFullScan(captured, this.selectedSport, true);
+    } else {
+      // Graceful fallback only if zero frames were received
+      const synthetic = poseEngine.generateSyntheticAthlete(this.selectedSport);
+      this.currentScanResults = biomechanics.evaluateFullScan(synthetic, this.selectedSport, false);
+    }
 
     try {
       localStorage.setItem('ks_saved_scan', JSON.stringify(this.currentScanResults));
@@ -278,6 +279,76 @@ class AppController {
       if (banner) banner.classList.add('hidden');
       this.navigate('results');
     }, 1800);
+  }
+
+  // ==============================================================
+  // REAL DATA FILE UPLOAD: ANALYZE REAL PHOTO OR VIDEO
+  // ==============================================================
+  async handleFileUpload(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    audioGuide.unlock();
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      const dataUrl = e.target.result;
+
+      if (file.type.startsWith('image/')) {
+        const img = new Image();
+        img.onload = async () => {
+          await poseEngine.init();
+
+          // One-shot handler for uploaded real image
+          const originalHandler = poseEngine.pose.onResults;
+          poseEngine.pose.onResults((results) => {
+            if (!results || !results.poseLandmarks || results.poseLandmarks.length < 25) {
+              alert('Could not detect clear human posture landmarks in this image. Please ensure the full body from head to ankles is visible.');
+              return;
+            }
+
+            const landmarks = results.poseLandmarks;
+            const yaw = biomechanics.estimateBodyYaw(landmarks);
+            const sector = biomechanics.getSectorForYaw(yaw);
+
+            poseEngine.milestones = {
+              0: null, 90: null, 180: null, 270: null
+            };
+
+            poseEngine.milestones[sector.angle] = {
+              landmarks: JSON.parse(JSON.stringify(landmarks)),
+              yaw: yaw,
+              sector: sector.name,
+              isRealUserCapture: true,
+              sourceFilename: file.name,
+              timestamp: Date.now()
+            };
+
+            this.currentScanResults = biomechanics.evaluateFullScan(poseEngine.milestones, this.selectedSport, true);
+            this.navigate('results');
+            audioGuide.speak('Real image posture analysis complete.', true);
+          });
+
+          await poseEngine.pose.send({ image: img });
+        };
+        img.src = dataUrl;
+      } else if (file.type.startsWith('video/')) {
+        const video = document.getElementById('webcam-video');
+        if (video) {
+          video.srcObject = null;
+          video.src = dataUrl;
+          this.navigate('scan');
+          await video.play();
+          cameraManager.isStreaming = true;
+          cameraManager.startFrameLoop();
+          audioGuide.speak('Analyzing uploaded video footage.', true);
+        }
+      }
+    };
+
+    reader.readAsDataURL(file);
+    // Reset file input so same file can be re-uploaded if desired
+    event.target.value = '';
   }
 
   cancelScan() {
@@ -565,6 +636,106 @@ class AppController {
     `).join('');
 
     if (window.lucide) lucide.createIcons();
+  }
+
+  // ==============================================================
+  // RAW BIOMETRIC TELEMETRY MODAL CONTROLLER
+  // ==============================================================
+  openRawTelemetryModal() {
+    const modal = document.getElementById('raw-telemetry-modal');
+    if (!modal) return;
+
+    const angle = this.activeMilestoneAngle || 0;
+    const angleLabel = document.getElementById('telemetry-active-angle');
+    if (angleLabel) angleLabel.innerText = `${angle}° (${angle === 0 ? 'Front' : angle === 90 ? 'Right Profile' : angle === 180 ? 'Back' : 'Left Profile'})`;
+
+    const milestoneData = poseEngine.milestones[angle] || poseEngine.milestones[0] || poseEngine.milestones[90] || poseEngine.milestones[180] || poseEngine.milestones[270];
+    const tbody = document.getElementById('telemetry-table-body');
+
+    const landmarkNames = [
+      'Nose', 'Left Eye Inner', 'Left Eye', 'Left Eye Outer',
+      'Right Eye Inner', 'Right Eye', 'Right Eye Outer',
+      'Left Ear (Tragus)', 'Right Ear (Tragus)', 'Mouth Left', 'Mouth Right',
+      'Left Shoulder (Acromion)', 'Right Shoulder (Acromion)',
+      'Left Elbow', 'Right Elbow', 'Left Wrist', 'Right Wrist',
+      'Left Pinky', 'Right Pinky', 'Left Index', 'Right Index',
+      'Left Thumb', 'Right Thumb',
+      'Left Hip (ASIS/Trochanter)', 'Right Hip (ASIS/Trochanter)',
+      'Left Knee (Femoral Condyle)', 'Right Knee (Femoral Condyle)',
+      'Left Ankle (Lateral Malleolus)', 'Right Ankle (Lateral Malleolus)',
+      'Left Heel', 'Right Heel', 'Left Foot Index', 'Right Foot Index'
+    ];
+
+    if (!milestoneData || !milestoneData.landmarks || milestoneData.landmarks.length === 0) {
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-4 text-center text-stone-500 italic">
+              No live telemetry captured yet for this angle. Run a scan or upload a photo to populate live coordinate vectors.
+            </td>
+          </tr>
+        `;
+      }
+    } else {
+      const lm = milestoneData.landmarks;
+      if (tbody) {
+        tbody.innerHTML = lm.map((pt, idx) => {
+          const name = landmarkNames[idx] || `Landmark ${idx}`;
+          const isKeyJoint = [0, 7, 8, 11, 12, 23, 24, 25, 26, 27, 28].includes(idx);
+          const x = typeof pt.x === 'number' ? pt.x.toFixed(4) : '--';
+          const y = typeof pt.y === 'number' ? pt.y.toFixed(4) : '--';
+          const z = typeof pt.z === 'number' ? pt.z.toFixed(4) : '--';
+          const vis = typeof pt.visibility === 'number' ? `${(pt.visibility * 100).toFixed(1)}%` : '100%';
+
+          return `
+            <tr class="${isKeyJoint ? 'bg-sunset-500/5 font-semibold text-stone-200' : 'hover:bg-white/5'} transition">
+              <td class="py-1.5 px-2 text-stone-500">${idx}</td>
+              <td class="py-1.5 px-2 ${isKeyJoint ? 'text-sunset-300' : 'text-stone-300'} flex items-center space-x-1.5">
+                ${isKeyJoint ? '<span class="w-1.5 h-1.5 rounded-full bg-sunset-400"></span>' : ''}
+                <span>${name}</span>
+              </td>
+              <td class="py-1.5 px-2 font-mono text-stone-300">${x}</td>
+              <td class="py-1.5 px-2 font-mono text-stone-300">${y}</td>
+              <td class="py-1.5 px-2 font-mono text-stone-400">${z}</td>
+              <td class="py-1.5 px-2 font-mono text-emerald-400">${vis}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    modal.classList.remove('hidden');
+    if (window.lucide) lucide.createIcons();
+  }
+
+  closeRawTelemetryModal() {
+    const modal = document.getElementById('raw-telemetry-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  downloadRawTelemetryJson() {
+    const angle = this.activeMilestoneAngle || 0;
+    const milestoneData = poseEngine.milestones[angle] || poseEngine.milestones;
+    const exportData = {
+      app: 'KineticScan 360',
+      exportType: 'Empirical Biometric Telemetry',
+      activeAngle: angle,
+      sportDiscipline: this.selectedSport,
+      timestamp: new Date().toISOString(),
+      metrics: this.currentScanResults ? this.currentScanResults.metrics : null,
+      compositeScore: this.currentScanResults ? this.currentScanResults.compositeScore : null,
+      milestonesCaptured: poseEngine.milestones
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kineticscan-telemetry-${angle}deg-${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 }
 

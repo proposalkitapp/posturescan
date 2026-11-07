@@ -179,8 +179,8 @@ class BiomechanicsEngine {
     };
   }
 
-  // Comprehensive Evaluation across all 4 Milestone Views
-  evaluateFullScan(milestones, sportId = 'general') {
+  // Comprehensive Evaluation across all Milestone Views (100% Real Empirical Data)
+  evaluateFullScan(milestones, sportId = 'general', isEmpiricalData = true) {
     const sport = SPORT_PROFILES.find(s => s.id === sportId) || SPORT_PROFILES[0];
     const weights = sport.priorityWeights;
 
@@ -189,24 +189,42 @@ class BiomechanicsEngine {
     const posterior = milestones[180] ? this.analyzeCoronalPlane(milestones[180].landmarks, true) : null;
     const leftSagittal = milestones[270] ? this.analyzeSagittalPlane(milestones[270].landmarks, false) : null;
 
-    // Sagittal consensus values
-    const forwardHead = rightSagittal ? rightSagittal.forwardHeadDeg : (leftSagittal ? leftSagittal.forwardHeadDeg : 8);
-    const thoracicTilt = rightSagittal ? rightSagittal.thoracicTiltDeg : (leftSagittal ? leftSagittal.thoracicTiltDeg : 6);
-    const pelvicDev = rightSagittal ? rightSagittal.pelvicTiltDevDeg : (leftSagittal ? leftSagittal.pelvicTiltDevDeg : 8);
+    const hasSagittal = rightSagittal || leftSagittal;
+    const hasCoronal = anterior || posterior;
 
-    // Coronal consensus values
-    const shoulderAsymmetry = anterior ? anterior.shoulderTiltDeg : 1.5;
-    const pelvicAsymmetry = anterior ? anterior.pelvicTiltDeg : 1.5;
-    const valgusAngle = anterior ? anterior.maxValgusDev : 4.0;
+    // Real measured values directly from user landmarks
+    const forwardHead = rightSagittal ? rightSagittal.forwardHeadDeg : (leftSagittal ? leftSagittal.forwardHeadDeg : 0);
+    const thoracicTilt = rightSagittal ? rightSagittal.thoracicTiltDeg : (leftSagittal ? leftSagittal.thoracicTiltDeg : 0);
+    const pelvicDev = rightSagittal ? rightSagittal.pelvicTiltDevDeg : (leftSagittal ? leftSagittal.pelvicTiltDevDeg : 0);
 
-    // Component Penalties
-    let penaltyPlumb = Math.min(25, (forwardHead * 0.9 + thoracicTilt * 0.8) * weights.thoracic);
-    let penaltyPelvis = Math.min(25, (pelvicDev * 1.5) * weights.pelvic);
-    let penaltyValgus = Math.min(25, (valgusAngle * 2.2) * weights.valgus);
-    let penaltySymmetry = Math.min(25, (shoulderAsymmetry * 2.5 + pelvicAsymmetry * 2.5) * weights.asymmetry);
+    const shoulderAsymmetry = anterior ? anterior.shoulderTiltDeg : (posterior ? posterior.shoulderTiltDeg : 0);
+    const pelvicAsymmetry = anterior ? anterior.pelvicTiltDeg : (posterior ? posterior.pelvicTiltDeg : 0);
+    const valgusAngle = anterior ? anterior.maxValgusDev : (posterior ? posterior.maxValgusDev : 0);
 
-    let rawScore = 100 - (penaltyPlumb + penaltyPelvis + penaltyValgus + penaltySymmetry);
-    let compositeScore = Math.max(45, Math.min(98, Math.round(rawScore)));
+    // Component Penalties computed strictly from measured planes
+    let totalPenalty = 0;
+    let maxPossiblePenalty = 0;
+
+    if (hasSagittal) {
+      const penaltyPlumb = Math.min(30, (forwardHead * 0.9 + thoracicTilt * 0.8) * weights.thoracic);
+      const penaltyPelvis = Math.min(30, (pelvicDev * 1.6) * weights.pelvic);
+      totalPenalty += penaltyPlumb + penaltyPelvis;
+      maxPossiblePenalty += 60;
+    }
+
+    if (hasCoronal) {
+      const penaltyValgus = Math.min(25, (valgusAngle * 2.2) * weights.valgus);
+      const penaltySymmetry = Math.min(25, (shoulderAsymmetry * 2.5 + pelvicAsymmetry * 2.5) * weights.asymmetry);
+      totalPenalty += penaltyValgus + penaltySymmetry;
+      maxPossiblePenalty += 50;
+    }
+
+    if (maxPossiblePenalty === 0) {
+      maxPossiblePenalty = 100;
+    }
+
+    const penaltyPercentage = (totalPenalty / maxPossiblePenalty) * 55; // max 55 point penalty
+    let compositeScore = Math.max(48, Math.min(98, Math.round(100 - penaltyPercentage)));
 
     // Qualitative Rating
     let rating = 'Elite Neutral Alignment';
@@ -219,9 +237,9 @@ class BiomechanicsEngine {
       ratingColor = 'accent-danger';
     }
 
-    // Identify Top 3 Issues
+    // Identify Top Issues from real data
     const issues = [];
-    if (pelvicDev > 8) {
+    if (hasSagittal && pelvicDev > 8) {
       issues.push({
         id: 'apt',
         title: 'Anterior Pelvic Tilt',
@@ -233,7 +251,7 @@ class BiomechanicsEngine {
       });
     }
 
-    if (valgusAngle > 5.5) {
+    if (hasCoronal && valgusAngle > 5.5) {
       issues.push({
         id: 'valgus',
         title: 'Medial Knee Collapse (Valgus)',
@@ -245,7 +263,7 @@ class BiomechanicsEngine {
       });
     }
 
-    if (thoracicTilt > 7.5 || forwardHead > 11) {
+    if (hasSagittal && (thoracicTilt > 7.5 || forwardHead > 11)) {
       issues.push({
         id: 'kyphosis',
         title: 'Thoracic Kyphosis & Head Protraction',
@@ -257,7 +275,7 @@ class BiomechanicsEngine {
       });
     }
 
-    if (shoulderAsymmetry > 2.8 || pelvicAsymmetry > 2.8) {
+    if (hasCoronal && (shoulderAsymmetry > 2.8 || pelvicAsymmetry > 2.8)) {
       issues.push({
         id: 'asymmetry',
         title: 'Bilateral Trunk Asymmetry',
@@ -269,7 +287,7 @@ class BiomechanicsEngine {
       });
     }
 
-    // Default if clean
+    // Default if clean or well aligned
     if (issues.length === 0) {
       issues.push({
         id: 'clean',
@@ -294,7 +312,6 @@ class BiomechanicsEngine {
       }
     });
 
-    // Ensure at least 4 drills
     if (prescribedDrills.length < 4) {
       const fallback = PREHAB_DRILLS.thoracicKyphosis[1] || PREHAB_DRILLS.anteriorPelvicTilt[1];
       if (fallback && !prescribedDrills.find(d => d.id === fallback.id)) {
@@ -307,6 +324,9 @@ class BiomechanicsEngine {
       rating,
       ratingColor,
       sport,
+      isEmpiricalData,
+      hasSagittal,
+      hasCoronal,
       anterior,
       rightSagittal,
       posterior,
@@ -318,6 +338,13 @@ class BiomechanicsEngine {
         shoulderAsymmetry,
         pelvicAsymmetry,
         valgusAngle,
+        forceTransferScore: Math.max(50, Math.min(99, Math.round(100 - (pelvicDev * 1.8 + valgusAngle * 2.0)))),
+        bilateralBalanceScore: Math.max(50, Math.min(99, Math.round(100 - (shoulderAsymmetry * 4.0 + pelvicAsymmetry * 4.0))))
+      },
+      issues,
+      prescribedDrills: prescribedDrills.slice(0, 4)
+    };
+  }
         forceTransferScore: Math.round(100 - (pelvicDev * 1.8 + valgusAngle * 2.0)),
         bilateralBalanceScore: Math.round(100 - (shoulderAsymmetry * 4.0 + pelvicAsymmetry * 4.0))
       },
