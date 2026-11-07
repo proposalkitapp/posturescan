@@ -1,178 +1,36 @@
-/* Orbix Studio / Aivo Warm Minimalist Aesthetic Styles */
+/* Clean Minimalist Luxury Aesthetic (Neutral Dark & Warm Gold) */
 
 :root {
-  --bg-deep: #0a0908;
-  --bg-card: #141210;
-  --accent-amber: #f97316;
-  --accent-sunset: #ea580c;
-  --accent-peach: #fed7aa;
+  --bg-deep: #0c0a09;
+  --bg-card: #171513;
+  --accent-amber: #f59e0b;
+  --accent-gold: #fbbf24;
 }
 
-/* Warm Sunset Radial Glow */
+/* Subtle, gentle warm ambient aura (no harsh red/orange cast) */
 .bg-ambient-aura {
-  background: radial-gradient(circle at 50% -10%, rgba(234, 88, 12, 0.28) 0%, rgba(194, 65, 12, 0.12) 40%, rgba(10, 9, 8, 0) 80%);
+  background: radial-gradient(circle at 50% -10%, rgba(245, 158, 11, 0.08) 0%, rgba(20, 18, 16, 0.04) 40%, rgba(12, 10, 9, 0) 75%);
 }
 
 .bg-ambient-card-glow {
-  background: radial-gradient(circle at 50% 0%, rgba(249, 115, 22, 0.15) 0%, rgba(20, 18, 16, 0.95) 60%);
+  background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.06) 0%, rgba(23, 21, 19, 0.95) 60%);
 }
 
-/* Frosted Obsidian Glassmorphism */
-.frosted-obsidian-card {
-  background: rgba(18, 17, 16, 0.82);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px -10px rgba(245, 158, 11, 0.05);
+/* Clean Card Container */
+.clean-card {
+  background: rgba(23, 21, 19, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.5rem;
+  transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
-.frosted-obsidian-card:hover {
+.clean-card:hover {
   border-color: rgba(245, 158, 11, 0.25);
 }
 
-/* Activity Matrix Grid Pills (Aivo Mockup) */
-.activity-matrix-pill {
-  width: 22px;
-  height: 10px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.12);
-  transition: all 0.2s ease;
-}
-
-.activity-matrix-pill.active {
-  background: #f97316;
-  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
-}
-
-.activity-matrix-pill.highlight {
-  background: #fed7aa;
-}
-
-/* Forecast Mini Bar (Aivo Mockup Screen 1) */
-.forecast-mini-bar {
-  width: 7px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.forecast-mini-bar.active {
-  background: linear-gradient(to top, #ea580c, #f97316, #fdba74);
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
-}
-
-/* Interactive Plumb Line Comparison Slider (Clip-Path Vector Split) */
-.comparison-container {
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
-  --split-pos: 50%;
-}
-
-.comparison-after-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.comparison-before-layer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  clip-path: polygon(0 0, var(--split-pos, 50%) 0, var(--split-pos, 50%) 100%, 0 100%);
-  z-index: 20;
-}
-
-.comparison-before-layer img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.comparison-divider-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--split-pos, 50%);
-  width: 2px;
-  background: rgba(251, 191, 36, 0.95);
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
-  z-index: 25;
-  pointer-events: none;
-  transform: translateX(-50%);
-}
-
-.comparison-handle {
-  position: absolute;
-  top: 50%;
-  left: var(--split-pos, 50%);
-  transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 9999px;
-  background: #121110;
-  border: 2px solid #fbbf24;
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 8px 16px rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 30;
-  cursor: ew-resize;
-  color: #fbbf24;
-  pointer-events: none;
-}
-
-.comparison-range-input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: ew-resize;
-  z-index: 40;
-  margin: 0;
-}
-
-/* Vertical Plumb Line Graphic Guides */
-.plumb-vector-line {
-  position: absolute;
-  top: 8%;
-  bottom: 8%;
-  width: 1.5px;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(251, 191, 36, 0.85),
-    rgba(251, 191, 36, 0.85) 6px,
-    transparent 6px,
-    transparent 12px
-  );
-  z-index: 22;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
-}
-
-/* Ethereal Glow Animation */
-@keyframes etherealPulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 16px rgba(249, 115, 22, 0.25));
-    opacity: 0.92;
-  }
-  50% {
-    filter: drop-shadow(0 0 28px rgba(249, 115, 22, 0.45));
-    opacity: 1;
-  }
-}
-
-.animate-ethereal {
-  animation: etherealPulse 4s infinite ease-in-out;
-}
-
-/* Framing Box Guides (Green & Yellow Lines) */
+/* Framing Box Guides (Green & Yellow Lines for camera scan) */
 #framing-guide-box.frame-ready {
   border-color: #22c55e !important;
   box-shadow: 0 0 35px rgba(34, 197, 94, 0.45), inset 0 0 25px rgba(34, 197, 94, 0.2);
@@ -185,26 +43,26 @@
 
 /* Milestone badges */
 .milestone-badge.active {
-  color: #fdba74 !important;
+  color: #fbbf24 !important;
 }
 .milestone-badge.active div {
-  background-color: #f97316 !important;
-  box-shadow: 0 0 10px #f97316;
+  background-color: #f59e0b !important;
+  box-shadow: 0 0 10px #f59e0b;
 }
 
 /* Focus Visible for Keyboard Accessibility (WCAG 2.1 AA) */
 a:focus-visible, button:focus-visible, input:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px #0a0908, 0 0 0 4px #f97316 !important;
+  box-shadow: 0 0 0 2px #0c0a09, 0 0 0 4px #f59e0b !important;
 }
 
 /* Smooth fade-in */
 .animate-fade-in {
-  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
