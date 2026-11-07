@@ -30,6 +30,37 @@
   border-color: rgba(245, 158, 11, 0.25);
 }
 
+/* Activity Matrix Grid Pills (Aivo Mockup) */
+.activity-matrix-pill {
+  width: 22px;
+  height: 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition: all 0.2s ease;
+}
+
+.activity-matrix-pill.active {
+  background: #f97316;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.5);
+}
+
+.activity-matrix-pill.highlight {
+  background: #fed7aa;
+}
+
+/* Forecast Mini Bar (Aivo Mockup Screen 1) */
+.forecast-mini-bar {
+  width: 7px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.forecast-mini-bar.active {
+  background: linear-gradient(to top, #ea580c, #f97316, #fdba74);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+}
+
 /* Interactive Plumb Line Comparison Slider (Clip-Path Vector Split) */
 .comparison-container {
   position: relative;

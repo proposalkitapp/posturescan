@@ -127,33 +127,87 @@
   <!-- MAIN APP CONTAINER -->
   <main id="main-content" class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col relative z-10 pb-28">
 
-    <!-- VIEW 1: HOME (Orbix Studio / Aivo Minimalist Inspiration) -->
+    <!-- VIEW 1: HOME (Orbix Studio / Aivo Minimalist Luxury Redesign) -->
     <section id="view-home" class="view-panel space-y-8 animate-fade-in" aria-label="Home Overview">
       
-      <!-- Hero Card with Ethereal Body Glow -->
-      <div class="relative overflow-hidden rounded-3xl bg-ambient-card-glow border border-white/5 p-6 sm:p-10 shadow-2xl">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+      <!-- Top Studio Status Bar & Milestone Strip (Directly matching Aivo Reference Design) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
+        <!-- Studio Location / Mode Chip -->
+        <div class="flex items-center space-x-2 text-xs text-stone-300">
+          <span class="w-2 h-2 rounded-full bg-sunset-400 animate-pulse"></span>
+          <span class="font-bold text-stone-200">Kinetic Studio</span>
+          <span class="text-stone-500">•</span>
+          <span class="text-stone-400">Hands-Free 360° Biomechanics (Wasm Native)</span>
+        </div>
+
+        <!-- Horizontal Anatomical Plane Strip (Matching Aivo Date Strip) -->
+        <div class="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none text-[11px] font-semibold">
+          <div class="px-3 py-1.5 rounded-full bg-stone-900 border border-white/5 text-stone-400 shrink-0">
+            <span class="text-stone-500 mr-1">01</span>Cervical
+          </div>
+          <div class="px-3 py-1.5 rounded-full bg-stone-900 border border-white/5 text-stone-400 shrink-0">
+            <span class="text-stone-500 mr-1">02</span>Thoracic
+          </div>
+          <div class="px-3.5 py-1.5 rounded-full bg-sunset-500 text-stone-950 font-bold shrink-0 shadow-lg shadow-sunset-500/25 flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-stone-950"></span>
+            <span>03 Pelvis</span>
+          </div>
+          <div class="px-3 py-1.5 rounded-full bg-stone-900 border border-white/5 text-stone-400 shrink-0">
+            <span class="text-stone-500 mr-1">04</span>Kinetics
+          </div>
+          <div class="px-3 py-1.5 rounded-full bg-stone-900 border border-white/5 text-stone-400 shrink-0">
+            <span class="text-stone-500 mr-1">05</span>Plumb Line
+          </div>
+        </div>
+      </div>
+
+      <!-- HERO STAGE: Centered Ethereal Silhouette & Recommendation (Aivo Style) -->
+      <div class="relative overflow-hidden rounded-3xl bg-ambient-card-glow border border-white/10 p-6 sm:p-10 shadow-2xl">
+        <!-- Ambient radial glow -->
+        <div class="absolute inset-0 bg-gradient-to-b from-sunset-500/10 via-transparent to-transparent pointer-events-none"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
           
-          <!-- Left Text Column -->
-          <div class="md:col-span-7 space-y-4">
+          <!-- Left Column: Recommendation & CTAs -->
+          <div class="md:col-span-7 space-y-5">
             <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sunset-500/10 border border-sunset-500/20 text-sunset-400 text-xs font-semibold">
-              <i data-lucide="compass" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              <span>HANDS-FREE BIOMECHANICAL SCREENING</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-sunset-400"></span>
+              <span class="uppercase tracking-wider text-[10px]">KineticScan Recommendation</span>
             </div>
             
-            <h1 class="text-3xl sm:text-5xl font-display font-extrabold tracking-tight text-stone-100 leading-[1.15]">
-              Harmonize Your Body. <br>
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-sunset-400 via-amber-300 to-amber-400">Restore Neutral Alignment.</span>
-            </h1>
+            <div class="space-y-2">
+              <h1 class="text-3xl sm:text-5xl font-display font-extrabold tracking-tight text-stone-100 leading-[1.12]">
+                Reset Your Posture. <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sunset-400 via-amber-300 to-amber-400">Harmonize Alignment.</span>
+              </h1>
+              
+              <p class="text-stone-300 text-sm sm:text-base leading-relaxed max-w-xl">
+                A gentle guided 360° rotational scan designed to chart musculoskeletal compensations, decompress the spinal axis, and restore neutral kinetic balance.
+              </p>
+            </div>
+
+            <!-- Session Stats Badge Strip -->
+            <div class="flex items-center space-x-4 text-xs text-stone-400 pt-1">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-sunset-400"></i>
+                <span class="font-semibold text-stone-200">10 Sec Scan</span>
+              </span>
+              <span>•</span>
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="mic" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span class="font-semibold text-stone-200">Guided Voice</span>
+              </span>
+              <span>•</span>
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span class="font-semibold text-stone-200">100% Local Wasm</span>
+              </span>
+            </div>
             
-            <p class="text-stone-300 text-sm sm:text-base leading-relaxed max-w-xl">
-              Prop your phone at waist height and step back. The scanner detects when you are fully in frame, automatically initiates the scan with voice guidance, and charts your kinetic chain as you rotate 360 degrees.
-            </p>
-            
-            <!-- CTAs -->
-            <div class="pt-2 flex flex-wrap gap-3">
+            <!-- Primary Action Buttons -->
+            <div class="pt-2 flex flex-wrap gap-3 items-center">
               <button onclick="app.startScanFlow()" 
-                class="px-6 py-3.5 rounded-full font-bold bg-gradient-to-r from-sunset-600 via-sunset-500 to-amber-500 hover:from-sunset-500 hover:to-amber-400 text-stone-950 shadow-xl shadow-sunset-500/20 transition-all transform active:scale-95 flex items-center space-x-2 text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-sunset-400">
+                class="px-6 py-3.5 rounded-full font-bold bg-gradient-to-r from-sunset-600 via-sunset-500 to-amber-400 hover:from-sunset-500 hover:to-amber-300 text-stone-950 shadow-xl shadow-sunset-500/25 transition-all transform active:scale-95 flex items-center space-x-2 text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-sunset-400">
                 <i data-lucide="play" class="w-4 h-4 fill-stone-950" aria-hidden="true"></i>
                 <span>Begin Automatic Scan</span>
               </button>
@@ -162,40 +216,33 @@
                 class="px-5 py-3.5 rounded-full font-semibold bg-stone-900/90 hover:bg-stone-850 text-stone-200 border border-amber-500/30 hover:border-amber-400 transition flex items-center space-x-2 text-sm focus-visible:ring-2 focus-visible:ring-sunset-500"
                 title="Upload real athlete photo or video for instant biomechanical analysis">
                 <i data-lucide="upload" class="w-4 h-4 text-amber-400" aria-hidden="true"></i>
-                <span>Analyze Real Photo/Video</span>
+                <span>Upload Photo / Video</span>
               </button>
               <input type="file" id="real-data-file-input" accept="image/*,video/*" class="hidden" onchange="app.handleFileUpload(event)">
               
               <button onclick="app.loadDemoAthlete('runner')" 
-                class="px-5 py-3.5 rounded-full font-semibold bg-stone-900/60 hover:bg-stone-850 text-stone-300 border border-white/5 transition flex items-center space-x-2 text-sm focus-visible:ring-2 focus-visible:ring-sunset-500">
-                <i data-lucide="eye" class="w-4 h-4 text-stone-400" aria-hidden="true"></i>
-                <span>Preview Sample Report</span>
+                class="px-4 py-3.5 rounded-full text-xs font-semibold text-stone-400 hover:text-stone-200 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+                Preview Sample Report
               </button>
-            </div>
-
-            <!-- Privacy Guarantee Badge -->
-            <div class="pt-2 flex items-center space-x-2 text-xs text-stone-400">
-              <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-400" aria-hidden="true"></i>
-              <span>100% on-device WebAssembly • Zero video saved or uploaded</span>
             </div>
           </div>
 
-          <!-- Right Column: Ethereal Glowing Human Silhouette (Aivo Style) -->
+          <!-- Right Column: Ethereal Glowing Human Silhouette (Aivo Reference Screen 2) -->
           <div class="md:col-span-5 flex items-center justify-center">
             <div class="relative w-64 h-80 sm:w-72 sm:h-96 flex items-center justify-center">
-              <!-- Soft ambient back-glow -->
-              <div class="absolute inset-0 bg-sunset-500/15 rounded-full blur-3xl pointer-events-none"></div>
+              <!-- Soft ambient back-glow aura -->
+              <div class="absolute inset-0 bg-sunset-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
               <!-- Glowing Body Silhouette Graphic -->
               <svg viewBox="0 0 200 320" class="w-full h-full object-contain animate-ethereal" aria-label="Ethereal human posture silhouette illustration" role="img">
                 <defs>
-                  <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#fdba74" stop-opacity="0.75" />
-                    <stop offset="40%" stop-color="#f97316" stop-opacity="0.35" />
-                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0.15" />
+                  <linearGradient id="bodyGradAivo" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#fdba74" stop-opacity="0.85" />
+                    <stop offset="40%" stop-color="#f97316" stop-opacity="0.45" />
+                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0.2" />
                   </linearGradient>
-                  <filter id="glow">
-                    <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                  <filter id="glowAivo">
+                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                     <feMerge>
                       <feMergeNode in="coloredBlur"/>
                       <feMergeNode in="SourceGraphic"/>
@@ -203,25 +250,25 @@
                   </filter>
                 </defs>
                 <!-- Head -->
-                <circle cx="100" cy="42" r="18" fill="url(#bodyGrad)" filter="url(#glow)" />
-                <!-- Neck & Shoulders -->
-                <path d="M 94 62 L 106 62 L 118 78 L 140 92 L 132 145 L 122 145 L 122 195 L 114 265 L 104 305 L 96 305 L 86 265 L 78 195 L 78 145 L 68 145 L 60 92 L 82 78 Z" fill="url(#bodyGrad)" filter="url(#glow)" />
-                <!-- Central Gravity Axis Plumb Line -->
-                <line x1="100" y1="20" x2="100" y2="310" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.65" />
+                <circle cx="100" cy="42" r="18" fill="url(#bodyGradAivo)" filter="url(#glowAivo)" />
+                <!-- Neck, Torso & Limbs -->
+                <path d="M 94 62 L 106 62 L 118 78 L 140 92 L 132 145 L 122 145 L 122 195 L 114 265 L 104 305 L 96 305 L 86 265 L 78 195 L 78 145 L 68 145 L 60 92 L 82 78 Z" fill="url(#bodyGradAivo)" filter="url(#glowAivo)" />
+                <!-- Central Plumb Line Axis -->
+                <line x1="100" y1="20" x2="100" y2="310" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.75" />
               </svg>
 
-              <!-- Anatomical Highlight Nodes (Matching Reference Image) -->
-              <div class="absolute top-10 left-12 bg-stone-900/90 border border-white/10 px-2.5 py-1 rounded-full text-[10px] text-stone-200 backdrop-blur shadow flex items-center space-x-1.5">
+              <!-- Anatomical Highlight Nodes (Matching Reference Screen 2) -->
+              <div class="absolute top-10 left-8 bg-stone-900/90 border border-white/10 px-3 py-1.5 rounded-full text-[10px] text-stone-200 backdrop-blur shadow-lg flex items-center space-x-1.5">
                 <span class="w-1.5 h-1.5 rounded-full bg-sunset-400"></span>
-                <span>Cervical Axis</span>
+                <span>Mind • Cervical</span>
               </div>
-              <div class="absolute top-32 right-6 bg-stone-900/90 border border-white/10 px-2.5 py-1 rounded-full text-[10px] text-stone-200 backdrop-blur shadow flex items-center space-x-1.5">
+              <div class="absolute top-32 right-4 bg-stone-900/90 border border-white/10 px-3 py-1.5 rounded-full text-[10px] text-stone-200 backdrop-blur shadow-lg flex items-center space-x-1.5">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                <span>Thoracic Stack</span>
+                <span>Heart • Thoracic</span>
               </div>
-              <div class="absolute bottom-28 left-8 bg-stone-900/90 border border-white/10 px-2.5 py-1 rounded-full text-[10px] text-stone-200 backdrop-blur shadow flex items-center space-x-1.5">
+              <div class="absolute bottom-24 left-6 bg-stone-900/90 border border-white/10 px-3 py-1.5 rounded-full text-[10px] text-stone-200 backdrop-blur shadow-lg flex items-center space-x-1.5">
                 <span class="w-1.5 h-1.5 rounded-full bg-sunset-400"></span>
-                <span>Pelvic Vector</span>
+                <span>Breath • Pelvic</span>
               </div>
             </div>
           </div>
@@ -229,110 +276,107 @@
         </div>
       </div>
 
-      <!-- Movement Discipline Selector -->
-      <div class="space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-base font-display font-bold text-stone-100 flex items-center space-x-2">
-            <i data-lucide="layers" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
-            <span>Movement Screening Discipline</span>
-          </h2>
-          <span class="text-xs text-stone-400">Adapts anatomical risk criteria</span>
+      <!-- THE 3 SHOWCASE CARDS (Directly representing Screens 1, 2, and 3 from Aivo Mockup) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        
+        <!-- CARD 1: Energy & Force Forecast Card (Aivo Screen 1) -->
+        <div class="lg:col-span-3 rounded-3xl bg-stone-900/80 border border-white/10 p-6 flex flex-col justify-between shadow-xl space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-stone-400">
+              <span class="font-bold uppercase tracking-wider text-[10px] text-sunset-400">Force Forecast</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] bg-sunset-500/10 text-sunset-300 font-semibold border border-sunset-500/20">Optimal</span>
+            </div>
+
+            <!-- Big Stat 88% -->
+            <div class="space-y-1">
+              <div class="font-display font-black text-4xl text-stone-100">88%</div>
+              <p class="text-[11px] text-stone-400">Kinetic force efficiency</p>
+            </div>
+
+            <!-- Weekday Mini Bar Graphic (S M T W T F S) -->
+            <div class="pt-2 flex items-end justify-between h-14 px-1">
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-6"></div>
+                <span class="text-[9px] text-stone-500 font-bold">S</span>
+              </div>
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-8"></div>
+                <span class="text-[9px] text-stone-500 font-bold">M</span>
+              </div>
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-12 active"></div>
+                <span class="text-[9px] text-sunset-400 font-bold">T</span>
+              </div>
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-10"></div>
+                <span class="text-[9px] text-stone-500 font-bold">W</span>
+              </div>
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-9"></div>
+                <span class="text-[9px] text-stone-500 font-bold">T</span>
+              </div>
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-7"></div>
+                <span class="text-[9px] text-stone-500 font-bold">F</span>
+              </div>
+              <div class="flex flex-col items-center space-y-1">
+                <div class="forecast-mini-bar h-8"></div>
+                <span class="text-[9px] text-stone-500 font-bold">S</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Micro Metrics -->
+          <div class="grid grid-cols-2 gap-2 pt-3 border-t border-stone-800 text-[11px]">
+            <div>
+              <div class="text-stone-400 text-[10px]">Average Scan</div>
+              <div class="font-bold text-stone-200">10 sec</div>
+            </div>
+            <div>
+              <div class="text-stone-400 text-[10px]">Current Poise</div>
+              <div class="font-bold text-emerald-400">Neutral Stack</div>
+            </div>
+          </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="sport-selector-container" role="radiogroup" aria-label="Movement Screening Discipline">
-          <!-- Dynamically populated via JS -->
-        </div>
-      </div>
-
-      <!-- Preparation Checklist & Safe Environment -->
-      <div id="how-it-works" class="bg-stone-900/60 rounded-3xl p-6 border border-white/5 space-y-4 scroll-mt-20">
-        <div class="flex items-center justify-between">
-          <h3 class="font-display font-semibold text-stone-200 text-sm flex items-center space-x-2">
-            <i data-lucide="check-circle" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
-            <span>How Hands-Free Automatic Scanning Works</span>
-          </h3>
-          <span class="text-xs text-stone-400">100% Local • Zero Cloud Storage</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs text-stone-300">
-          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
-            <div class="text-sunset-400 font-bold">1. Device Placement</div>
-            <p class="text-stone-400">Prop device upright at waist height on a table or stand, 7 to 8 feet away.</p>
-          </div>
-          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
-            <div class="text-sunset-400 font-bold">2. Automatic Trigger</div>
-            <p class="text-stone-400">Step back into the frame. As soon as the box turns green, recording commences automatically.</p>
-          </div>
-          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
-            <div class="text-sunset-400 font-bold">3. 360° Slow Turn</div>
-            <p class="text-stone-400">Following the voice prompt, complete one smooth slow rotation clockwise over ~10 seconds.</p>
-          </div>
-          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
-            <div class="text-sunset-400 font-bold">4. Actionable Drills</div>
-            <p class="text-stone-400">View your kinetic plumb lines, pelvic tilt angle, and receive tailored pre-hab exercises.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION: BEFORE & AFTER POSTURE TRANSFORMATION -->
-      <div id="posture-transformation" class="space-y-6 pt-4 scroll-mt-20">
-        <!-- Section Header -->
-        <div class="text-center max-w-2xl mx-auto space-y-2">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sunset-500/10 border border-sunset-500/20 text-sunset-400 text-xs font-semibold">
-            <i data-lucide="git-compare" class="w-3.5 h-3.5" aria-hidden="true"></i>
-            <span>CLINICAL POSTURE TRANSFORMATION</span>
-          </div>
-          <h2 class="text-2xl sm:text-4xl font-display font-black tracking-tight text-stone-100">
-            Faulty Compensations <span class="text-stone-500 font-light">vs.</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-sunset-400 via-amber-300 to-amber-400">Neutral Kinetic Poise</span>
-          </h2>
-          <p class="text-stone-400 text-xs sm:text-sm leading-relaxed">
-            See how sedentary desk habits and muscle imbalances compromise your skeletal kinetic chain—and how targeted 360° corrective alignment restores structural force transfer.
-          </p>
-        </div>
-
-        <!-- INTERACTIVE PLUMB LINE COMPARISON SLIDER (Orbix Studio / Aivo Pattern A) -->
-        <div class="relative rounded-3xl bg-stone-900/80 border border-white/10 overflow-hidden shadow-2xl p-4 sm:p-6 space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+        <!-- CARD 2: Interactive Before vs. After Plumb Line Slider (Aivo Screen 2 Centerpiece) -->
+        <div id="posture-transformation" class="lg:col-span-6 rounded-3xl bg-stone-900/80 border border-white/10 p-6 flex flex-col justify-between shadow-xl space-y-4 scroll-mt-20">
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
             <div>
               <div class="flex items-center space-x-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-sunset-400">Interactive Alignment Slider</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-sunset-400">Sagittal Plumb Vector</span>
                 <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sunset-500/15 text-sunset-300 border border-sunset-500/30">Drag Divider</span>
               </div>
-              <p class="text-xs text-stone-400 mt-0.5">Drag to inspect gravitational load transfer across the sagittal kinetic axis</p>
+              <p class="text-xs text-stone-400 mt-0.5">Drag to inspect gravitational load transfer across the kinetic axis</p>
             </div>
-            <div class="flex items-center space-x-3 text-xs">
-              <span class="flex items-center space-x-1.5 text-rose-400 font-semibold">
-                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                <span>Before: Severe Tech Neck</span>
-              </span>
+            <div class="flex items-center space-x-2 text-[11px] font-semibold">
+              <span class="text-rose-400 flex items-center space-x-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span><span>Before</span></span>
               <span class="text-stone-600">•</span>
-              <span class="flex items-center space-x-1.5 text-emerald-400 font-semibold">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                <span>After: Restored Plumb Line</span>
-              </span>
+              <span class="text-emerald-400 flex items-center space-x-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>After</span></span>
             </div>
           </div>
 
           <!-- Comparison Viewport -->
-          <div id="posture-slider-container" class="comparison-container relative h-80 sm:h-96 w-full rounded-2xl overflow-hidden bg-stone-950 border border-white/5">
+          <div id="posture-slider-container" class="comparison-container relative h-64 sm:h-72 w-full rounded-2xl overflow-hidden bg-stone-950 border border-white/5">
             <!-- AFTER IMAGE (Base Layer) -->
-            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1400&q=80" 
+            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80" 
               alt="After: Athlete demonstrating stacked vertical plumb line posture" 
               class="comparison-after-img filter brightness-95">
 
             <!-- After Badges -->
-            <div class="absolute top-4 right-4 z-10 bg-stone-950/85 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-emerald-300 border border-emerald-500/30 shadow-lg pointer-events-none">
+            <div class="absolute top-3 right-3 z-10 bg-stone-950/85 backdrop-blur px-2.5 py-1 rounded-full text-[10px] font-bold text-emerald-300 border border-emerald-500/30 shadow-lg pointer-events-none">
               AFTER • Neutral Plumb Line
             </div>
 
             <!-- BEFORE LAYER (Clipped Overlay) -->
             <div id="posture-slider-before" class="comparison-before-layer">
-              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1400&q=80" 
+              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80" 
                 alt="Before: Desk worker with severe forward head and rounded spine" 
                 class="filter brightness-90 contrast-105">
               
               <!-- Before Badges -->
-              <div class="absolute top-4 left-4 z-10 bg-stone-950/85 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-rose-300 border border-rose-500/30 shadow-lg pointer-events-none">
-                BEFORE • Cervical Strain
+              <div class="absolute top-3 left-3 z-10 bg-stone-950/85 backdrop-blur px-2.5 py-1 rounded-full text-[10px] font-bold text-rose-300 border border-rose-500/30 shadow-lg pointer-events-none">
+                BEFORE • Cervical Strain (-24°)
               </div>
 
               <!-- Deviation Plumb Line Overlay -->
@@ -344,7 +388,7 @@
 
             <!-- Glowing Amber Draggable Handle -->
             <div id="posture-slider-handle" class="comparison-handle">
-              <i data-lucide="chevrons-left-right" class="w-5 h-5 text-amber-300" aria-hidden="true"></i>
+              <i data-lucide="chevrons-left-right" class="w-4 h-4 text-amber-300" aria-hidden="true"></i>
             </div>
 
             <!-- Hidden Accessibility Range Input -->
@@ -355,32 +399,32 @@
           </div>
 
           <!-- Kinetic Force Transmission Meter -->
-          <div class="p-4 rounded-2xl bg-stone-950/60 border border-white/5 space-y-2">
+          <div class="p-3.5 rounded-2xl bg-stone-950/70 border border-white/5 space-y-2">
             <div class="flex items-center justify-between text-xs font-bold">
               <span class="text-stone-300 flex items-center space-x-1.5">
                 <i data-lucide="gauge" class="w-3.5 h-3.5 text-sunset-400" aria-hidden="true"></i>
-                <span>Kinetic Force Transmission Efficiency</span>
+                <span>Force Transmission Efficiency</span>
               </span>
-              <span class="text-sunset-400 font-mono">+38% Efficiency Gain</span>
+              <span class="text-sunset-400 font-mono text-[11px]">+38% Efficiency Gain</span>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div class="space-y-1">
-                <div class="flex justify-between text-[11px]">
-                  <span class="text-rose-400 font-semibold">Faulty Posture (Before)</span>
-                  <span class="text-stone-400 font-mono">58% Transfer (42% shear loss)</span>
+            <div class="grid grid-cols-2 gap-3 text-[11px]">
+              <div>
+                <div class="flex justify-between text-stone-400 text-[10px]">
+                  <span class="text-rose-400 font-semibold">Faulty (Before)</span>
+                  <span>58%</span>
                 </div>
-                <div class="w-full h-2 rounded-full bg-stone-800 overflow-hidden">
+                <div class="w-full h-1.5 bg-stone-800 rounded-full mt-1 overflow-hidden">
                   <div class="h-full bg-rose-500 rounded-full" style="width: 58%"></div>
                 </div>
               </div>
 
-              <div class="space-y-1">
-                <div class="flex justify-between text-[11px]">
-                  <span class="text-emerald-400 font-semibold">Neutral Poise (After)</span>
-                  <span class="text-stone-400 font-mono">96% Optimal Power Transfer</span>
+              <div>
+                <div class="flex justify-between text-stone-400 text-[10px]">
+                  <span class="text-emerald-400 font-semibold">Neutral (After)</span>
+                  <span>96%</span>
                 </div>
-                <div class="w-full h-2 rounded-full bg-stone-800 overflow-hidden">
+                <div class="w-full h-1.5 bg-stone-800 rounded-full mt-1 overflow-hidden">
                   <div class="h-full bg-gradient-to-r from-sunset-500 to-emerald-400 rounded-full" style="width: 96%"></div>
                 </div>
               </div>
@@ -388,189 +432,144 @@
           </div>
         </div>
 
-        <!-- Before & After Grid Cards -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <!-- BEFORE CARD -->
-          <div class="relative rounded-3xl bg-stone-900/80 border border-rose-500/20 overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-rose-500/40 transition-all duration-300">
-            <!-- Stock Photo Container -->
-            <div class="relative h-64 sm:h-72 w-full overflow-hidden bg-stone-950">
-              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80" 
-                alt="Before: Desk worker displaying severe forward head protraction, rounded shoulders, and spinal fatigue" 
-                loading="lazy"
-                class="w-full h-full object-cover object-center filter brightness-90 contrast-105 group-hover:scale-105 transition duration-500">
-              
-              <!-- Dark Vignette Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent"></div>
+        <!-- CARD 3: Biometric Insights & Alignment Score Arc (Aivo Screen 3) -->
+        <div class="lg:col-span-3 rounded-3xl bg-stone-900/80 border border-white/10 p-6 flex flex-col justify-between shadow-xl space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-stone-400">
+              <span class="font-bold uppercase tracking-wider text-[10px] text-sunset-400">Biometric Insights</span>
+              <span class="text-[10px] text-stone-500">Live Metric</span>
+            </div>
 
-              <!-- Top Badge -->
-              <div class="absolute top-4 left-4 z-10 flex items-center space-x-2">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/90 text-stone-950 shadow-md">
-                  BEFORE • Faulty Alignment
-                </span>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-stone-950/80 text-rose-300 border border-rose-500/30 backdrop-blur">
-                  Kinetic Power Leak
-                </span>
+            <!-- Glowing Circular Score Hero Arc -->
+            <div class="relative flex flex-col items-center justify-center pt-2">
+              <div class="w-36 h-24 relative flex items-center justify-center">
+                <svg viewBox="0 0 160 100" class="w-36 h-24 overflow-visible">
+                  <!-- Arc background track -->
+                  <path d="M 20 85 A 60 60 0 0 1 140 85" fill="none" stroke="#26221f" stroke-width="12" stroke-linecap="round" />
+                  <!-- Glowing active arc progress -->
+                  <path d="M 20 85 A 60 60 0 0 1 125 45" fill="none" stroke="url(#arcGlowAivo)" stroke-width="12" stroke-linecap="round" />
+                  <defs>
+                    <linearGradient id="arcGlowAivo" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="#ea580c" />
+                      <stop offset="60%" stop-color="#f97316" />
+                      <stop offset="100%" stop-color="#fde047" />
+                    </linearGradient>
+                  </defs>
+                  <!-- Dial thumb marker -->
+                  <circle cx="125" cy="45" r="7" fill="#ffffff" stroke="#f97316" stroke-width="3" />
+                </svg>
               </div>
 
-              <!-- Callout Pill Pins on Photo -->
-              <div class="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 z-10">
-                <div class="bg-stone-950/90 backdrop-blur border border-rose-500/40 px-2.5 py-1 rounded-full text-[11px] font-bold text-rose-300 flex items-center space-x-1 shadow">
-                  <i data-lucide="alert-triangle" class="w-3 h-3 text-rose-400" aria-hidden="true"></i>
-                  <span>Tech Neck (CVA -24°)</span>
-                </div>
-                <div class="bg-stone-950/90 backdrop-blur border border-rose-500/40 px-2.5 py-1 rounded-full text-[11px] font-bold text-rose-300 flex items-center space-x-1 shadow">
-                  <span>Thoracic Kyphosis +18°</span>
-                </div>
-                <div class="bg-stone-950/90 backdrop-blur border border-rose-500/40 px-2.5 py-1 rounded-full text-[11px] font-bold text-rose-300 flex items-center space-x-1 shadow">
-                  <span>Anterior Pelvic Tilt</span>
-                </div>
+              <div class="text-center -mt-4">
+                <div class="font-display font-black text-3xl text-stone-100">82<span class="text-base font-normal text-stone-400">/100</span></div>
+                <div class="text-[10px] text-sunset-400 font-semibold mt-0.5">↗ 12% improvement</div>
+                <p class="text-[11px] text-stone-400 mt-1">Your alignment score</p>
               </div>
             </div>
 
-            <!-- Detailed Breakdown Content -->
-            <div class="p-6 space-y-4">
-              <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                <div>
-                  <h3 class="font-display font-bold text-lg text-rose-300">Biomechanical Breakdown</h3>
-                  <p class="text-xs text-stone-400">Compensatory muscle patterns & spinal strain</p>
-                </div>
-                <span class="text-xs font-bold px-3 py-1 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/30">
-                  -42% Efficiency
-                </span>
+            <!-- Activity Matrix Grid (Matching Screen 3) -->
+            <div class="space-y-1.5 pt-2 border-t border-stone-800">
+              <div class="flex items-center justify-between text-[10px] text-stone-400">
+                <span class="font-bold">Kinetic Joint Matrix</span>
+                <span class="text-stone-500">Quad Axis</span>
               </div>
-
-              <div class="space-y-3 text-xs text-stone-300">
-                <div class="flex items-start space-x-2.5">
-                  <div class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">1</div>
-                  <div>
-                    <strong class="text-stone-200">Forward Head Protraction (Tech Neck):</strong>
-                    <p class="text-stone-400 mt-0.5">Every inch of forward head tilt doubles cervical strain, generating up to 60 lbs of compressive shear on C5-C7 vertebrae.</p>
-                  </div>
+              <div class="flex flex-col space-y-1.5 items-center">
+                <div class="flex space-x-1.5">
+                  <div class="activity-matrix-pill active"></div>
+                  <div class="activity-matrix-pill active"></div>
+                  <div class="activity-matrix-pill active"></div>
+                  <div class="activity-matrix-pill"></div>
                 </div>
-
-                <div class="flex items-start space-x-2.5">
-                  <div class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">2</div>
-                  <div>
-                    <strong class="text-stone-200">Rounded Shoulders & Kyphosis:</strong>
-                    <p class="text-stone-400 mt-0.5">Inhibited lower trapezius and locked pectoralis minor restrict vital lung capacity and cause overhead shoulder impingement.</p>
-                  </div>
+                <div class="flex space-x-1.5">
+                  <div class="activity-matrix-pill highlight"></div>
+                  <div class="activity-matrix-pill highlight"></div>
+                  <div class="activity-matrix-pill active"></div>
+                  <div class="activity-matrix-pill active"></div>
                 </div>
-
-                <div class="flex items-start space-x-2.5">
-                  <div class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">3</div>
-                  <div>
-                    <strong class="text-stone-200">Anterior Pelvic Tilt (Lower Crossed):</strong>
-                    <p class="text-stone-400 mt-0.5">Shortened hip flexors shut down glute recruitment during sprints and load the lumbar spine with excessive shear.</p>
-                  </div>
+                <div class="flex space-x-1.5">
+                  <div class="activity-matrix-pill active"></div>
+                  <div class="activity-matrix-pill"></div>
+                  <div class="activity-matrix-pill highlight"></div>
+                  <div class="activity-matrix-pill active"></div>
                 </div>
-              </div>
-
-              <div class="pt-2 border-t border-white/5 flex items-center justify-between text-xs text-stone-400">
-                <span>Resulting Risk: Chronic Lumbar & Cervical Pain</span>
-                <span class="text-rose-400 font-semibold">Elevated Injury Rate</span>
               </div>
             </div>
           </div>
 
-          <!-- AFTER CARD -->
-          <div class="relative rounded-3xl bg-stone-900/80 border border-emerald-500/25 overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-emerald-500/50 transition-all duration-300">
-            <!-- Stock Photo Container -->
-            <div class="relative h-64 sm:h-72 w-full overflow-hidden bg-stone-950">
-              <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80" 
-                alt="After: Athlete demonstrating neutral vertical plumb line stacking, open thoracic expansion, and optimal pelvic stability" 
-                loading="lazy"
-                class="w-full h-full object-cover object-center filter brightness-95 contrast-105 group-hover:scale-105 transition duration-500">
-              
-              <!-- Dark Vignette Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent"></div>
-
-              <!-- Top Badge -->
-              <div class="absolute top-4 left-4 z-10 flex items-center space-x-2">
-                <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-400 text-stone-950 shadow-md">
-                  AFTER • Restored Neutral Poise
-                </span>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-stone-950/80 text-emerald-300 border border-emerald-500/30 backdrop-blur">
-                  Optimal Force Transfer
-                </span>
-              </div>
-
-              <!-- Callout Pill Pins on Photo -->
-              <div class="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2 z-10">
-                <div class="bg-stone-950/90 backdrop-blur border border-emerald-500/40 px-2.5 py-1 rounded-full text-[11px] font-bold text-emerald-300 flex items-center space-x-1 shadow">
-                  <i data-lucide="check" class="w-3 h-3 text-emerald-400" aria-hidden="true"></i>
-                  <span>Stacked Gravity Plumb Line</span>
-                </div>
-                <div class="bg-stone-950/90 backdrop-blur border border-emerald-500/40 px-2.5 py-1 rounded-full text-[11px] font-bold text-emerald-300 flex items-center space-x-1 shadow">
-                  <span>Scapular Retraction & Open Thorax</span>
-                </div>
-                <div class="bg-stone-950/90 backdrop-blur border border-emerald-500/40 px-2.5 py-1 rounded-full text-[11px] font-bold text-emerald-300 flex items-center space-x-1 shadow">
-                  <span>Neutral Pelvic Platform</span>
-                </div>
-              </div>
+          <!-- Daily Alignment Slider Track -->
+          <div class="pt-2 border-t border-stone-800 text-[11px] space-y-1">
+            <div class="flex justify-between text-[10px] text-stone-400">
+              <span>Neutral Plumb Ratio</span>
+              <span class="font-bold text-stone-200">88%</span>
             </div>
-
-            <!-- Detailed Breakdown Content -->
-            <div class="p-6 space-y-4">
-              <div class="flex items-center justify-between border-b border-white/5 pb-3">
-                <div>
-                  <h3 class="font-display font-bold text-lg text-emerald-300">Targeted Kinetic Realignment</h3>
-                  <p class="text-xs text-stone-400">Postural integrity unlocked via 360° pre-hab drills</p>
-                </div>
-                <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                  96% Force Transmission
-                </span>
-              </div>
-
-              <div class="space-y-3 text-xs text-stone-300">
-                <div class="flex items-start space-x-2.5">
-                  <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">1</div>
-                  <div>
-                    <strong class="text-stone-200">Balanced Gravity Axis:</strong>
-                    <p class="text-stone-400 mt-0.5">Ear tragus, acromion, greater trochanter, and lateral malleolus align on a single vertical plumb vector, eliminating compressive cervical fatigue.</p>
-                  </div>
-                </div>
-
-                <div class="flex items-start space-x-2.5">
-                  <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">2</div>
-                  <div>
-                    <strong class="text-stone-200">Optimal Thoracic Expansion:</strong>
-                    <p class="text-stone-400 mt-0.5">Active rhomboids and serratus anterior stabilize the shoulder girdle, restoring full overhead rotational leverage and deep respiratory mechanics.</p>
-                  </div>
-                </div>
-
-                <div class="flex items-start space-x-2.5">
-                  <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 font-bold text-[10px]">3</div>
-                  <div>
-                    <strong class="text-stone-200">Neutral Pelvic Stacking:</strong>
-                    <p class="text-stone-400 mt-0.5">Gluteus maximus activates fully in hip extension, protecting the lumbar spine and driving maximal ground reaction force.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pt-2 border-t border-white/5 flex items-center justify-between text-xs text-stone-400">
-                <span>Outcome: Maximal Power & Movement Longevity</span>
-                <span class="text-emerald-400 font-semibold">Resilient Performance</span>
-              </div>
+            <div class="w-full h-1.5 bg-stone-800 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-sunset-500 to-amber-400 rounded-full" style="width: 88%"></div>
             </div>
           </div>
+        </div>
 
+      </div>
+
+      <!-- Movement Discipline Selector (Clean Compact Strip) -->
+      <div class="space-y-3 pt-2">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-display font-bold text-stone-200 flex items-center space-x-2">
+            <i data-lucide="layers" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+            <span>Movement Screening Discipline</span>
+          </h2>
+          <span class="text-[11px] text-stone-400">Calibrates anatomical thresholds</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="sport-selector-container" role="radiogroup" aria-label="Movement Screening Discipline">
+          <!-- Dynamically populated via JS -->
         </div>
       </div>
 
-      <!-- SECTION: REAL DATA ARCHITECTURE & ACCURACY -->
-      <div id="real-data-architecture" class="bg-ambient-card-glow rounded-3xl p-6 sm:p-8 border border-white/5 space-y-6 scroll-mt-20">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <!-- Preparation & Scanning Checklist (Concise & Clean) -->
+      <div id="how-it-works" class="bg-stone-900/60 rounded-3xl p-6 border border-white/5 space-y-4 scroll-mt-20">
+        <div class="flex items-center justify-between border-b border-white/5 pb-3">
+          <h3 class="font-display font-bold text-stone-100 text-sm flex items-center space-x-2">
+            <i data-lucide="check-circle" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+            <span>How Hands-Free Automatic Scanning Works</span>
+          </h3>
+          <span class="text-[11px] text-emerald-400 font-semibold flex items-center space-x-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>100% On-Device Wasm</span>
+          </span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs text-stone-300">
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold text-[11px]">01 • Placement</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">Prop device upright at waist height on a table, 7 to 8 feet away.</p>
+          </div>
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold text-[11px]">02 • Auto Trigger</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">Step into frame. Once the guide box turns green, recording commences automatically.</p>
+          </div>
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold text-[11px]">03 • 360° Slow Turn</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">Following voice prompts, make one slow clockwise turn over ~10 seconds.</p>
+          </div>
+          <div class="bg-stone-950/60 p-4 rounded-2xl border border-white/5 space-y-1">
+            <div class="text-sunset-400 font-bold text-[11px]">04 • Actionable Plan</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">Inspect your 3D joint vectors, plumb lines, and personalized corrective drills.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real Data Architecture & Zero-Synthetic Guarantee -->
+      <div id="real-data-architecture" class="bg-stone-900/60 rounded-3xl p-6 sm:p-8 border border-white/5 space-y-6 scroll-mt-20">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4">
           <div class="space-y-1">
             <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>100% EMPIRICAL BIOMECHANICS</span>
             </div>
-            <h3 class="font-display font-extrabold text-xl sm:text-2xl text-stone-100">
-              How Real Data Replaces Hardcoded Approximations
+            <h3 class="font-display font-extrabold text-xl text-stone-100">
+              Real 3D Joint Geometry • Zero Synthetic Overrides
             </h3>
-            <p class="text-xs sm:text-sm text-stone-400 max-w-2xl">
-              Unlike traditional apps that display static pre-set scores, KineticScan processes your actual physical landmarks in 3D metric coordinates through client-side WebAssembly.
+            <p class="text-xs text-stone-400 max-w-xl">
+              Unlike static mockups, KineticScan calculates actual 3D landmark vectors and Cobb angles in real-time using client-side WebAssembly.
             </p>
           </div>
 
@@ -583,25 +582,25 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div class="p-4 rounded-2xl bg-stone-950/70 border border-white/5 space-y-2">
-            <div class="w-8 h-8 rounded-full bg-sunset-500/15 flex items-center justify-center text-sunset-400 font-bold">1</div>
-            <div class="text-sm font-bold text-stone-200">33-Point Metric Skeleton</div>
-            <p class="text-stone-400 leading-relaxed">
+            <div class="w-7 h-7 rounded-full bg-sunset-500/15 flex items-center justify-center text-sunset-400 font-bold text-xs">1</div>
+            <div class="text-xs font-bold text-stone-200">33-Point Metric Skeleton</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">
               Every frame extracts actual 3D landmark vectors (X, Y, Z coordinates + detection visibility confidence) measured in metric space relative to your body center.
             </p>
           </div>
 
           <div class="p-4 rounded-2xl bg-stone-950/70 border border-white/5 space-y-2">
-            <div class="w-8 h-8 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 font-bold">2</div>
-            <div class="text-sm font-bold text-stone-200">Trigonometric Vector Math</div>
-            <p class="text-stone-400 leading-relaxed">
+            <div class="w-7 h-7 rounded-full bg-amber-500/15 flex items-center justify-center text-amber-400 font-bold text-xs">2</div>
+            <div class="text-xs font-bold text-stone-200">Trigonometric Vector Math</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">
               Angles are calculated dynamically via dot products: &theta; = arccos(&vec;u &middot; &vec;v / ||&vec;u|| ||&vec;v||), computing real Cobb, Q-angles, and plumb line deltas.
             </p>
           </div>
 
           <div class="p-4 rounded-2xl bg-stone-950/70 border border-white/5 space-y-2">
-            <div class="w-8 h-8 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-400 font-bold">3</div>
-            <div class="text-sm font-bold text-stone-200">Zero Synthetic Overrides</div>
-            <p class="text-stone-400 leading-relaxed">
+            <div class="w-7 h-7 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-400 font-bold text-xs">3</div>
+            <div class="text-xs font-bold text-stone-200">Zero Synthetic Overrides</div>
+            <p class="text-stone-400 text-[11px] leading-relaxed">
               Your report is derived strictly from real captured frames. Unrotated planes are clearly tagged rather than populated with hardcoded placeholders.
             </p>
           </div>
