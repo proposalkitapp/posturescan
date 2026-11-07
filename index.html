@@ -289,6 +289,105 @@
           </p>
         </div>
 
+        <!-- INTERACTIVE PLUMB LINE COMPARISON SLIDER (Orbix Studio / Aivo Pattern A) -->
+        <div class="relative rounded-3xl bg-stone-900/80 border border-white/10 overflow-hidden shadow-2xl p-4 sm:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-sunset-400">Interactive Alignment Slider</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-sunset-500/15 text-sunset-300 border border-sunset-500/30">Drag Divider</span>
+              </div>
+              <p class="text-xs text-stone-400 mt-0.5">Drag to inspect gravitational load transfer across the sagittal kinetic axis</p>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+              <span class="flex items-center space-x-1.5 text-rose-400 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                <span>Before: Severe Tech Neck</span>
+              </span>
+              <span class="text-stone-600">•</span>
+              <span class="flex items-center space-x-1.5 text-emerald-400 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>After: Restored Plumb Line</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Comparison Viewport -->
+          <div id="posture-slider-container" class="comparison-container relative h-80 sm:h-96 w-full rounded-2xl overflow-hidden bg-stone-950 border border-white/5">
+            <!-- AFTER IMAGE (Base Layer) -->
+            <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1400&q=80" 
+              alt="After: Athlete demonstrating stacked vertical plumb line posture" 
+              class="comparison-after-img filter brightness-95">
+
+            <!-- After Badges -->
+            <div class="absolute top-4 right-4 z-10 bg-stone-950/85 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-emerald-300 border border-emerald-500/30 shadow-lg pointer-events-none">
+              AFTER • Neutral Plumb Line
+            </div>
+
+            <!-- BEFORE LAYER (Clipped Overlay) -->
+            <div id="posture-slider-before" class="comparison-before-layer">
+              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1400&q=80" 
+                alt="Before: Desk worker with severe forward head and rounded spine" 
+                class="filter brightness-90 contrast-105">
+              
+              <!-- Before Badges -->
+              <div class="absolute top-4 left-4 z-10 bg-stone-950/85 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-rose-300 border border-rose-500/30 shadow-lg pointer-events-none">
+                BEFORE • Cervical Strain
+              </div>
+
+              <!-- Deviation Plumb Line Overlay -->
+              <div class="plumb-vector-line left-[42%]"></div>
+            </div>
+
+            <!-- Amber Divider Line -->
+            <div class="comparison-divider-line"></div>
+
+            <!-- Glowing Amber Draggable Handle -->
+            <div id="posture-slider-handle" class="comparison-handle">
+              <i data-lucide="chevrons-left-right" class="w-5 h-5 text-amber-300" aria-hidden="true"></i>
+            </div>
+
+            <!-- Hidden Accessibility Range Input -->
+            <input type="range" id="posture-slider-input" min="0" max="100" value="50" 
+              class="comparison-range-input" 
+              aria-label="Drag slider to compare before and after postural alignment"
+              oninput="app.updatePostureSlider(this.value)">
+          </div>
+
+          <!-- Kinetic Force Transmission Meter -->
+          <div class="p-4 rounded-2xl bg-stone-950/60 border border-white/5 space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold">
+              <span class="text-stone-300 flex items-center space-x-1.5">
+                <i data-lucide="gauge" class="w-3.5 h-3.5 text-sunset-400" aria-hidden="true"></i>
+                <span>Kinetic Force Transmission Efficiency</span>
+              </span>
+              <span class="text-sunset-400 font-mono">+38% Efficiency Gain</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="space-y-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-rose-400 font-semibold">Faulty Posture (Before)</span>
+                  <span class="text-stone-400 font-mono">58% Transfer (42% shear loss)</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-stone-800 overflow-hidden">
+                  <div class="h-full bg-rose-500 rounded-full" style="width: 58%"></div>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-emerald-400 font-semibold">Neutral Poise (After)</span>
+                  <span class="text-stone-400 font-mono">96% Optimal Power Transfer</span>
+                </div>
+                <div class="w-full h-2 rounded-full bg-stone-800 overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-sunset-500 to-emerald-400 rounded-full" style="width: 96%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Before & After Grid Cards -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           

@@ -45,7 +45,20 @@ class AppController {
       } catch (e) {}
     }
 
+    this.initPostureSlider();
+
     if (window.lucide) lucide.createIcons();
+  }
+
+  initPostureSlider() {
+    this.updatePostureSlider(50);
+  }
+
+  updatePostureSlider(val) {
+    const container = document.getElementById('posture-slider-container');
+    if (container) {
+      container.style.setProperty('--split-pos', `${val}%`);
+    }
   }
 
   navigate(view) {
