@@ -562,51 +562,70 @@
           </div>
         </div>
 
-        <!-- 3 Highlight Findings -->
-        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- 4 Dedicated Clinical Metric Cards -->
+        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
           
-          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-2">
+          <!-- Card 1: Cervical Spine (CVA & Neck Strain) -->
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Pelvic Vector</span>
-              <span id="badge-pelvic-tilt" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">APT (14°)</span>
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Cervical Spine • CVA</span>
+              <span id="badge-cervical" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">Mild (+24 lbs / 11 kg)</span>
             </div>
             <div>
-              <div class="text-sm font-bold text-stone-100">Anterior Pelvic Tilt</div>
-              <p class="text-xs text-stone-400 mt-1" id="desc-pelvic-tilt">Shortened hip flexors limit terminal hip extension.</p>
+              <div class="text-sm font-bold text-stone-100">Craniovertebral Angle (CVA)</div>
+              <p class="text-xs text-stone-400 mt-1" id="desc-cervical">CVA 48° adds +24 lbs (11 kg) of continuous tension on upper cervical extensors.</p>
             </div>
-            <div class="text-[11px] text-sunset-400 font-semibold flex items-center space-x-1 pt-1">
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              <span>Sprint extension leak</span>
+            <div id="load-cervical" class="text-[11px] text-amber-400 font-semibold flex items-center space-x-1 pt-1 border-t border-white/5">
+              <i data-lucide="scale" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>Cervical load: +24 lbs (11 kg)</span>
             </div>
           </div>
 
-          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-2">
+          <!-- Card 2: Thoracic Spine (Kyphosis & Cobb Proxy) -->
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Knee Tracking</span>
-              <span id="badge-knee-valgus" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/25">Valgus (6°)</span>
-            </div>
-            <div>
-              <div class="text-sm font-bold text-stone-100">Medial Collapse</div>
-              <p class="text-xs text-stone-400 mt-1" id="desc-knee-valgus">Inward tracking points to weak lateral glute stabilizers.</p>
-            </div>
-            <div class="text-[11px] text-rose-400 font-semibold flex items-center space-x-1 pt-1">
-              <i data-lucide="alert-circle" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              <span>Elevated knee stress</span>
-            </div>
-          </div>
-
-          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Upper Quadrant</span>
-              <span id="badge-kyphosis" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">Kyphotic (18°)</span>
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Thoracic Spine • Cobb Proxy</span>
+              <span id="badge-kyphosis" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">Cobb 42° • Mild</span>
             </div>
             <div>
               <div class="text-sm font-bold text-stone-100">Thoracic Kyphosis</div>
-              <p class="text-xs text-stone-400 mt-1" id="desc-kyphosis">Scapular protraction restricts overhead reach.</p>
+              <p class="text-xs text-stone-400 mt-1" id="desc-kyphosis">Scapular protraction restricts overhead reach and thoracic rotation.</p>
             </div>
-            <div class="text-[11px] text-amber-400 font-semibold flex items-center space-x-1 pt-1">
+            <div class="text-[11px] text-amber-400 font-semibold flex items-center space-x-1 pt-1 border-t border-white/5">
+              <i data-lucide="shield" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>Limits rotational whip & respiration</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Lumbopelvic (Pelvic Tilt) -->
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Lumbopelvic • Hip Flexor</span>
+              <span id="badge-pelvic-tilt" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25">APT (7°) • Mild</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-stone-100">Anterior Pelvic Tilt</div>
+              <p class="text-xs text-stone-400 mt-1" id="desc-pelvic-tilt">Shortened hip flexors limit terminal hip extension in the drive phase.</p>
+            </div>
+            <div class="text-[11px] text-amber-400 font-semibold flex items-center space-x-1 pt-1 border-t border-white/5">
               <i data-lucide="arrow-right" class="w-3.5 h-3.5" aria-hidden="true"></i>
-              <span>Limits rotational whip</span>
+              <span>Sprint extension leak & lumbar shear</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Lower Extremity (Knee Valgus / Q-Angle) -->
+          <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Lower Kinetic Chain • Q-Angle</span>
+              <span id="badge-knee-valgus" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">Optimal Tracking (2°)</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-stone-100">Medial Knee Tracking</div>
+              <p class="text-xs text-stone-400 mt-1" id="desc-knee-valgus">Neutral knee alignment tracked along the second toe axis.</p>
+            </div>
+            <div class="text-[11px] text-emerald-400 font-semibold flex items-center space-x-1 pt-1 border-t border-white/5">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5" aria-hidden="true"></i>
+              <span>Patellofemoral balance & ACL protection</span>
             </div>
           </div>
 

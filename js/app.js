@@ -429,29 +429,73 @@ class AppController {
     if (scoreBalance) scoreBalance.innerText = `${res.metrics.bilateralBalanceScore}%`;
     if (barBalance) barBalance.style.width = `${res.metrics.bilateralBalanceScore}%`;
 
-    const badgeApt = document.getElementById('badge-pelvic-tilt');
-    const descApt = document.getElementById('desc-pelvic-tilt');
-    if (badgeApt) badgeApt.innerText = `Dev ${res.metrics.pelvicDev}°`;
-    if (descApt && res.metrics.pelvicDev > 7) {
-      descApt.innerText = 'Shortened hip flexors limit terminal hip extension in the drive phase.';
+    const getSeverityBadgeClass = (severity) => {
+      if (severity === 'Optimal') return 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25';
+      if (severity === 'Mild') return 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25';
+      return 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/25';
+    };
+
+    const m = res.metrics;
+
+    // 1. Cervical Card (CVA & Neck Strain in lbs & kg)
+    const badgeCervical = document.getElementById('badge-cervical');
+    const descCervical = document.getElementById('desc-cervical');
+    const loadCervical = document.getElementById('load-cervical');
+
+    if (badgeCervical) {
+      badgeCervical.innerText = m.extraNeckLoadLbs > 0 
+        ? `${m.cervicalSeverity} (+${m.extraNeckLoadLbs} lbs / ${m.extraNeckLoadKg} kg)`
+        : 'Optimal Alignment';
+      badgeCervical.className = getSeverityBadgeClass(m.cervicalSeverity);
+    }
+    if (descCervical) {
+      descCervical.innerText = m.extraNeckLoadLbs > 0
+        ? `CVA ${m.cvaDeg}° adds +${m.extraNeckLoadLbs} lbs (${m.extraNeckLoadKg} kg) of continuous tension on upper cervical extensors.`
+        : `CVA ${m.cvaDeg}° represents optimal neutral head stacking over the thoracic spine with minimal neck muscle fatigue.`;
+    }
+    if (loadCervical) {
+      loadCervical.innerHTML = m.extraNeckLoadLbs > 0
+        ? `<i data-lucide="scale" class="w-3.5 h-3.5" aria-hidden="true"></i><span>Extra neck strain: +${m.extraNeckLoadLbs} lbs / ${m.extraNeckLoadKg} kg</span>`
+        : `<i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400" aria-hidden="true"></i><span class="text-emerald-400">Neutral cervical gravity line</span>`;
     }
 
-    const badgeValgus = document.getElementById('badge-knee-valgus');
-    const descValgus = document.getElementById('desc-knee-valgus');
-    if (badgeValgus) badgeValgus.innerText = `Valgus ${res.metrics.valgusAngle}°`;
-    if (descValgus) {
-      descValgus.innerText = res.metrics.valgusAngle > 5.5
-        ? 'Medial tracking points to underactive gluteus medius hip stabilizers.'
-        : 'Neutral knee alignment tracked along the second toe axis.';
-    }
-
+    // 2. Thoracic Card (Cobb Proxy & Kyphosis)
     const badgeKyphosis = document.getElementById('badge-kyphosis');
     const descKyphosis = document.getElementById('desc-kyphosis');
-    if (badgeKyphosis) badgeKyphosis.innerText = `Kyphotic ${res.metrics.thoracicTilt}°`;
+    if (badgeKyphosis) {
+      badgeKyphosis.innerText = `Cobb ${m.kyphosisCobb}° • ${m.kyphosisSeverity}`;
+      badgeKyphosis.className = getSeverityBadgeClass(m.kyphosisSeverity);
+    }
     if (descKyphosis) {
-      descKyphosis.innerText = res.metrics.thoracicTilt > 7.5
-        ? 'Scapular protraction restricts overhead reach and thoracic rotation.'
-        : 'Upright thoracic stacking supporting deep respiratory volume.';
+      descKyphosis.innerText = m.kyphosisCobb > 45
+        ? 'Scapular protraction and thoracic curve restrict overhead reach and rotational power.'
+        : 'Upright thoracic stacking supporting deep respiratory volume and scapular mobility.';
+    }
+
+    // 3. Pelvic Card (APT)
+    const badgeApt = document.getElementById('badge-pelvic-tilt');
+    const descApt = document.getElementById('desc-pelvic-tilt');
+    if (badgeApt) {
+      badgeApt.innerText = `APT (${m.pelvicDev}°) • ${m.pelvicSeverity}`;
+      badgeApt.className = getSeverityBadgeClass(m.pelvicSeverity);
+    }
+    if (descApt) {
+      descApt.innerText = m.pelvicDev > 7
+        ? 'Shortened hip flexors limit terminal hip extension in the drive phase and load the lumbar spine.'
+        : 'Neutral pelvis alignment allows efficient glute activation and abdominal bracing.';
+    }
+
+    // 4. Knee Tracking Card (Valgus)
+    const badgeValgus = document.getElementById('badge-knee-valgus');
+    const descValgus = document.getElementById('desc-knee-valgus');
+    if (badgeValgus) {
+      badgeValgus.innerText = `${m.valgusSeverity} (${m.valgusAngle}°)`;
+      badgeValgus.className = getSeverityBadgeClass(m.valgusSeverity);
+    }
+    if (descValgus) {
+      descValgus.innerText = m.valgusAngle > 4.5
+        ? 'Medial tracking points to underactive gluteus medius stabilizers and elevated patellofemoral shear.'
+        : 'Neutral knee alignment tracked along the second toe axis with balanced lateral stability.';
     }
 
     this.renderMilestoneInspection();

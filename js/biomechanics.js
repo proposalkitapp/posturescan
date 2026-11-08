@@ -113,6 +113,17 @@ class BiomechanicsEngine {
     const rightValgusDev = Math.max(0, 180 - rightKneeAngle);
     const maxValgusDev = Math.max(leftValgusDev, rightValgusDev);
 
+    let valgusSeverity = 'Optimal';
+    if (maxValgusDev > 9.0) {
+      valgusSeverity = 'Severe';
+    } else if (maxValgusDev > 5.5) {
+      valgusSeverity = 'Moderate';
+    } else if (maxValgusDev > 3.0) {
+      valgusSeverity = 'Mild';
+    } else {
+      valgusSeverity = 'Optimal';
+    }
+
     // 4. Lateral Shift (Trunk vs Pelvis Center)
     const shoulderMidX = (ls.x + rs.x) / 2;
     const hipMidX = (lh.x + rh.x) / 2;
@@ -126,8 +137,9 @@ class BiomechanicsEngine {
       leftKneeAngle: Math.round(leftKneeAngle * 10) / 10,
       rightKneeAngle: Math.round(rightKneeAngle * 10) / 10,
       maxValgusDev: Math.round(maxValgusDev * 10) / 10,
+      valgusSeverity,
       lateralShiftPct: Math.round(lateralShift * 10) / 10,
-      hasKneeValgus: maxValgusDev > 6.0,
+      hasKneeValgus: maxValgusDev > 4.5,
       hasShoulderTilt: shoulderTilt > 2.5,
       hasPelvicTilt: pelvicTilt > 2.5
     };
@@ -144,19 +156,75 @@ class BiomechanicsEngine {
     const knee = isRightSide ? landmarks[26] : landmarks[25];
     const ankle = isRightSide ? landmarks[28] : landmarks[27];
 
-    // 1. Forward Head Tilt (Craniovertebral Plumb Vector)
+    // 1. Forward Head Tilt (Craniovertebral Plumb Vector & CVA)
     // Line from Shoulder to Ear vs vertical plumb line
     const forwardHeadTilt = Math.abs(this.calculateVerticalTilt(shoulder, ear));
+    // Clinical Craniovertebral Angle (CVA) relative to horizontal
+    const cvaDeg = Math.round(Math.max(25, Math.min(65, 90 - forwardHeadTilt)) * 10) / 10;
 
-    // 2. Thoracic Kyphosis & Forward Shoulder Displacement
+    // Hansraj Spinal Biomechanics Cervical Load calculation:
+    // Base head weight at neutral (~0-7°): ~10-12 lbs (0 lbs extra)
+    // At ~15° tilt (CVA ~45-50°): +15 lbs / 7 kg extra load
+    // At ~30° tilt (CVA ~38-44°): +28 lbs / 13 kg extra load
+    // At ~45° tilt (CVA ~30-37°): +39 lbs / 18 kg extra load
+    // At >45° tilt (CVA <30°): +50 lbs / 23 kg extra load
+    let extraNeckLoadLbs = 0;
+    let extraNeckLoadKg = 0;
+    let cervicalSeverity = 'Optimal';
+
+    if (forwardHeadTilt > 35) {
+      extraNeckLoadLbs = 44;
+      extraNeckLoadKg = 20;
+      cervicalSeverity = 'Severe';
+    } else if (forwardHeadTilt > 22) {
+      extraNeckLoadLbs = 34;
+      extraNeckLoadKg = 15;
+      cervicalSeverity = 'Moderate';
+    } else if (forwardHeadTilt > 12) {
+      extraNeckLoadLbs = 24;
+      extraNeckLoadKg = 11;
+      cervicalSeverity = 'Moderate';
+    } else if (forwardHeadTilt > 6.5) {
+      extraNeckLoadLbs = 14;
+      extraNeckLoadKg = 6;
+      cervicalSeverity = 'Mild';
+    } else {
+      extraNeckLoadLbs = 0;
+      extraNeckLoadKg = 0;
+      cervicalSeverity = 'Optimal';
+    }
+
+    // 2. Thoracic Kyphosis & Cobb Angle Proxy
     // Line from Hip to Shoulder vs vertical
     const thoracicTilt = Math.abs(this.calculateVerticalTilt(hip, shoulder));
+    // Cobb Angle Proxy (Clinical baseline ~28° + surface inclination * 1.5)
+    const kyphosisCobb = Math.round(Math.min(75, Math.max(25, 28 + thoracicTilt * 1.6)) * 10) / 10;
+    let kyphosisSeverity = 'Optimal';
+    if (kyphosisCobb > 55) {
+      kyphosisSeverity = 'Severe';
+    } else if (kyphosisCobb > 46) {
+      kyphosisSeverity = 'Moderate';
+    } else if (kyphosisCobb > 38) {
+      kyphosisSeverity = 'Mild';
+    } else {
+      kyphosisSeverity = 'Optimal';
+    }
 
     // 3. Pelvic Tilt (Relative angle between Torso and Thigh)
     // Hip angle at vertex: Shoulder -> Hip -> Knee
     const hipAngle = this.calculateAngle2D(shoulder, hip, knee);
     // Neutral standing is ~175°-180°. Under 170° indicates anterior hip flexion tilt
-    const pelvicTiltDev = Math.abs(180 - hipAngle);
+    const pelvicTiltDev = Math.round(Math.abs(180 - hipAngle) * 10) / 10;
+    let pelvicSeverity = 'Optimal';
+    if (pelvicTiltDev > 14) {
+      pelvicSeverity = 'Severe';
+    } else if (pelvicTiltDev > 9) {
+      pelvicSeverity = 'Moderate';
+    } else if (pelvicTiltDev > 5) {
+      pelvicSeverity = 'Mild';
+    } else {
+      pelvicSeverity = 'Optimal';
+    }
 
     // 4. Kinetic Chain Plumb Line Horizontal Deviation
     // Deviation of Ear, Shoulder, and Hip relative to Ankle X-coordinate
@@ -167,15 +235,22 @@ class BiomechanicsEngine {
     return {
       side: isRightSide ? 'Right' : 'Left',
       forwardHeadDeg: Math.round(forwardHeadTilt * 10) / 10,
+      cvaDeg,
+      extraNeckLoadLbs,
+      extraNeckLoadKg,
+      cervicalSeverity,
       thoracicTiltDeg: Math.round(thoracicTilt * 10) / 10,
+      kyphosisCobb,
+      kyphosisSeverity,
       hipAngleDeg: Math.round(hipAngle * 10) / 10,
-      pelvicTiltDevDeg: Math.round(pelvicTiltDev * 10) / 10,
+      pelvicTiltDevDeg: pelvicTiltDev,
+      pelvicSeverity,
       earOffsetPct: Math.round(earOffset * 10) / 10,
       shoulderOffsetPct: Math.round(shoulderOffset * 10) / 10,
       hipOffsetPct: Math.round(hipOffset * 10) / 10,
       isAnteriorPelvicTilt: hipAngle < 172,
-      isForwardHead: forwardHeadTilt > 12.0,
-      isThoracicKyphosis: thoracicTilt > 8.0
+      isForwardHead: forwardHeadTilt > 10.0,
+      isThoracicKyphosis: thoracicTilt > 7.5
     };
   }
 
@@ -193,13 +268,25 @@ class BiomechanicsEngine {
     const hasCoronal = anterior || posterior;
 
     // Real measured values directly from user landmarks
-    const forwardHead = rightSagittal ? rightSagittal.forwardHeadDeg : (leftSagittal ? leftSagittal.forwardHeadDeg : 0);
-    const thoracicTilt = rightSagittal ? rightSagittal.thoracicTiltDeg : (leftSagittal ? leftSagittal.thoracicTiltDeg : 0);
-    const pelvicDev = rightSagittal ? rightSagittal.pelvicTiltDevDeg : (leftSagittal ? leftSagittal.pelvicTiltDevDeg : 0);
+    const activeSagittal = rightSagittal || leftSagittal;
+    const forwardHead = activeSagittal ? activeSagittal.forwardHeadDeg : 0;
+    const cvaDeg = activeSagittal ? activeSagittal.cvaDeg : 55;
+    const extraNeckLoadLbs = activeSagittal ? activeSagittal.extraNeckLoadLbs : 0;
+    const extraNeckLoadKg = activeSagittal ? activeSagittal.extraNeckLoadKg : 0;
+    const cervicalSeverity = activeSagittal ? activeSagittal.cervicalSeverity : 'Optimal';
 
-    const shoulderAsymmetry = anterior ? anterior.shoulderTiltDeg : (posterior ? posterior.shoulderTiltDeg : 0);
-    const pelvicAsymmetry = anterior ? anterior.pelvicTiltDeg : (posterior ? posterior.pelvicTiltDeg : 0);
-    const valgusAngle = anterior ? anterior.maxValgusDev : (posterior ? posterior.maxValgusDev : 0);
+    const thoracicTilt = activeSagittal ? activeSagittal.thoracicTiltDeg : 0;
+    const kyphosisCobb = activeSagittal ? activeSagittal.kyphosisCobb : 32;
+    const kyphosisSeverity = activeSagittal ? activeSagittal.kyphosisSeverity : 'Optimal';
+
+    const pelvicDev = activeSagittal ? activeSagittal.pelvicTiltDevDeg : 0;
+    const pelvicSeverity = activeSagittal ? activeSagittal.pelvicSeverity : 'Optimal';
+
+    const activeCoronal = anterior || posterior;
+    const shoulderAsymmetry = activeCoronal ? activeCoronal.shoulderTiltDeg : 0;
+    const pelvicAsymmetry = activeCoronal ? activeCoronal.pelvicTiltDeg : 0;
+    const valgusAngle = activeCoronal ? activeCoronal.maxValgusDev : 0;
+    const valgusSeverity = activeCoronal ? activeCoronal.valgusSeverity : 'Optimal';
 
     // Component Penalties computed strictly from measured planes
     let totalPenalty = 0;
@@ -239,36 +326,49 @@ class BiomechanicsEngine {
 
     // Identify Top Issues from real data
     const issues = [];
-    if (hasSagittal && pelvicDev > 8) {
+
+    if (hasSagittal && forwardHead > 7) {
+      issues.push({
+        id: 'fhp',
+        title: 'Forward Head Posture (CVA)',
+        badge: `${cervicalSeverity} (+${extraNeckLoadLbs} lbs / ${extraNeckLoadKg} kg)`,
+        level: cervicalSeverity === 'Optimal' ? 'neutral' : (cervicalSeverity === 'Mild' ? 'warning' : 'danger'),
+        desc: `Cranial angle of ${cvaDeg}° imposes +${extraNeckLoadLbs} lbs (${extraNeckLoadKg} kg) of continuous strain on cervical extensors.`,
+        powerLeak: 'Cervical compression & upper trapezius hypertonicity',
+        drillCategory: 'forwardHead'
+      });
+    }
+
+    if (hasSagittal && pelvicDev > 5) {
       issues.push({
         id: 'apt',
         title: 'Anterior Pelvic Tilt',
-        badge: `APT (${Math.round(pelvicDev)}°)`,
-        level: pelvicDev > 12 ? 'danger' : 'warning',
+        badge: `${pelvicSeverity} (${Math.round(pelvicDev)}°)`,
+        level: pelvicDev > 10 ? 'danger' : 'warning',
         desc: 'Inhibits terminal hip extension and gluteus maximus recruitment during sprints and heavy lifts.',
         powerLeak: 'Power leak in sprint cycle & jump propulsion',
         drillCategory: 'anteriorPelvicTilt'
       });
     }
 
-    if (hasCoronal && valgusAngle > 5.5) {
+    if (hasCoronal && valgusAngle > 3.5) {
       issues.push({
         id: 'valgus',
-        title: 'Medial Knee Collapse (Valgus)',
-        badge: `Valgus (${Math.round(valgusAngle)}°)`,
-        level: valgusAngle > 8 ? 'danger' : 'warning',
-        desc: 'Inward femoral tracking under load indicates underactive gluteus medius and elevated non-contact ACL strain.',
-        powerLeak: 'ACL and patellar tendon vulnerability on cutting',
+        title: 'Medial Knee Tracking (Valgus)',
+        badge: `${valgusSeverity} (${Math.round(valgusAngle)}°)`,
+        level: valgusAngle > 6.5 ? 'danger' : 'warning',
+        desc: 'Inward femoral tracking under load indicates underactive gluteus medius and elevated knee strain.',
+        powerLeak: 'Patellofemoral shear & cutting instability',
         drillCategory: 'kneeValgus'
       });
     }
 
-    if (hasSagittal && (thoracicTilt > 7.5 || forwardHead > 11)) {
+    if (hasSagittal && (thoracicTilt > 6.5 || kyphosisCobb > 40)) {
       issues.push({
         id: 'kyphosis',
-        title: 'Thoracic Kyphosis & Head Protraction',
-        badge: `Kyphotic (${Math.round(thoracicTilt)}°)`,
-        level: thoracicTilt > 12 ? 'danger' : 'warning',
+        title: 'Thoracic Kyphosis (Cobb Proxy)',
+        badge: `${kyphosisSeverity} (${Math.round(kyphosisCobb)}°)`,
+        level: kyphosisCobb > 50 ? 'danger' : 'warning',
         desc: 'Restricts thoracic extension and scapular upward rotation, causing impingement in overhead positions.',
         powerLeak: 'Loss of rotational whip & overhead pressing force',
         drillCategory: 'thoracicKyphosis'
@@ -333,11 +433,19 @@ class BiomechanicsEngine {
       leftSagittal,
       metrics: {
         forwardHead,
+        cvaDeg,
+        extraNeckLoadLbs,
+        extraNeckLoadKg,
+        cervicalSeverity,
         thoracicTilt,
+        kyphosisCobb,
+        kyphosisSeverity,
         pelvicDev,
+        pelvicSeverity,
         shoulderAsymmetry,
         pelvicAsymmetry,
         valgusAngle,
+        valgusSeverity,
         forceTransferScore: Math.max(50, Math.min(99, Math.round(100 - (pelvicDev * 1.8 + valgusAngle * 2.0)))),
         bilateralBalanceScore: Math.max(50, Math.min(99, Math.round(100 - (shoulderAsymmetry * 4.0 + pelvicAsymmetry * 4.0))))
       },
