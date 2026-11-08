@@ -3,6 +3,8 @@
  * Directional Voice Coaching & Hands-Free Automatic 360 Recording
  */
 
+const CLINICAL_FOCUS_KEYS = ['cervical', 'thoracic', 'pelvic', 'knee'];
+
 const CLINICAL_FOCUS_DATA = {
   cervical: {
     title: 'Craniovertebral Alignment & Extra Cervical Load',
@@ -90,11 +92,24 @@ class AppController {
     if (window.lucide) lucide.createIcons();
   }
 
+  prevClinicalFocus() {
+    const currentIndex = CLINICAL_FOCUS_KEYS.indexOf(this.currentClinicalFocus || 'cervical');
+    const newIndex = (currentIndex - 1 + CLINICAL_FOCUS_KEYS.length) % CLINICAL_FOCUS_KEYS.length;
+    this.setClinicalFocus(CLINICAL_FOCUS_KEYS[newIndex]);
+  }
+
+  nextClinicalFocus() {
+    const currentIndex = CLINICAL_FOCUS_KEYS.indexOf(this.currentClinicalFocus || 'cervical');
+    const newIndex = (currentIndex + 1) % CLINICAL_FOCUS_KEYS.length;
+    this.setClinicalFocus(CLINICAL_FOCUS_KEYS[newIndex]);
+  }
+
   setClinicalFocus(key) {
+    this.currentClinicalFocus = key;
     const data = CLINICAL_FOCUS_DATA[key];
     if (!data) return;
 
-    ['cervical', 'thoracic', 'pelvic', 'knee'].forEach(tabKey => {
+    CLINICAL_FOCUS_KEYS.forEach(tabKey => {
       const btn = document.getElementById(`tab-focus-${tabKey}`);
       if (btn) {
         if (tabKey === key) {
@@ -112,6 +127,7 @@ class AppController {
     const imgEl = document.getElementById('featured-focus-img');
     const statLabel = document.getElementById('featured-focus-stat-label');
     const statValue = document.getElementById('featured-focus-stat-value');
+    const counterEl = document.getElementById('featured-focus-counter');
 
     if (titleEl) titleEl.innerText = data.title;
     if (badgeEl) badgeEl.innerText = data.badge;
@@ -120,9 +136,18 @@ class AppController {
     if (statLabel) statLabel.innerText = data.statLabel;
     if (statValue) statValue.innerText = data.statValue;
 
+    const currentIndex = CLINICAL_FOCUS_KEYS.indexOf(key) + 1;
+    if (counterEl) counterEl.innerText = `${currentIndex}/${CLINICAL_FOCUS_KEYS.length}`;
+
     if (tagsContainer) {
-      tagsContainer.innerHTML = data.tags.map(tag => `
-        <span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/80">${tag}</span>
+      // 3 distinct pastel colors matching Lawtrades (mint green, sky blue, peach/rose)
+      const pastelThemes = [
+        'bg-emerald-50 text-emerald-800 border-emerald-200/80',
+        'bg-sky-50 text-sky-800 border-sky-200/80',
+        'bg-amber-50 text-amber-800 border-amber-200/80'
+      ];
+      tagsContainer.innerHTML = data.tags.map((tag, idx) => `
+        <span class="px-3 py-1 rounded-full text-[11px] font-semibold ${pastelThemes[idx % pastelThemes.length]} border shadow-xs">${tag}</span>
       `).join('');
     }
 
