@@ -3,7 +3,7 @@
  * Directional Voice Coaching & Hands-Free Automatic 360 Recording
  */
 
-const CLINICAL_FOCUS_KEYS = ['cervical', 'thoracic', 'pelvic', 'knee'];
+const CLINICAL_FOCUS_KEYS = ['cervical', 'thoracic', 'pelvic', 'scapula', 'knee'];
 
 const CLINICAL_FOCUS_DATA = {
   cervical: {
@@ -32,6 +32,15 @@ const CLINICAL_FOCUS_DATA = {
     image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=700&q=80',
     statLabel: 'Pelvic Deviation',
     statValue: 'APT (6°) • Mild'
+  },
+  scapula: {
+    title: 'Scapulothoracic Rhythm & Shoulder Symmetry',
+    badge: 'Frontal & Dorsal • Shoulder Plane',
+    description: 'Bilateral shoulder height asymmetries and winging scapulae indicate serratus anterior inhibition and upper trapezius dominance. KineticScan evaluates bilateral acromion horizontal alignment and scapular protraction vectors to balance rotational power and protect the rotator cuff.',
+    tags: ['Acromion Delta: ≤1.2°', 'Serratus Activation', 'Rotator Cuff Protection'],
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=700&q=80',
+    statLabel: 'Shoulder Delta',
+    statValue: '0.8° (Symmetric)'
   },
   knee: {
     title: 'Lower Kinetic Chain & Dynamic Knee Valgus',
