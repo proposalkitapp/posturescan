@@ -58,17 +58,23 @@ class PoseEngine {
     return false;
   }
 
-  // Evaluate if athlete is well-positioned in frame
+  // Evaluate if athlete is well-positioned in frame with adaptive human tolerances
   checkAthleteFraming(landmarks) {
-    if (!landmarks || landmarks.length < 29) {
+    if (!landmarks || landmarks.length < 25) {
       return {
         isFramed: false,
         distanceFeedback: 'SEARCHING FOR ATHLETE',
-        confidenceBadge: 'SEARCHING'
+        confidenceBadge: 'SEARCHING',
+        confidenceScore: 0,
+        checklist: { head: false, torso: false, legs: false, centered: false }
       };
     }
 
     const nose = landmarks[0];
+    const leftEye = landmarks[2];
+    const rightEye = landmarks[5];
+    const leftEar = landmarks[7];
+    const rightEar = landmarks[8];
     const leftShoulder = landmarks[11];
     const rightShoulder = landmarks[12];
     const leftHip = landmarks[23];
@@ -77,51 +83,123 @@ class PoseEngine {
     const rightKnee = landmarks[26];
     const leftAnkle = landmarks[27];
     const rightAnkle = landmarks[28];
-    const leftFoot = landmarks[31] || landmarks[29] || leftAnkle;
-    const rightFoot = landmarks[32] || landmarks[30] || rightAnkle;
+    const leftFoot = landmarks[31];
+    const rightFoot = landmarks[32];
 
-    const hasUpperBody = (nose && (nose.visibility === undefined || nose.visibility > 0.3)) ||
-                         (leftShoulder && rightShoulder);
-    const hasLowerBody = (leftFoot && (leftFoot.visibility === undefined || leftFoot.visibility > 0.2)) ||
-                         (rightFoot && (rightFoot.visibility === undefined || rightFoot.visibility > 0.2)) ||
-                         (leftKnee && rightKnee);
+    const hasVis = (lm, minVis = 0.25) => lm && (lm.visibility === undefined || lm.visibility >= minVis);
 
-    if (!hasUpperBody || !hasLowerBody) {
+    // 1. Head & Cranial Check
+    const hasHead = hasVis(nose, 0.25) || hasVis(leftEye, 0.25) || hasVis(rightEye, 0.25) || hasVis(leftEar, 0.25) || hasVis(rightEar, 0.25);
+    const headY = hasVis(nose, 0.2) ? nose.y : (hasVis(leftShoulder, 0.2) ? leftShoulder.y - 0.12 : 0.15);
+
+    // 2. Torso & Core Check
+    const hasShoulders = hasVis(leftShoulder, 0.25) || hasVis(rightShoulder, 0.25);
+    const hasHips = hasVis(leftHip, 0.25) || hasVis(rightHip, 0.25);
+    const hasTorso = hasShoulders && hasHips;
+
+    // 3. Lower Body Check (Knees and/or Ankles)
+    const hasKnees = hasVis(leftKnee, 0.20) || hasVis(rightKnee, 0.20);
+    const hasAnkles = hasVis(leftAnkle, 0.20) || hasVis(rightAnkle, 0.20) || hasVis(leftFoot, 0.20) || hasVis(rightFoot, 0.20);
+    const hasLegs = hasKnees || hasAnkles;
+
+    // 4. Horizontal Centering
+    const torsoX = (hasVis(leftShoulder) && hasVis(rightShoulder))
+      ? (leftShoulder.x + rightShoulder.x) / 2
+      : (hasVis(leftHip) && hasVis(rightHip) ? (leftHip.x + rightHip.x) / 2 : (nose ? nose.x : 0.5));
+    const isCentered = torsoX >= 0.15 && torsoX <= 0.85;
+
+    // Checklist object for UI badges
+    const checklist = {
+      head: Boolean(hasHead),
+      torso: Boolean(hasTorso),
+      legs: Boolean(hasLegs),
+      centered: Boolean(isCentered)
+    };
+
+    // Calculate confidence score (0 to 100%)
+    let score = 0;
+    if (hasHead) score += 25;
+    if (hasShoulders) score += 25;
+    if (hasHips) score += 20;
+    if (hasLegs) score += 20;
+    if (isCentered) score += 10;
+
+    // Calculate vertical span
+    let bottomY = 0.85;
+    if (hasVis(leftFoot, 0.2) || hasVis(rightFoot, 0.2)) {
+      const ly = hasVis(leftFoot, 0.2) ? leftFoot.y : 0;
+      const ry = hasVis(rightFoot, 0.2) ? rightFoot.y : 0;
+      bottomY = Math.max(ly, ry);
+    } else if (hasVis(leftAnkle, 0.2) || hasVis(rightAnkle, 0.2)) {
+      const ly = hasVis(leftAnkle, 0.2) ? leftAnkle.y : 0;
+      const ry = hasVis(rightAnkle, 0.2) ? rightAnkle.y : 0;
+      bottomY = Math.max(ly, ry) + 0.04;
+    } else if (hasKnees) {
+      const lk = hasVis(leftKnee, 0.2) ? leftKnee.y : 0;
+      const rk = hasVis(rightKnee, 0.2) ? rightKnee.y : 0;
+      bottomY = Math.max(lk, rk) + 0.20; // Extrapolate lower leg
+    }
+
+    const bodyHeight = bottomY - headY;
+
+    // Diagnostic guidance
+    if (!hasHead || headY < 0.01) {
       return {
         isFramed: false,
-        distanceFeedback: 'STEP BACK (FULL BODY NEEDED)',
-        confidenceBadge: 'POSITIONING'
+        distanceFeedback: 'HEAD TOO HIGH (TILT CAMERA UP OR STEP BACK)',
+        confidenceBadge: 'HEAD CUT OFF',
+        confidenceScore: score,
+        checklist
       };
     }
 
-    // Check vertical coverage
-    const headY = nose ? nose.y : (leftShoulder.y - 0.15);
-    const ankleY = Math.max(
-      leftFoot ? leftFoot.y : (leftKnee ? leftKnee.y + 0.15 : 0.85),
-      rightFoot ? rightFoot.y : (rightKnee ? rightKnee.y + 0.15 : 0.85)
-    );
-    const bodyHeight = ankleY - headY;
-
-    if (bodyHeight < 0.35) {
+    if (!hasLegs) {
       return {
         isFramed: false,
-        distanceFeedback: 'TOO FAR (STEP CLOSER)',
-        confidenceBadge: 'TOO FAR'
+        distanceFeedback: 'STEP BACK (SHOW KNEES & LEGS)',
+        confidenceBadge: 'LEGS NEEDED',
+        confidenceScore: score,
+        checklist
       };
     }
 
-    if (headY < 0.02 || ankleY > 0.99) {
+    if (!isCentered) {
       return {
         isFramed: false,
-        distanceFeedback: 'STEP BACK SLIGHTLY',
-        confidenceBadge: 'TOO CLOSE'
+        distanceFeedback: torsoX < 0.15 ? 'STEP TO YOUR RIGHT →' : '← STEP TO YOUR LEFT',
+        confidenceBadge: 'OFF CENTER',
+        confidenceScore: score,
+        checklist
       };
     }
 
+    if (bodyHeight < 0.28) {
+      return {
+        isFramed: false,
+        distanceFeedback: 'TOO FAR (STEP A LITTLE CLOSER)',
+        confidenceBadge: 'TOO FAR',
+        confidenceScore: score,
+        checklist
+      };
+    }
+
+    if (bodyHeight > 0.98 && headY < 0.04) {
+      return {
+        isFramed: false,
+        distanceFeedback: 'TOO CLOSE (STEP BACK 1 STEP)',
+        confidenceBadge: 'TOO CLOSE',
+        confidenceScore: score,
+        checklist
+      };
+    }
+
+    // Athlete satisfies full body criteria!
     return {
       isFramed: true,
       distanceFeedback: 'LOCKED & READY',
-      confidenceBadge: 'LOCKED'
+      confidenceBadge: 'LOCKED',
+      confidenceScore: 100,
+      checklist: { head: true, torso: true, legs: true, centered: true }
     };
   }
 

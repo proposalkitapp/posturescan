@@ -33,12 +33,34 @@
 /* Framing Box Guides (Green & Yellow Lines for camera scan) */
 #framing-guide-box.frame-ready {
   border-color: #22c55e !important;
-  box-shadow: 0 0 35px rgba(34, 197, 94, 0.45), inset 0 0 25px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 0 45px rgba(34, 197, 94, 0.55), inset 0 0 25px rgba(34, 197, 94, 0.25);
+  transition: all 0.25s ease-out;
 }
 
 #framing-guide-box.frame-adjust {
   border-color: #fbbf24 !important;
-  box-shadow: 0 0 35px rgba(251, 191, 36, 0.4), inset 0 0 25px rgba(251, 191, 36, 0.15);
+  box-shadow: 0 0 35px rgba(251, 191, 36, 0.35), inset 0 0 20px rgba(251, 191, 36, 0.12);
+  transition: all 0.25s ease-out;
+}
+
+/* Big Countdown Pop Animation */
+@keyframes countdownPop {
+  0% {
+    transform: scale(0.65);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.0);
+    opacity: 1;
+  }
+}
+
+.animate-countdown-pop {
+  animation: countdownPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Milestone badges */

@@ -314,16 +314,24 @@
           </div>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-3">
+          <!-- Live Body Alignment Checklist -->
+          <div class="hidden sm:flex items-center space-x-1.5 bg-stone-950/80 px-3 py-1.5 rounded-full border border-white/5">
+            <span class="text-[10px] text-stone-400 uppercase font-mono mr-1">Framing:</span>
+            <span id="chk-head" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-900/80 text-stone-500 border border-white/5 transition-colors">Head</span>
+            <span id="chk-torso" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-900/80 text-stone-500 border border-white/5 transition-colors">Torso</span>
+            <span id="chk-legs" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-900/80 text-stone-500 border border-white/5 transition-colors">Legs</span>
+          </div>
+
           <button onclick="audioGuide.testVoice()" 
-            class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sunset-500/15 hover:bg-sunset-500/25 text-sunset-300 border border-sunset-500/30 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-sunset-500"
+            class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 border border-amber-400/20 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-amber-400"
             title="Test Voice Commands & Sound">
-            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-sunset-400" aria-hidden="true"></i>
-            <span>Test Voice Guidance</span>
+            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-amber-400" aria-hidden="true"></i>
+            <span>Test Voice</span>
           </button>
 
           <button id="switch-camera-btn" onclick="cameraManager.switchCamera()" 
-            class="p-2.5 rounded-full bg-stone-800 text-stone-300 hover:text-white transition focus-visible:ring-2 focus-visible:ring-sunset-500" 
+            class="p-2.5 rounded-full bg-stone-800 text-stone-300 hover:text-white transition focus-visible:ring-2 focus-visible:ring-amber-400" 
             aria-label="Switch between front and back camera">
             <i data-lucide="flip-horizontal" class="w-4 h-4" aria-hidden="true"></i>
           </button>
@@ -334,7 +342,7 @@
       <div class="relative flex-1 min-h-[460px] sm:min-h-[520px] bg-black rounded-3xl overflow-hidden border border-white/5 shadow-2xl flex items-center justify-center">
         
         <!-- High-Visibility Directional Command Banner (Commands where to turn and informs when complete) -->
-        <div id="directional-command-banner" class="absolute top-5 inset-x-4 sm:inset-x-16 z-30 hidden bg-gradient-to-r from-sunset-600 to-amber-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-sunset-400 animate-fade-in" role="status" aria-live="assertive">
+        <div id="directional-command-banner" class="absolute top-5 inset-x-4 sm:inset-x-16 z-30 hidden bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-amber-400 animate-fade-in" role="status" aria-live="assertive">
           <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded-full bg-stone-950/20 flex items-center justify-center">
               <i data-lucide="compass" class="w-4 h-4 text-stone-950 stroke-[2.5]" aria-hidden="true"></i>
@@ -346,22 +354,40 @@
           </div>
           <span class="px-2.5 py-1 rounded-full bg-stone-950/20 text-[10px] uppercase font-black tracking-widest text-stone-950 hidden sm:inline">Active Turn</span>
         </div>
+
         <!-- Live Video Element -->
         <video id="webcam-video" playsinline autoplay muted class="absolute inset-0 w-full h-full object-contain" aria-label="Webcam feed for posture screening"></video>
 
         <!-- Dynamic Overlay Canvas (Skeleton & Guides) -->
         <canvas id="overlay-canvas" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"></canvas>
 
-        <!-- Full-Body Framing Bounding Box Box Overlay (Starts Yellow, Locks Green) -->
-        <div id="framing-guide-box" class="absolute inset-y-8 inset-x-12 sm:inset-x-36 md:inset-x-48 border-2 border-dashed border-amber-400 rounded-3xl pointer-events-none transition-all duration-300 flex flex-col justify-between p-4 z-20 frame-adjust">
+        <!-- Full-Body Framing Bounding Box Overlay (Starts Yellow, Locks Green) -->
+        <div id="framing-guide-box" class="absolute inset-y-8 inset-x-8 sm:inset-x-28 md:inset-x-40 border-2 border-dashed border-amber-400 rounded-3xl pointer-events-none transition-all duration-300 flex flex-col justify-between p-4 z-20 frame-adjust">
           <div class="flex justify-between items-center text-[10px] text-stone-300 font-mono">
-            <span class="bg-black/75 px-2 py-0.5 rounded backdrop-blur border border-white/10">CRANIAL ALIGNMENT</span>
+            <span class="bg-black/75 px-2 py-0.5 rounded backdrop-blur border border-white/10">CRANIAL LEVEL</span>
             <span id="framing-confidence-badge" class="bg-amber-400 text-stone-950 px-2 py-0.5 rounded-full backdrop-blur font-bold">SEARCHING</span>
           </div>
           <div class="flex justify-between items-center text-[10px] text-stone-300 font-mono">
-            <span class="bg-black/75 px-2 py-0.5 rounded backdrop-blur border border-white/10">ANKLE LEVEL</span>
+            <span class="bg-black/75 px-2 py-0.5 rounded backdrop-blur border border-white/10">LOWER STANCE</span>
             <span id="framing-distance-badge" class="bg-amber-400 text-stone-950 px-2 py-0.5 rounded-full backdrop-blur font-bold">STEP INTO BOX</span>
           </div>
+        </div>
+
+        <!-- 3-2-1 Big Visual Countdown Overlay -->
+        <div id="scan-countdown-overlay" class="absolute inset-0 bg-stone-950/70 backdrop-blur-sm hidden flex flex-col items-center justify-center p-6 text-center space-y-3 z-35 pointer-events-none">
+          <div id="scan-countdown-number" class="text-7xl sm:text-9xl font-black text-amber-400 font-display animate-countdown-pop tracking-tight">3</div>
+          <div id="scan-countdown-text" class="text-sm sm:text-lg font-bold text-stone-200">Hold steady... stand tall</div>
+          <div class="text-xs text-stone-400">Automatic 360° scan commencing</div>
+        </div>
+
+        <!-- Floating Manual Start Scan Button Over Video -->
+        <div class="absolute bottom-16 inset-x-0 flex justify-center z-25 pointer-events-auto">
+          <button onclick="cameraManager.startManualCountdown()" 
+            class="px-6 py-2.5 rounded-full font-extrabold text-xs sm:text-sm bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 shadow-xl shadow-amber-400/25 transition transform active:scale-95 flex items-center space-x-2 border border-amber-300/40 focus-visible:ring-2 focus-visible:ring-amber-400"
+            title="Start scan immediately with 3-second countdown">
+            <i data-lucide="play" class="w-4 h-4 fill-stone-950 stroke-none" aria-hidden="true"></i>
+            <span>Start Scan (3s Countdown)</span>
+          </button>
         </div>
 
         <!-- Spin Progress HUD (Radial 360 Ring during active spin) -->
@@ -369,12 +395,12 @@
           <div class="relative w-14 h-14 flex items-center justify-center">
             <svg class="w-14 h-14 transform -rotate-90">
               <circle cx="28" cy="28" r="26" stroke="currentColor" stroke-width="4" class="text-stone-800" fill="transparent" />
-              <circle id="spin-progress-circle" cx="28" cy="28" r="26" stroke="currentColor" stroke-width="4" stroke-dasharray="163.36" stroke-dashoffset="163.36" class="text-sunset-500 transition-all duration-150" fill="transparent" stroke-linecap="round" />
+              <circle id="spin-progress-circle" cx="28" cy="28" r="26" stroke="currentColor" stroke-width="4" stroke-dasharray="163.36" stroke-dashoffset="163.36" class="text-amber-400 transition-all duration-150" fill="transparent" stroke-linecap="round" />
             </svg>
             <span id="spin-angle-text" class="absolute text-xs font-mono font-bold text-stone-100">0°</span>
           </div>
           <div>
-            <div class="text-[10px] uppercase font-bold text-sunset-400 tracking-wider">Automated Capture</div>
+            <div class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Automated Capture</div>
             <div id="spin-current-sector" class="text-xs font-semibold text-stone-100">Anterior (Front)</div>
             <div class="text-[10px] text-stone-400">Rotating in slow motion...</div>
           </div>
@@ -402,9 +428,18 @@
           </div>
         </div>
 
+        <!-- Loading Model Indicator -->
+        <div id="pose-loading-indicator" class="absolute inset-0 bg-stone-950/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-6 text-center space-y-4 z-25">
+          <div class="w-12 h-12 rounded-full border-4 border-amber-400 border-t-transparent animate-spin"></div>
+          <div class="space-y-1">
+            <div class="font-display font-bold text-base text-stone-100">Initializing Posture AI Model...</div>
+            <div class="text-xs text-stone-400">Loading local on-device neural network for real-time tracking</div>
+          </div>
+        </div>
+
         <!-- Camera Permission Initial State -->
         <div id="camera-prompt-card" class="absolute inset-0 bg-stone-950/95 flex flex-col items-center justify-center p-6 text-center space-y-4 z-20">
-          <div class="w-14 h-14 rounded-full bg-stone-900 border border-white/5 flex items-center justify-center text-sunset-400">
+          <div class="w-14 h-14 rounded-full bg-stone-900 border border-white/5 flex items-center justify-center text-amber-400">
             <i data-lucide="camera" class="w-7 h-7" aria-hidden="true"></i>
           </div>
           <div class="max-w-md space-y-1.5">
@@ -415,12 +450,12 @@
           </div>
           <div class="flex flex-col sm:flex-row gap-3 pt-2">
             <button onclick="cameraManager.startCamera()" 
-              class="px-5 py-2.5 rounded-full bg-sunset-500 hover:bg-sunset-400 text-stone-950 font-bold text-xs shadow-lg shadow-sunset-500/20 transition flex items-center justify-center space-x-2 focus-visible:ring-2 focus-visible:ring-sunset-400">
+              class="px-5 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs shadow-lg shadow-amber-400/20 transition flex items-center justify-center space-x-2 focus-visible:ring-2 focus-visible:ring-amber-400">
               <i data-lucide="video" class="w-3.5 h-3.5" aria-hidden="true"></i>
               <span>Allow Camera Access</span>
             </button>
             <button onclick="app.loadDemoAthlete('runner')" 
-              class="px-4 py-2.5 rounded-full bg-stone-900 hover:bg-stone-850 text-stone-300 font-medium text-xs border border-white/5 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+              class="px-4 py-2.5 rounded-full bg-stone-900 hover:bg-stone-850 text-stone-300 font-medium text-xs border border-white/5 transition focus-visible:ring-2 focus-visible:ring-amber-400">
               View Sample Scan Instead
             </button>
           </div>
@@ -431,11 +466,11 @@
       <div class="flex flex-wrap items-center justify-between gap-3 bg-stone-900/80 p-4 rounded-2xl border border-white/5">
         <div class="flex items-center space-x-2 text-xs text-stone-300">
           <i data-lucide="info" class="w-4 h-4 text-amber-400" aria-hidden="true"></i>
-          <span>Yellow line: adjusting position. Green line: locked & auto-recording starts.</span>
+          <span>Yellow box: adjusting. Green box: locked & 3-2-1 countdown begins.</span>
         </div>
 
         <div class="flex items-center space-x-2.5">
-          <button onclick="app.startAutomaticRecording()" 
+          <button onclick="cameraManager.startManualCountdown()" 
             class="px-4 py-2 rounded-full text-xs font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-500/20 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-amber-400"
             title="Immediately trigger 360° scan and voice guidance">
             <i data-lucide="play" class="w-3.5 h-3.5 fill-current" aria-hidden="true"></i>
@@ -443,7 +478,7 @@
           </button>
 
           <button onclick="app.cancelScan()" 
-            class="px-4 py-2 rounded-full text-xs font-semibold text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+            class="px-4 py-2 rounded-full text-xs font-semibold text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition focus-visible:ring-2 focus-visible:ring-amber-400">
             Cancel Scan
           </button>
         </div>

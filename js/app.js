@@ -238,7 +238,7 @@ class AppController {
     }, 100);
   }
 
-  setDirectionalBanner(title, instruction, theme = 'sunset') {
+  setDirectionalBanner(title, instruction, theme = 'amber') {
     const banner = document.getElementById('directional-command-banner');
     const titleEl = document.getElementById('directional-command-title');
     const textEl = document.getElementById('directional-command-text');
@@ -249,11 +249,11 @@ class AppController {
     textEl.innerText = instruction;
 
     if (theme === 'emerald') {
-      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-emerald-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-emerald-300 animate-pulse-glow';
+      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-emerald-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-emerald-300';
     } else if (theme === 'amber') {
       banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-amber-400 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-amber-300';
     } else {
-      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-gradient-to-r from-sunset-600 to-amber-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-sunset-400';
+      banner.className = 'absolute top-5 inset-x-4 sm:inset-x-16 z-30 bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-bold px-5 py-3 rounded-2xl shadow-2xl flex items-center justify-between border border-amber-300';
     }
     if (window.lucide) lucide.createIcons();
   }
@@ -367,6 +367,7 @@ class AppController {
   cancelScan() {
     this.isSpinning = false;
     if (this.spinTimer) clearInterval(this.spinTimer);
+    cameraManager.cancelCountdown();
     cameraManager.onFrameCallback = null;
     cameraManager.hasAutoTriggered = false;
     const hud = document.getElementById('spin-progress-hud');

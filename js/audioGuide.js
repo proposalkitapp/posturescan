@@ -110,7 +110,45 @@ class AudioGuide {
 
   // DIRECTIONAL VOICE COMMANDS & AUDIO CUES
 
-  // 1. Initial trigger: Immediately upon green framing
+  // 0. Pre-scan countdown and locking cues
+  announceFramingLocked() {
+    this.unlock();
+    this.playHarmonicChime([523.25, 659.25], 0.25);
+    this.speak('Position locked! Stand tall.', true);
+  }
+
+  playCountdownBeep(count) {
+    if (this.isMuted) return;
+    try {
+      this.init();
+      if (!this.audioCtx) return;
+
+      const freq = count === 1 ? 987.77 : count === 2 ? 880 : 783.99;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.12, this.audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.14);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start();
+      osc.stop(this.audioCtx.currentTime + 0.15);
+    } catch (e) {
+      console.warn('Countdown beep error', e);
+    }
+  }
+
+  playMilestoneSector() {
+    if (this.isMuted) return;
+    this.playHarmonicChime([659.25, 880], 0.18);
+  }
+
+  // 1. Initial trigger: Immediately upon countdown completion
   announceRecordingCommenced() {
     this.unlock();
     this.playHarmonicChime([392, 523.25, 659.25], 0.45);

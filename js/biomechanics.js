@@ -345,13 +345,6 @@ class BiomechanicsEngine {
       prescribedDrills: prescribedDrills.slice(0, 4)
     };
   }
-        forceTransferScore: Math.round(100 - (pelvicDev * 1.8 + valgusAngle * 2.0)),
-        bilateralBalanceScore: Math.round(100 - (shoulderAsymmetry * 4.0 + pelvicAsymmetry * 4.0))
-      },
-      issues,
-      prescribedDrills: prescribedDrills.slice(0, 4)
-    };
-  }
 }
 
 const biomechanics = new BiomechanicsEngine();
