@@ -12,3 +12,4 @@ desktop.ini
 
 # Internal agent working directories
 .agents/
+brag-output/
