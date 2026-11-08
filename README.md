@@ -1,12 +1,12 @@
-# KineticScan 360 — Athletic Posture & Biomechanics Scanner
+# KineticScan 360 — Clinical & Athletic Posture Screening Web App
 
-KineticScan 360 is a zero-install, client-side web application designed for athletes, coaches, and trainers. It guides the user through a hands-free **10-second 360° spin video scan** using their mobile or desktop camera, detects 3D anatomical landmarks on-device with MediaPipe Pose, calculates key athletic biomechanical deviations (sagittal plumb lines, anterior pelvic tilt, medial knee valgus, and bilateral asymmetries), and generates a personalized **athletic pre-hab & corrective drill routine**.
+KineticScan 360 is a zero-install, on-device web application engineered for clinical posture screening and athletic movement assessment. It features a modern, editorial luxury interface inspired by Lawtrades, hands-free **automated 360° rotation capture** with directional voice coaching, and peer-reviewed biomechanical analysis including **Dr. Kenneth Hansraj's cervical spine load model** in dual units (`+lbs` and `kg`).
 
 ---
 
 ## ⚡ Quick Start
 
-Since this app runs pure modern ES modules with client-side computer vision:
+Runs entirely on modern web standards with client-side WebAssembly computer vision:
 
 1. Double-click `start.bat` or run:
    ```powershell
@@ -16,42 +16,46 @@ Since this app runs pure modern ES modules with client-side computer vision:
    ```
    http://localhost:8080
    ```
-3. Alternatively, host with any static web server (Vercel, GitHub Pages, Netlify, or Nginx).
+3. Alternatively, deploy to any static host (Vercel, GitHub Pages, Netlify, Cloudflare Pages).
 
 ---
 
-## 🔬 How the 360° Spin Video Scanner Works
+## 🎨 Editorial Landing Page Design (Lawtrades Aesthetic)
 
-1. **Athlete Framing Check:**
-   - Real-time computer vision monitors head-to-ankle vertical framing.
-   - The HUD guide box turns **Green** when you are at the optimal distance (7–8 feet) with full body visibility.
+- **Canvas & Tone:** Warm luxury cream (`#faf8f5`) with an ambient radial mint aura glow (`rgba(167, 243, 208, 0.45)`).
+- **Hero Display:** Bold display typography (*"Clinical posture screening, on demand."* with deep teal `#0d9488` highlights), solid black pill CTA (*"Start Free Scan"*), and white bordered secondary pill (*"Upload a Photo"*).
+- **Overlapping Portrait Collage:** Real Unsplash stock photography of real people in solid 2px dark charcoal borders (`border-2 border-stone-900 rounded-3xl`) with curved organic dashed SVG connector lines and floating chips (Dr. Justin Higgs, Karen Frame, and Hansraj Spine Strain `-24 lbs / 11 kg Relieved`) protruding past photo frames.
+- **Interactive Focus Area Carousel:** 4-tab clinical focus switcher (`Cervical Spine & CVA`, `Thoracic Kyphosis`, `Lumbopelvic APT`, `Knee Tracking Valgus`) with circular arrow carousel controls (`← 1/4 →`) and soft pastel badges.
+- **The 4 Clinical Checkpoints Grid:** Dedicated light-mode showcase cards detailing exact mathematical formulas, normal ranges, and clinical interventions.
+- **Zero AI Imagery:** 100% genuine Unsplash portrait photography and clean Lucide SVG icons.
 
-2. **Hands-Free Countdown:**
-   - Visual 3-second countdown and synchronized audio synth beeps notify you when to begin.
+---
 
-3. **10-Second Continuous Rotation:**
-   - The app monitors body rotation using 3D shoulder and hip coordinates:
+## 🔬 Peer-Reviewed Clinical Biomechanics
+
+| Clinical Checkpoint | Metric Formula | Benchmark | Clinical & Athletic Impact |
+| :--- | :--- | :--- | :--- |
+| **Craniovertebral Angle (CVA)** | $90^\circ - \operatorname{atan2}(|\Delta y|,\, |\Delta x|)$ | $\ge 50^\circ$ (Optimal) | Measures forward head posture. Translates head tilt into extra cervical disc compressive load via Dr. Kenneth Hansraj's model in **dual units** (e.g. `+24 lbs / 11 kg`). |
+| **Thoracic Kyphosis (Cobb Proxy)** | $180^\circ - \angle(\text{Tragus}, \text{C7}, \text{Acromion})$ | $28^\circ \text{–} 40^\circ$ (Optimal) | Identifies "desk hunch", scapular protraction, and ribcage restriction limiting overhead arm elevation and breathing capacity. |
+| **Lumbopelvic Rhythm & Pelvic Tilt** | $|\operatorname{atan2}(\Delta x,\, \Delta y)|$ (Hip-to-Knee) | $\le 5^\circ$ (Neutral) | Evaluates Anterior Pelvic Tilt (APT) caused by shortened psoas and hip flexors that inhibit glute lockout and induce lumbar shear. |
+| **Dynamic Knee Tracking (Valgus Q-Angle)** | $|180^\circ - \angle(\text{Hip}, \text{Knee}, \text{Ankle})|$ | $< 3.5^\circ$ (Safe) | Frontal plane knee tracking relative to the second toe axis. Flags medial collapse (knock-knees) that drastically increases non-contact ACL strain. |
+
+---
+
+## 🔄 Automated 360° Camera & Upload Flow
+
+1. **Adaptive Full-Body Framing Detection:**
+   - Multi-point anatomical confidence check for Head, Torso, and Legs with natural stance tolerance (`y: 0.88 - 1.05`).
+   - Visual HUD guide box transitions from yellow adjustment mode to locked **Green** with live body-part checklist badges (`Head [✓]`, `Torso [✓]`, `Legs [✓]`).
+   - Manual override button available for rapid testing.
+2. **3-2-1 Audio-Visual Countdown:**
+   - On-screen visual countdown numbers with synchronized harmonic audio synthesize chimes (Web Audio API) giving you 3 seconds to balance.
+3. **Continuous 360° Rotation Coaching:**
+   - Real-time yaw tracking via 3D shoulder/hip vectors:
      $$\theta = \operatorname{atan2}(z_{\text{left}} - z_{\text{right}},\, x_{\text{left}} - x_{\text{right}})$$
-   - A radial HUD dial tracks your 360° rotation in real time while voice cues coach your pace.
-   - Automatically buffers and isolates the best frame for each canonical plane:
-     - **0° (Anterior / Front View)**
-     - **90° (Right Sagittal Profile)**
-     - **180° (Posterior / Back View)**
-     - **270° (Left Sagittal Profile)**
-
-4. **Instant Demo Mode:**
-   - If testing without a live camera, click **"Load Sample Athlete Scan"** to immediately explore the biomechanical reporting engine, skeleton canvas visualizer, and drill prescriptions.
-
----
-
-## 🏃 Evaluated Biomechanical Metrics
-
-| Metric | Measured Angle / Vector | Athletic Consequence |
-| :--- | :--- | :--- |
-| **Anterior Pelvic Tilt (APT)** | ASIS-PSIS pelvic girdle deviation from horizontal | Glute max inhibition; lost sprint extension; lumbar shear under load. |
-| **Knee Valgus (Q-Angle)** | Femur-tibia inward angle at vertex knee | Primary non-contact ACL strain mechanism during cutting & jump landing. |
-| **Thoracic Kyphosis & Forward Head** | Tragus-to-C7 Craniovertebral Angle & thoracic spine curvature | Overhead shoulder impingement; loss of rotational throwing velocity. |
-| **Bilateral Shoulder & Hip Asymmetry** | Delta between left and right clavicles and iliac crests | Unilateral kinetic chain leaks; asymmetric barbell path. |
+   - Directional banner and voice coaching announce turn commands at 90° intervals (*"Slowly turn to your right now →"*) and capture milestone plane buffers (`0° Front`, `90° Profile`, `180° Back`, `270° Profile`).
+4. **Instant Photo/Video Upload Support:**
+   - Upload any full-body photo or video file to trigger instant on-device MediaPipe landmark extraction and generate a complete clinical report.
 
 ---
 
@@ -59,23 +63,26 @@ Since this app runs pure modern ES modules with client-side computer vision:
 
 ```
 posture-scan-web/
-├── index.html            # Main athletic HUD interface & layout
+├── index.html            # Lawtrades-inspired editorial layout & clinical scan stage
 ├── css/
-│   └── app.css           # Custom radar glows, framing animations, print styles
+│   └── app.css           # Warm cream palette, mint aura, lawtrades cards, print CSS
 ├── js/
-│   ├── app.js            # Master state manager & UI flow controller
-│   ├── camera.js         # WebRTC stream, framing feedback & frame loop
-│   ├── audioGuide.js     # Web Audio API beeps & SpeechSynthesis coaching
-│   ├── poseEngine.js     # MediaPipe Pose wrapper & 360 yaw tracking
-│   ├── biomechanics.js   # Angle calculations, plumb lines, & scoring
-│   ├── exercises.js      # Sports pre-hab drills & discipline profiles
-│   └── renderer.js       # High-DPI Canvas skeleton visualizer
-├── start-server.ps1      # Native .NET HttpListener local server
+│   ├── app.js            # State management, focus carousel, navigation, and upload handling
+│   ├── biomechanics.js   # CVA, Hansraj dual-unit load formulas, Cobb proxy, APT & Q-angle
+│   ├── camera.js         # Adaptive framing detection, sliding confidence window, 3-2-1 countdown
+│   ├── poseEngine.js     # MediaPipe Pose wrapper, 33 3D landmarks, 360° yaw estimation
+│   ├── audioGuide.js     # Web Audio API harmonic countdown chimes & speech synthesis coaching
+│   ├── exercises.js      # Evidence-based corrective pre-hab routines by kinetic segment
+│   ├── renderer.js       # High-DPI Canvas skeleton overlay and plumb lines
+│   ├── privacyManager.js # Zero-cookie local preference storage & compliance modals
+│   └── policyContent.js  # Privacy, Terms of Service, and Biometric Storage policies
+├── start-server.ps1      # Zero-dependency Windows .NET HttpListener local web server
 ├── start.bat             # 1-click Windows starter
-└── README.md             # Documentation
+└── README.md             # Complete project and architecture documentation
 ```
 
 ---
 
-## 🔒 Privacy & Performance
-- **100% Client-Side:** Video streams are analyzed frame-by-frame in browser memory via WebAssembly/WebGL. No video data or frames are ever uploaded or transmitted to any remote server.
+## 🔒 100% On-Device Privacy Guarantee
+
+KineticScan 360 processes all camera feeds and uploaded photos strictly in browser memory using **client-side WebAssembly**. No images, video frames, or biometric coordinates are ever saved, stored on external servers, or transmitted across the internet.
