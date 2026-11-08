@@ -279,18 +279,18 @@ class CameraManager {
 
     if (chkHead) {
       chkHead.className = framing.checklist.head 
-        ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-        : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-900/80 text-stone-500 border border-white/5';
+        ? 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 transition-colors'
+        : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 border border-stone-200 transition-colors';
     }
     if (chkTorso) {
       chkTorso.className = framing.checklist.torso
-        ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-        : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-900/80 text-stone-500 border border-white/5';
+        ? 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 transition-colors'
+        : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 border border-stone-200 transition-colors';
     }
     if (chkLegs) {
       chkLegs.className = framing.checklist.legs
-        ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-        : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-900/80 text-stone-500 border border-white/5';
+        ? 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 transition-colors'
+        : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 border border-stone-200 transition-colors';
     }
 
     if (!box) return;
