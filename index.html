@@ -60,45 +60,58 @@
 
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="bg-stone-950 text-stone-100 min-h-screen flex flex-col font-sans selection:bg-sunset-500 selection:text-white antialiased relative">
+<body class="bg-[#faf8f5] text-stone-900 min-h-screen flex flex-col font-sans selection:bg-teal-500 selection:text-white antialiased relative">
 
   <!-- Accessibility Skip Link -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-sunset-500 text-stone-950 font-bold rounded-lg shadow-lg">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-stone-950 text-white font-bold rounded-lg shadow-lg">
     Skip to main content
   </a>
 
-  <!-- Ambient Sunset Aura Glow -->
-  <div class="fixed top-0 inset-x-0 h-96 bg-ambient-aura pointer-events-none z-0"></div>
+  <!-- Ambient Mint Aura Glow (Matching Lawtrades Template) -->
+  <div class="fixed top-0 inset-x-0 h-[650px] bg-mint-aura pointer-events-none z-0"></div>
 
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 border-b border-white/5 bg-stone-950/90 backdrop-blur-xl px-4 sm:px-8 py-3.5 transition-all">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-4">
+  <!-- TOP HEADER (Lawtrades Clean Pill Style) -->
+  <header class="sticky top-0 z-40 border-b border-stone-200/80 bg-[#faf8f5]/90 backdrop-blur-xl px-4 sm:px-8 py-3.5 transition-all">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
       <!-- Clean Brand Logo -->
       <div class="flex items-center space-x-2.5 cursor-pointer" onclick="app.navigate('home')" tabindex="0" role="button" aria-label="KineticScan Home">
-        <div class="w-8 h-8 rounded-full bg-amber-400 flex items-center justify-center shadow-md shadow-amber-400/20">
-          <i data-lucide="activity" class="w-4 h-4 text-stone-950 stroke-[2.5]" aria-hidden="true"></i>
+        <div class="w-8 h-8 rounded-full bg-stone-950 flex items-center justify-center shadow-md">
+          <i data-lucide="activity" class="w-4 h-4 text-emerald-400 stroke-[2.5]" aria-hidden="true"></i>
         </div>
-        <span class="font-display font-extrabold text-base tracking-tight text-stone-100">Kinetic<span class="text-amber-400">Scan</span></span>
+        <span class="font-display font-extrabold text-base tracking-tight text-stone-950">Kinetic<span class="text-teal-600">Scan</span></span>
       </div>
 
-      <!-- Minimal Navigation Links -->
-      <div class="flex items-center space-x-4">
-        <a href="#how-it-works" class="text-xs font-medium text-stone-400 hover:text-stone-200 transition hidden sm:inline-block">How It Works</a>
-        <a href="#why-posture" class="text-xs font-medium text-stone-400 hover:text-stone-200 transition hidden sm:inline-block">Why Posture Matters</a>
+      <!-- Center Minimal Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-6 text-xs font-semibold text-stone-600">
+        <a href="#clinical-focus" class="hover:text-stone-950 transition">Clinical Focus</a>
+        <a href="#why-kinetic" class="hover:text-stone-950 transition">Hansraj Spine Model</a>
+        <a href="#how-it-works" class="hover:text-stone-950 transition">How It Works</a>
+        <a href="#why-posture" class="hover:text-stone-950 transition">Why Alignment Matters</a>
+      </nav>
 
+      <!-- Right Action CTAs -->
+      <div class="flex items-center space-x-3">
         <!-- Sound Toggle -->
         <button id="sound-toggle-btn" onclick="audioGuide.toggleMute()" 
-          class="p-2 rounded-full bg-stone-900 border border-white/5 text-stone-400 hover:text-white transition focus-visible:ring-2 focus-visible:ring-amber-400" 
+          class="p-2 rounded-full bg-white border border-stone-200 text-stone-600 hover:text-stone-950 hover:bg-stone-50 transition shadow-sm focus-visible:ring-2 focus-visible:ring-teal-500" 
           aria-label="Toggle Voice Coaching" title="Toggle Voice Guidance">
           <i id="sound-icon" data-lucide="volume-2" class="w-4 h-4" aria-hidden="true"></i>
         </button>
 
-        <!-- Prominent Start Scan CTA -->
+        <!-- Upload Photo CTA (Outlined Pill) -->
+        <button onclick="document.getElementById('real-data-file-input').click()" 
+          class="hidden sm:inline-flex px-4 py-2 rounded-full font-semibold text-xs border border-stone-300 hover:border-stone-400 bg-white text-stone-800 transition shadow-sm"
+          title="Upload image or video">
+          <span>Upload Photo</span>
+        </button>
+        <input type="file" id="real-data-file-input" accept="image/*,video/*" class="hidden" onchange="app.handleFileUpload(event)">
+
+        <!-- Prominent Start Scan CTA (Solid Black Pill) -->
         <button onclick="app.startScanFlow()" 
-          class="px-4 sm:px-5 py-2 rounded-full font-bold text-xs sm:text-sm bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-md shadow-amber-400/20 transition-all transform active:scale-95 flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-amber-400"
+          class="px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-stone-950 hover:bg-stone-800 text-white shadow-md transition-all transform active:scale-95 flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-teal-500"
           aria-label="Start scan now">
           <i data-lucide="camera" class="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true"></i>
-          <span>Start Scan</span>
+          <span>Start Free Scan</span>
         </button>
       </div>
     </div>
@@ -107,195 +120,370 @@
   <!-- MAIN APP CONTAINER -->
   <main id="main-content" class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col relative z-10 pb-28">
 
-    <!-- VIEW 1: HOME (Simple, Clean, Straight to the Point) -->
-    <section id="view-home" class="view-panel space-y-16 animate-fade-in max-w-4xl mx-auto py-4" aria-label="Home Overview">
+    <!-- VIEW 1: HOME (Lawtrades Reference Template) -->
+    <section id="view-home" class="view-panel space-y-20 animate-fade-in py-4" aria-label="Home Overview">
       
-      <!-- 1. HERO SECTION -->
-      <div class="text-center pt-6 sm:pt-12 space-y-6">
-        <!-- Minimal Badge -->
-        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-stone-900 border border-white/10 text-stone-300 text-xs font-medium">
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span>100% Private • Runs on your device</span>
-        </div>
-
-        <!-- Big, Clear, Human Headline -->
-        <h1 class="text-3xl sm:text-5xl font-display font-extrabold tracking-tight text-stone-100 leading-[1.15]">
-          Check your posture in 360°. <br>
-          <span class="text-amber-400">Get simple corrections.</span>
-        </h1>
-
-        <!-- One Plain-English Sentence -->
-        <p class="text-stone-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-          Stand in front of your camera, complete a slow turn, and see how your spine, neck, and shoulders align in real time.
-        </p>
-
-        <!-- Direct Action Buttons -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <button onclick="app.startScanFlow()" 
-            class="w-full sm:w-auto px-8 py-3.5 rounded-full font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-400/20 transition transform active:scale-95 flex items-center justify-center space-x-2 text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-amber-400">
-            <i data-lucide="camera" class="w-4 h-4 stroke-[2.5]" aria-hidden="true"></i>
-            <span>Start Free Scan</span>
-          </button>
-
-          <button onclick="document.getElementById('real-data-file-input').click()" 
-            class="w-full sm:w-auto px-6 py-3.5 rounded-full font-semibold bg-stone-900 hover:bg-stone-850 text-stone-200 border border-white/10 transition flex items-center justify-center space-x-2 text-sm focus-visible:ring-2 focus-visible:ring-amber-400"
-            title="Upload a photo or video to analyze posture">
-            <i data-lucide="upload" class="w-4 h-4 text-stone-400" aria-hidden="true"></i>
-            <span>Upload a Photo</span>
-          </button>
-          <input type="file" id="real-data-file-input" accept="image/*,video/*" class="hidden" onchange="app.handleFileUpload(event)">
-        </div>
-
-        <!-- Trust Note -->
-        <p class="text-xs text-stone-400">
-          No sign up needed. No videos or photos ever leave your phone or computer.
-        </p>
-      </div>
-
-      <!-- 2. BEFORE & AFTER SECTION (Clean Real Stock Photos) -->
-      <div id="why-posture" class="space-y-6 scroll-mt-24">
-        <div class="text-center space-y-1.5">
-          <h2 class="text-2xl sm:text-3xl font-display font-bold text-stone-100">
-            Why Posture Matters
-          </h2>
-          <p class="text-xs sm:text-sm text-stone-400 max-w-md mx-auto">
-            Small daily habits create hidden strain. Here is what happens when you restore neutral alignment.
-          </p>
-        </div>
-
-        <!-- Clean 2-Card Stock Photo Comparison -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- 1. HERO SECTION (2-Column Lawtrades Hero Layout) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4 sm:pt-10">
+        
+        <!-- Left Column: Copy & Actions -->
+        <div class="lg:col-span-6 space-y-6">
           
-          <!-- POOR POSTURE CARD -->
-          <div class="rounded-3xl bg-stone-900/70 border border-white/5 overflow-hidden shadow-xl flex flex-col">
-            <div class="relative h-60 w-full overflow-hidden bg-stone-950">
-              <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80" 
-                alt="Person slouching at a desk with neck strain and rounded shoulders" 
-                loading="lazy"
-                class="w-full h-full object-cover object-center filter brightness-90">
-              <div class="absolute top-3 left-3 bg-stone-950/90 border border-white/10 px-3 py-1 rounded-full text-xs font-semibold text-stone-300">
-                Poor Posture (Slouching)
-              </div>
-            </div>
-            
-            <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
-              <div class="space-y-2 text-xs text-stone-300">
-                <div class="flex items-start space-x-2">
-                  <span class="text-amber-400 font-bold">•</span>
-                  <span><strong>Head pushed forward:</strong> Creates heavy strain on the upper spine and neck muscles.</span>
-                </div>
-                <div class="flex items-start space-x-2">
-                  <span class="text-amber-400 font-bold">•</span>
-                  <span><strong>Rounded shoulders:</strong> Compresses the chest and restricts deep breathing.</span>
-                </div>
-                <div class="flex items-start space-x-2">
-                  <span class="text-amber-400 font-bold">•</span>
-                  <span><strong>Tilted pelvis:</strong> Places continuous tension on the lower back and hips.</span>
-                </div>
-              </div>
-              <div class="pt-3 border-t border-white/5 text-[11px] text-stone-400">
-                Common result: Neck stiffness, tension headaches, and afternoon fatigue.
-              </div>
-            </div>
+          <!-- Pill Badge -->
+          <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white border border-stone-200/90 shadow-sm text-stone-700 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            <span>100% Client-Side WebAssembly • Zero Cloud Uploads</span>
           </div>
 
-          <!-- GOOD POSTURE CARD -->
-          <div class="rounded-3xl bg-stone-900/70 border border-amber-400/20 overflow-hidden shadow-xl flex flex-col">
-            <div class="relative h-60 w-full overflow-hidden bg-stone-950">
-              <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80" 
-                alt="Person standing with upright, neutral posture and balanced spine" 
-                loading="lazy"
-                class="w-full h-full object-cover object-center filter brightness-95">
-              <div class="absolute top-3 left-3 bg-amber-400 text-stone-950 px-3 py-1 rounded-full text-xs font-bold shadow-md">
-                Neutral Alignment (Balanced)
-              </div>
-            </div>
+          <!-- Hero Headline (Matching Lawtrades: "Top legal talent, on demand.") -->
+          <h1 class="text-4xl sm:text-6xl font-display font-extrabold tracking-tight text-stone-950 leading-[1.08]">
+            Clinical posture <br>
+            screening, <br>
+            <span class="text-teal-600">on demand.</span>
+          </h1>
+
+          <!-- Body Copy -->
+          <p class="text-stone-600 text-sm sm:text-base leading-relaxed max-w-md">
+            Screen full-body alignment in 360° directly in your browser. Measure Craniovertebral Angle (CVA), Hansraj cervical spine load in lbs/kg, and pelvic tilt with complete on-device privacy.
+          </p>
+
+          <!-- Action Buttons (Solid Black + White Outlined Pill) -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="app.startScanFlow()" 
+              class="px-6 py-3 rounded-full font-bold bg-stone-950 hover:bg-stone-800 text-white shadow-lg shadow-stone-950/15 transition transform active:scale-95 text-xs sm:text-sm flex items-center space-x-2 focus-visible:ring-2 focus-visible:ring-teal-500">
+              <i data-lucide="camera" class="w-4 h-4 stroke-[2.5]" aria-hidden="true"></i>
+              <span>Start Free Scan</span>
+            </button>
+
+            <button onclick="document.getElementById('real-data-file-input').click()" 
+              class="px-5 py-3 rounded-full font-semibold border border-stone-300 hover:border-stone-400 bg-white/90 text-stone-800 text-xs sm:text-sm transition flex items-center space-x-2 shadow-sm focus-visible:ring-2 focus-visible:ring-teal-500"
+              title="Upload a photo or video to analyze posture">
+              <i data-lucide="upload" class="w-4 h-4 text-stone-500" aria-hidden="true"></i>
+              <span>Upload a Photo</span>
+            </button>
+          </div>
+
+          <!-- Trust Subtext -->
+          <div class="flex items-center space-x-2 text-xs text-stone-500 pt-1">
+            <i data-lucide="shield-check" class="w-4 h-4 text-teal-600" aria-hidden="true"></i>
+            <span>No account required • Instant results in 10 seconds</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Visual Collage (Matching Lawtrades 2-Card Portrait Collage + Curved Dotted Lines) -->
+        <div class="lg:col-span-6 relative flex justify-center items-center py-6">
+          
+          <!-- Curved Dotted Line Connector SVG -->
+          <svg class="absolute inset-0 w-full h-full pointer-events-none text-stone-400/70" viewBox="0 0 480 420" fill="none">
+            <path d="M 40 310 C 140 310, 160 140, 280 140 C 370 140, 390 220, 450 190" stroke="currentColor" stroke-width="1.8" stroke-dasharray="4 4" />
+            <circle cx="40" cy="310" r="4" fill="#1c1917" />
+            <circle cx="280" cy="140" r="4" fill="#0d9488" />
+            <circle cx="450" cy="190" r="4" fill="#1c1917" />
+          </svg>
+
+          <!-- Atmospheric Mint Glow Behind Cards -->
+          <div class="absolute w-80 h-80 rounded-full bg-teal-200/35 filter blur-3xl pointer-events-none -top-10 -right-10"></div>
+
+          <!-- Collage Container -->
+          <div class="relative w-full max-w-md h-[400px]">
             
-            <div class="p-5 space-y-3 flex-1 flex flex-col justify-between">
-              <div class="space-y-2 text-xs text-stone-300">
-                <div class="flex items-start space-x-2">
-                  <span class="text-emerald-400 font-bold">•</span>
-                  <span><strong>Balanced head position:</strong> Head sits easily over the shoulders with zero neck pull.</span>
-                </div>
-                <div class="flex items-start space-x-2">
-                  <span class="text-emerald-400 font-bold">•</span>
-                  <span><strong>Open chest:</strong> Shoulders rest naturally back, allowing effortless full breaths.</span>
-                </div>
-                <div class="flex items-start space-x-2">
-                  <span class="text-emerald-400 font-bold">•</span>
-                  <span><strong>Supported lower back:</strong> Weight is distributed evenly across hips and feet.</span>
+            <!-- Card 1: Top Right Portrait (Real Stock Photo) -->
+            <div class="absolute top-2 right-4 w-52 sm:w-60 h-60 sm:h-72 rounded-3xl border-2 border-stone-900 bg-white overflow-hidden shadow-2xl z-10 transition-transform hover:scale-[1.02]">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" 
+                alt="Portrait of person with aligned posture" 
+                class="w-full h-full object-cover object-center">
+              
+              <!-- Floating Top Badge (Justin Higgs Style) -->
+              <div class="absolute top-3 right-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-2xl border border-stone-200/90 shadow-md flex items-center space-x-2 z-20">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&q=80" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
+                <div>
+                  <div class="text-[10px] font-bold text-stone-900 leading-tight">Dr. Justin Higgs</div>
+                  <div class="text-[9px] text-stone-500 font-medium leading-tight">Cervical Spine</div>
                 </div>
               </div>
-              <div class="pt-3 border-t border-white/5 text-[11px] text-emerald-400 font-medium">
-                Target outcome: Less daily aches, effortless upright poise, and more energy.
+
+              <!-- Floating Bottom Alignment Pill -->
+              <div class="absolute bottom-3 left-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl border border-stone-200/90 shadow-md z-20">
+                <div class="text-[9px] font-bold text-stone-500 uppercase tracking-wider">Cervical Vector</div>
+                <div class="text-xs font-extrabold text-stone-900 flex items-center space-x-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>CVA 54° • Optimal</span>
+                </div>
               </div>
             </div>
+
+            <!-- Card 2: Lower Left Overlapping Portrait (Real Stock Photo) -->
+            <div class="absolute bottom-2 left-2 w-56 sm:w-64 h-64 sm:h-76 rounded-3xl border-2 border-stone-900 bg-white overflow-hidden shadow-2xl z-20 transition-transform hover:scale-[1.02]">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" 
+                alt="Portrait of athlete with healthy alignment" 
+                class="w-full h-full object-cover object-center">
+              
+              <!-- Floating Top-Left Badge (Karen Frame Style) -->
+              <div class="absolute top-3 left-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-2xl border border-stone-200/90 shadow-md flex items-center space-x-2 z-20">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=80&q=80" alt="Avatar" class="w-6 h-6 rounded-full object-cover">
+                <div>
+                  <div class="text-[10px] font-bold text-stone-900 leading-tight">Karen Frame</div>
+                  <div class="text-[9px] text-stone-500 font-medium leading-tight">Athlete • Full 360°</div>
+                </div>
+              </div>
+
+              <!-- Floating Bottom-Right Load Tag (New Work Log Style) -->
+              <div class="absolute bottom-3 right-3 bg-white/95 backdrop-blur px-3 py-1.5 rounded-2xl border border-stone-200/90 shadow-md z-20 flex items-center space-x-2.5">
+                <div>
+                  <div class="text-[9px] text-stone-500 font-bold uppercase tracking-wider">Spine Strain</div>
+                  <div class="text-xs font-black text-emerald-600">-24 lbs (11 kg)</div>
+                </div>
+                <div class="px-2 py-0.5 rounded-lg bg-teal-100 text-teal-900 text-[10px] font-extrabold uppercase">
+                  Relieved
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. METHODOLOGY & SCIENCE TRUST BAR (Matching Yelp, DoorDash, Airbnb... Bar) -->
+      <div class="py-6 border-y border-stone-200/80">
+        <div class="text-center text-[10px] uppercase font-bold tracking-widest text-stone-400 mb-4">
+          Grounded in peer-reviewed clinical posturology & kinesiology
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs sm:text-sm font-bold text-stone-600">
+          <span class="flex items-center space-x-1.5 hover:text-stone-950 transition">
+            <i data-lucide="scale" class="w-4 h-4 text-teal-600"></i>
+            <span>Hansraj Cervical Model</span>
+          </span>
+          <span class="flex items-center space-x-1.5 hover:text-stone-950 transition">
+            <i data-lucide="compass" class="w-4 h-4 text-teal-600"></i>
+            <span>Kendall Plumb Line</span>
+          </span>
+          <span class="flex items-center space-x-1.5 hover:text-stone-950 transition">
+            <i data-lucide="binary" class="w-4 h-4 text-teal-600"></i>
+            <span>MediaPipe Pose AI</span>
+          </span>
+          <span class="flex items-center space-x-1.5 hover:text-stone-950 transition">
+            <i data-lucide="cpu" class="w-4 h-4 text-teal-600"></i>
+            <span>Client WebAssembly</span>
+          </span>
+          <span class="flex items-center space-x-1.5 hover:text-stone-950 transition">
+            <i data-lucide="shield" class="w-4 h-4 text-teal-600"></i>
+            <span>100% On-Device Privacy</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 3. CHOOSE YOUR CLINICAL FOCUS AREA (Matching Lawtrades Section 2) -->
+      <div id="clinical-focus" class="space-y-8 scroll-mt-24">
+        
+        <!-- Section Header -->
+        <div class="text-left sm:text-center space-y-2">
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-stone-950 tracking-tight">
+            Choose Your <span class="text-teal-600">Clinical Focus Area</span>
+          </h2>
+          <p class="text-stone-600 text-xs sm:text-sm max-w-xl sm:mx-auto">
+            Target specific kinetic chain segments with orthopedic precision and receive tailored corrective exercise protocols.
+          </p>
+        </div>
+
+        <!-- Filter Pill Tabs (Interactive Buttons) -->
+        <div class="flex flex-wrap items-center justify-start sm:justify-center gap-2">
+          <button id="tab-focus-cervical" onclick="app.setClinicalFocus('cervical')"
+            class="px-4 sm:px-5 py-2.5 rounded-full text-xs font-bold bg-stone-950 text-white shadow-md transition transform active:scale-95">
+            Cervical Spine & CVA
+          </button>
+          <button id="tab-focus-thoracic" onclick="app.setClinicalFocus('thoracic')"
+            class="px-4 sm:px-5 py-2.5 rounded-full text-xs font-semibold bg-white hover:bg-stone-100 text-stone-700 transition border border-stone-200/90 shadow-sm">
+            Thoracic Kyphosis
+          </button>
+          <button id="tab-focus-pelvic" onclick="app.setClinicalFocus('pelvic')"
+            class="px-4 sm:px-5 py-2.5 rounded-full text-xs font-semibold bg-white hover:bg-stone-100 text-stone-700 transition border border-stone-200/90 shadow-sm">
+            Lumbopelvic (APT)
+          </button>
+          <button id="tab-focus-knee" onclick="app.setClinicalFocus('knee')"
+            class="px-4 sm:px-5 py-2.5 rounded-full text-xs font-semibold bg-white hover:bg-stone-100 text-stone-700 transition border border-stone-200/90 shadow-sm">
+            Knee Tracking (Valgus)
+          </button>
+        </div>
+
+        <!-- Large Featured Card (Matching Lawtrades Horizontal Layout) -->
+        <div class="rounded-3xl border-2 border-stone-900 bg-white p-6 sm:p-10 shadow-xl overflow-hidden relative">
+          
+          <!-- Soft Mint Background Aura -->
+          <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-teal-100/60 via-emerald-50/40 to-transparent rounded-full pointer-events-none -mr-20 -mt-20"></div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center relative z-10">
+            
+            <!-- Left Info Column -->
+            <div class="md:col-span-7 space-y-4">
+              <div class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200" id="featured-focus-badge">
+                Sagittal Vector • CVA
+              </div>
+              
+              <h3 class="text-2xl sm:text-3xl font-display font-extrabold text-stone-950" id="featured-focus-title">
+                Craniovertebral Alignment & Extra Cervical Load
+              </h3>
+              
+              <p class="text-stone-600 text-xs sm:text-sm leading-relaxed" id="featured-focus-desc">
+                Every degree of forward head protraction multiplies cervical disc compression. KineticScan calculates your Craniovertebral Angle (CVA) from the ear tragus to C7, determining exact mechanical overload in both pounds and kilograms (e.g. +24 lbs / 11 kg extra neck strain) so you can eliminate upper trapezius fatigue and tension headaches.
+              </p>
+
+              <!-- Tags Container -->
+              <div class="flex flex-wrap gap-2 pt-1" id="featured-focus-tags">
+                <span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/80">CVA Normal: ≥50°</span>
+                <span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/80">Hansraj Load: +lbs/kg</span>
+                <span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/80">Suboccipital Relief</span>
+              </div>
+
+              <!-- Button & Stat Row -->
+              <div class="pt-4 flex flex-wrap items-center gap-4">
+                <button onclick="app.startScanFlow()" 
+                  class="px-6 py-2.5 rounded-full font-bold bg-stone-950 hover:bg-stone-800 text-white text-xs sm:text-sm shadow-md transition flex items-center space-x-2">
+                  <span>Start Screen Now</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+                <div class="text-xs text-stone-600 font-medium">
+                  <span id="featured-focus-stat-label">Extra Cervical Strain:</span>
+                  <span class="font-extrabold text-teal-700 ml-1" id="featured-focus-stat-value">+24 lbs (11 kg)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Real Stock Photo in 2px Border Card -->
+            <div class="md:col-span-5 flex justify-center">
+              <div class="relative w-64 sm:w-72 h-72 sm:h-80 rounded-2xl overflow-hidden border-2 border-stone-900 shadow-xl bg-stone-100">
+                <img id="featured-focus-img" 
+                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80" 
+                  alt="Clinical posture screening reference" 
+                  class="w-full h-full object-cover object-center">
+                <div class="absolute bottom-3 inset-x-3 bg-stone-950/85 backdrop-blur px-3 py-1.5 rounded-xl text-white text-[10px] font-semibold flex items-center justify-between">
+                  <span>Neutral Plumb Line</span>
+                  <span class="text-emerald-400 font-mono font-bold">LOCKED</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 4. WHY CHOOSE KINETICSCAN (Matching Lawtrades Section 3) -->
+      <div id="why-kinetic" class="space-y-8 scroll-mt-24">
+        <div class="text-left sm:text-center space-y-2">
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-stone-950 tracking-tight">
+            Why choose <span class="text-teal-600">KineticScan</span>
+          </h2>
+          <p class="text-stone-600 text-xs sm:text-sm max-w-xl sm:mx-auto">
+            Built on peer-reviewed biomechanical science, not guesswork or generic AI generation.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <!-- Card 1 -->
+          <div class="rounded-3xl border border-stone-200/90 bg-white p-7 space-y-4 shadow-sm hover:shadow-md transition">
+            <div class="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-200/80 text-teal-700 flex items-center justify-center">
+              <i data-lucide="binary" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-base text-stone-950">Empirical Trigonometry</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              True angles for Craniovertebral Angle (CVA), thoracic Cobb proxy, pelvic inclination, and knee valgus computed from 33 real 3D anatomical landmark vectors.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="rounded-3xl border border-stone-200/90 bg-white p-7 space-y-4 shadow-sm hover:shadow-md transition">
+            <div class="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-200/80 text-teal-700 flex items-center justify-center">
+              <i data-lucide="scale" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-base text-stone-950">Hansraj Spinal Model</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Translating abstract angles into tangible mechanical strain in both pounds and kilograms (+24 lbs / 11 kg) so you clearly understand the daily load on your neck and spine.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="rounded-3xl border border-stone-200/90 bg-white p-7 space-y-4 shadow-sm hover:shadow-md transition">
+            <div class="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-200/80 text-teal-700 flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-display font-bold text-base text-stone-950">100% On-Device Privacy</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Zero video or photos are ever saved, uploaded, or transmitted. Every computation executes locally via client-side WebAssembly directly on your device.
+            </p>
           </div>
 
         </div>
       </div>
 
-      <!-- 3. HOW IT WORKS (3 Simple Steps) -->
-      <div id="how-it-works" class="space-y-6 scroll-mt-24">
-        <div class="text-center space-y-1.5">
-          <h2 class="text-2xl sm:text-3xl font-display font-bold text-stone-100">
-            How It Works
+      <!-- 5. HOW IT WORKS (3 Simple Steps) -->
+      <div id="how-it-works" class="space-y-8 scroll-mt-24">
+        <div class="text-left sm:text-center space-y-2">
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-stone-950 tracking-tight">
+            How It <span class="text-teal-600">Works</span>
           </h2>
-          <p class="text-xs sm:text-sm text-stone-400">
-            No equipment required. Just your device and a little bit of space.
+          <p class="text-stone-600 text-xs sm:text-sm max-w-xl sm:mx-auto">
+            Zero equipment needed. Just your phone or laptop camera and a little bit of space.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Step 1 -->
-          <div class="rounded-3xl bg-stone-900/60 border border-white/5 p-6 space-y-3">
-            <div class="w-10 h-10 rounded-full bg-stone-800 text-amber-400 flex items-center justify-center font-display font-bold text-base">
+          <div class="rounded-3xl border border-stone-200/90 bg-white p-7 space-y-3 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-stone-950 text-white flex items-center justify-center font-display font-bold text-sm">
               1
             </div>
-            <h3 class="font-display font-bold text-stone-100 text-base">Position device</h3>
-            <p class="text-xs text-stone-400 leading-relaxed">
-              Prop your phone or laptop on a desk or table at waist height. Take a few steps back until you see your full body in the box.
+            <h3 class="font-display font-bold text-stone-950 text-base">Position Device</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Prop your phone or laptop on a desk or table at waist height. Step back 5 to 7 feet until the live checklist marks Head, Torso, and Legs green.
             </p>
           </div>
 
           <!-- Step 2 -->
-          <div class="rounded-3xl bg-stone-900/60 border border-white/5 p-6 space-y-3">
-            <div class="w-10 h-10 rounded-full bg-stone-800 text-amber-400 flex items-center justify-center font-display font-bold text-base">
+          <div class="rounded-3xl border border-stone-200/90 bg-white p-7 space-y-3 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-stone-950 text-white flex items-center justify-center font-display font-bold text-sm">
               2
             </div>
-            <h3 class="font-display font-bold text-stone-100 text-base">Spin 360° slowly</h3>
-            <p class="text-xs text-stone-400 leading-relaxed">
-              As soon as the frame turns green, a friendly voice counts down. Make one slow turn in a circle while the camera checks your alignment.
+            <h3 class="font-display font-bold text-stone-950 text-base">3-2-1 Audio Countdown</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              An on-screen countdown and audio chime gives you 3 seconds to balance. Make one slow turn as directional voice guidance coaches each 90° angle.
             </p>
           </div>
 
           <!-- Step 3 -->
-          <div class="rounded-3xl bg-stone-900/60 border border-white/5 p-6 space-y-3">
-            <div class="w-10 h-10 rounded-full bg-stone-800 text-amber-400 flex items-center justify-center font-display font-bold text-base">
+          <div class="rounded-3xl border border-stone-200/90 bg-white p-7 space-y-3 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-stone-950 text-white flex items-center justify-center font-display font-bold text-sm">
               3
             </div>
-            <h3 class="font-display font-bold text-stone-100 text-base">See your plan</h3>
-            <p class="text-xs text-stone-400 leading-relaxed">
-              Instantly view your alignment score and get 3 personalized daily stretches to correct any tight muscles or imbalances.
+            <h3 class="font-display font-bold text-stone-950 text-base">Clinical Action Plan</h3>
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Instantly view your 4-card clinical dashboard (CVA neck load, kyphosis Cobb proxy, pelvic tilt, knee valgus) and 4 targeted corrective exercises.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- 4. FINAL CALL TO ACTION CARD -->
-      <div class="rounded-3xl bg-gradient-to-b from-stone-900 to-stone-950 border border-white/10 p-8 sm:p-10 text-center space-y-5 shadow-2xl">
-        <h2 class="text-2xl sm:text-3xl font-display font-bold text-stone-100">
-          Ready to check your posture?
-        </h2>
-        <p class="text-stone-400 text-xs sm:text-sm max-w-md mx-auto">
-          It takes only 10 seconds, requires no account, and is completely free and private.
-        </p>
-        <div class="pt-2">
-          <button onclick="app.startScanFlow()" 
-            class="px-8 py-3.5 rounded-full font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-400/20 transition transform active:scale-95 inline-flex items-center space-x-2 text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-amber-400">
-            <i data-lucide="camera" class="w-4 h-4 stroke-[2.5]" aria-hidden="true"></i>
-            <span>Start Free Scan</span>
-          </button>
+      <!-- 6. FINAL CALL TO ACTION (Matching Lawtrades Bottom Card) -->
+      <div class="rounded-3xl border-2 border-stone-900 bg-gradient-to-br from-white via-emerald-50/30 to-teal-100/40 p-8 sm:p-12 text-center space-y-5 shadow-xl relative overflow-hidden">
+        <div class="max-w-xl mx-auto space-y-3 relative z-10">
+          <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-stone-950 tracking-tight">
+            Ready to check your postural alignment?
+          </h2>
+          <p class="text-stone-600 text-xs sm:text-sm">
+            Takes only 10 seconds. Free, 100% private, and runs directly on your device.
+          </p>
+          <div class="pt-3 flex flex-wrap items-center justify-center gap-3">
+            <button onclick="app.startScanFlow()" 
+              class="px-8 py-3.5 rounded-full font-bold bg-stone-950 hover:bg-stone-850 text-white shadow-xl shadow-stone-950/20 transition transform active:scale-95 inline-flex items-center space-x-2 text-xs sm:text-sm focus-visible:ring-2 focus-visible:ring-teal-500">
+              <i data-lucide="camera" class="w-4 h-4 stroke-[2.5]" aria-hidden="true"></i>
+              <span>Start Free Scan</span>
+            </button>
+            <button onclick="document.getElementById('real-data-file-input').click()" 
+              class="px-6 py-3.5 rounded-full font-semibold border border-stone-300 hover:border-stone-400 bg-white text-stone-800 transition text-xs sm:text-sm shadow-sm">
+              <span>Upload a Photo</span>
+            </button>
+          </div>
         </div>
       </div>
 

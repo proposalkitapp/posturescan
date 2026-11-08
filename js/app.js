@@ -3,6 +3,45 @@
  * Directional Voice Coaching & Hands-Free Automatic 360 Recording
  */
 
+const CLINICAL_FOCUS_DATA = {
+  cervical: {
+    title: 'Craniovertebral Alignment & Extra Cervical Load',
+    badge: 'Sagittal Vector • CVA',
+    description: 'Every degree of forward head protraction multiplies cervical disc compression. KineticScan calculates your Craniovertebral Angle (CVA) from the ear tragus to C7, determining exact mechanical overload in both pounds and kilograms (e.g. +24 lbs / 11 kg) so you can eliminate tension headaches and upper trapezius fatigue.',
+    tags: ['CVA Normal: ≥50°', 'Hansraj Load: +lbs/kg', 'Suboccipital Relief'],
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80',
+    statLabel: 'Extra Cervical Strain',
+    statValue: '+24 lbs (11 kg)'
+  },
+  thoracic: {
+    title: 'Thoracic Kyphosis & Cobb Angle Proxy',
+    badge: 'Upper Trunk • Cobb Proxy',
+    description: 'Rounded shoulders and excessive thoracic rounding restrict ribcage expansion, diaphragm excursion, and overhead shoulder rotation. KineticScan measures photogrammetric thoracic curvature against clinical Cobb angle benchmarks to restore thoracic spine extension and explosive rotational whip.',
+    tags: ['Cobb Proxy: <40°', 'Scapular Retraction', 'T-Spine Mobility'],
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=700&q=80',
+    statLabel: 'Cobb Angle Proxy',
+    statValue: '36° (Optimal)'
+  },
+  pelvic: {
+    title: 'Lumbopelvic Rhythm & Anterior Pelvic Tilt',
+    badge: 'Core & Pelvis • Hip Flexors',
+    description: 'Prolonged sitting shortens the psoas and rectus femoris, pulling the pelvis forward into anterior pelvic tilt. This disables gluteus maximus recruitment and exerts continuous compressive shear on lumbar facet joints. KineticScan isolates hip flexion angle to unlock full terminal hip extension.',
+    tags: ['Neutral Dev: ≤5°', 'Psoas Lengthening', 'Glute Lockout'],
+    image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=700&q=80',
+    statLabel: 'Pelvic Deviation',
+    statValue: 'APT (6°) • Mild'
+  },
+  knee: {
+    title: 'Lower Kinetic Chain & Dynamic Knee Valgus',
+    badge: 'Frontal Plane • Q-Angle',
+    description: 'Medial knee collapse during squatting, jumping, or running reveals underactive gluteus medius stabilizers and drastically elevates non-contact ACL stress. KineticScan screens hip-knee-ankle frontal plane tracking relative to the second toe axis to protect the patellofemoral joint.',
+    tags: ['Q-Angle Valgus: <3.5°', 'Glute Medius Activation', 'ACL Shielding'],
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=80',
+    statLabel: 'Dynamic Tracking',
+    statValue: '2.1° Valgus (Safe)'
+  }
+};
+
 class AppController {
   constructor() {
     this.currentView = 'home';
@@ -46,6 +85,46 @@ class AppController {
     }
 
     this.initPostureSlider();
+    this.setClinicalFocus('cervical');
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  setClinicalFocus(key) {
+    const data = CLINICAL_FOCUS_DATA[key];
+    if (!data) return;
+
+    ['cervical', 'thoracic', 'pelvic', 'knee'].forEach(tabKey => {
+      const btn = document.getElementById(`tab-focus-${tabKey}`);
+      if (btn) {
+        if (tabKey === key) {
+          btn.className = 'px-4 sm:px-5 py-2.5 rounded-full text-xs font-bold bg-stone-950 text-white shadow-md transition transform active:scale-95';
+        } else {
+          btn.className = 'px-4 sm:px-5 py-2.5 rounded-full text-xs font-semibold bg-white hover:bg-stone-100 text-stone-700 transition border border-stone-200/90 shadow-sm';
+        }
+      }
+    });
+
+    const titleEl = document.getElementById('featured-focus-title');
+    const badgeEl = document.getElementById('featured-focus-badge');
+    const descEl = document.getElementById('featured-focus-desc');
+    const tagsContainer = document.getElementById('featured-focus-tags');
+    const imgEl = document.getElementById('featured-focus-img');
+    const statLabel = document.getElementById('featured-focus-stat-label');
+    const statValue = document.getElementById('featured-focus-stat-value');
+
+    if (titleEl) titleEl.innerText = data.title;
+    if (badgeEl) badgeEl.innerText = data.badge;
+    if (descEl) descEl.innerText = data.description;
+    if (imgEl) imgEl.src = data.image;
+    if (statLabel) statLabel.innerText = data.statLabel;
+    if (statValue) statValue.innerText = data.statValue;
+
+    if (tagsContainer) {
+      tagsContainer.innerHTML = data.tags.map(tag => `
+        <span class="px-3 py-1 rounded-full text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/80">${tag}</span>
+      `).join('');
+    }
 
     if (window.lucide) lucide.createIcons();
   }

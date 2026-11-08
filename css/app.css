@@ -1,10 +1,26 @@
-/* Clean Minimalist Luxury Aesthetic (Neutral Dark & Warm Gold) */
+/* Clean Minimalist Luxury Aesthetic (Warm Cream & Mint Accents) */
 
 :root {
-  --bg-deep: #0c0a09;
-  --bg-card: #171513;
-  --accent-amber: #f59e0b;
-  --accent-gold: #fbbf24;
+  --bg-cream: #faf8f5;
+  --bg-card: #ffffff;
+  --accent-teal: #0d9488;
+  --accent-mint: #4ade80;
+}
+
+/* Lawtrades-Style Soft Mint Atmosphere */
+.bg-mint-aura {
+  background: radial-gradient(circle at 75% 25%, rgba(167, 243, 208, 0.45) 0%, rgba(204, 251, 241, 0.25) 45%, rgba(250, 248, 246, 0) 70%);
+}
+
+.dashed-plumb-line {
+  stroke-dasharray: 4, 4;
+}
+
+.lawtrades-card {
+  background: #ffffff;
+  border: 2px solid #1c1917;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08);
 }
 
 /* Subtle, gentle warm ambient aura (no harsh red/orange cast) */
