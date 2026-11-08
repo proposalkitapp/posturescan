@@ -1069,15 +1069,15 @@
     </div>
   </nav>
 
-  <!-- COOKIE CONSENT BANNER (Zero Dark Patterns) -->
-  <aside id="cookie-consent-banner" class="fixed bottom-0 inset-x-0 z-50 p-4 bg-stone-950/95 border-t border-white/10 backdrop-blur-2xl shadow-2xl hidden" role="region" aria-label="Cookie and Privacy Consent">
+  <!-- COOKIE CONSENT BANNER (Zero Dark Patterns - Luxury Light Mode) -->
+  <aside id="cookie-consent-banner" class="fixed bottom-0 inset-x-0 z-50 p-4 bg-white/95 border-t border-stone-200/90 backdrop-blur-2xl shadow-2xl hidden" role="region" aria-label="Cookie and Privacy Consent">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="space-y-1 text-center md:text-left">
-        <div class="font-display font-bold text-sm text-stone-100 flex items-center justify-center md:justify-start space-x-2">
-          <i data-lucide="shield" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+        <div class="font-display font-bold text-sm text-stone-950 flex items-center justify-center md:justify-start space-x-2">
+          <i data-lucide="shield-check" class="w-4 h-4 text-teal-600" aria-hidden="true"></i>
           <span>Privacy & Essential Local Storage</span>
         </div>
-        <p class="text-xs text-stone-400 max-w-2xl">
+        <p class="text-xs text-stone-600 max-w-2xl">
           KineticScan 360 uses zero advertising or tracking cookies. We only use essential local browser storage to save your preference selections and scan history on this device.
         </p>
       </div>
@@ -1085,15 +1085,15 @@
       <div class="flex items-center space-x-3 w-full md:w-auto justify-center">
         <!-- Equal visual weight: no dark patterns -->
         <button onclick="privacyManager.setCookieConsent(false)" 
-          class="flex-1 md:flex-none px-4 py-2 rounded-full text-xs font-semibold bg-stone-900 hover:bg-stone-850 text-stone-300 border border-white/10 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          class="flex-1 md:flex-none px-4 py-2 rounded-full text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200 transition focus-visible:ring-2 focus-visible:ring-teal-500">
           Reject Non-Essential
         </button>
         <button onclick="privacyManager.setCookieConsent(true)" 
-          class="flex-1 md:flex-none px-5 py-2 rounded-full text-xs font-semibold bg-sunset-500 hover:bg-sunset-400 text-stone-950 transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          class="flex-1 md:flex-none px-5 py-2 rounded-full text-xs font-bold bg-stone-950 hover:bg-stone-850 text-white transition focus-visible:ring-2 focus-visible:ring-teal-500 shadow-sm">
           Accept Essential Storage
         </button>
         <button onclick="privacyManager.showPolicy('cookies')" 
-          class="text-xs text-stone-400 hover:text-stone-200 underline focus-visible:ring-2 focus-visible:ring-sunset-500">
+          class="text-xs text-stone-500 hover:text-stone-950 underline focus-visible:ring-2 focus-visible:ring-teal-500">
           Cookie Policy
         </button>
       </div>
@@ -1101,16 +1101,16 @@
   </aside>
 
   <!-- LEGAL & COMPLIANCE MODAL (Privacy, Terms, Cookies) -->
-  <div id="policy-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+  <div id="policy-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title">
+    <div class="bg-white border border-stone-200/90 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
       <!-- Header -->
-      <div class="p-6 border-b border-stone-800 flex items-center justify-between">
+      <div class="p-6 border-b border-stone-100 flex items-center justify-between">
         <div>
-          <h3 id="policy-modal-title" class="font-display font-extrabold text-xl text-stone-100">Legal Policy</h3>
-          <p id="policy-modal-date" class="text-xs text-stone-400 mt-0.5">Effective: November 2026</p>
+          <h3 id="policy-modal-title" class="font-display font-extrabold text-xl text-stone-950">Legal Policy</h3>
+          <p id="policy-modal-date" class="text-xs text-stone-500 mt-0.5">Effective: November 2026</p>
         </div>
         <button onclick="privacyManager.closeModal('policy-modal')" 
-          class="p-2 rounded-full bg-stone-800 text-stone-400 hover:text-white transition focus-visible:ring-2 focus-visible:ring-sunset-500" 
+          class="p-2 rounded-full bg-stone-100 text-stone-600 hover:text-stone-950 transition focus-visible:ring-2 focus-visible:ring-teal-500" 
           aria-label="Close dialog">
           <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
         </button>
@@ -1118,14 +1118,14 @@
 
       <!-- Content -->
       <div class="p-6 overflow-y-auto space-y-4">
-        <p id="policy-modal-summary" class="text-xs text-sunset-400 font-medium leading-relaxed bg-sunset-500/10 p-3.5 rounded-2xl border border-sunset-500/20"></p>
-        <div id="policy-modal-body" class="space-y-4 text-xs text-stone-300"></div>
+        <p id="policy-modal-summary" class="text-xs text-teal-800 font-medium leading-relaxed bg-teal-50 p-3.5 rounded-2xl border border-teal-200/80"></p>
+        <div id="policy-modal-body" class="space-y-4 text-xs text-stone-600 leading-relaxed"></div>
       </div>
 
       <!-- Footer -->
-      <div class="p-4 border-t border-stone-800 bg-stone-950/60 flex justify-end">
+      <div class="p-4 border-t border-stone-100 bg-stone-50/80 flex justify-end">
         <button onclick="privacyManager.closeModal('policy-modal')" 
-          class="px-5 py-2 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          class="px-5 py-2 rounded-full bg-stone-950 hover:bg-stone-850 text-white text-xs font-bold transition focus-visible:ring-2 focus-visible:ring-teal-500 shadow-sm">
           Close
         </button>
       </div>
@@ -1133,24 +1133,24 @@
   </div>
 
   <!-- AGE VERIFICATION GATE MODAL (COPPA / GDPR-K Protection) -->
-  <div id="age-gate-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl">
-      <div class="w-12 h-12 rounded-full bg-sunset-500/10 border border-sunset-500/25 flex items-center justify-center text-sunset-400 mx-auto">
+  <div id="age-gate-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
+    <div class="bg-white border border-stone-200/90 rounded-3xl max-w-md w-full p-6 sm:p-7 text-center space-y-4 shadow-2xl">
+      <div class="w-12 h-12 rounded-full bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center mx-auto shadow-xs">
         <i data-lucide="user-check" class="w-6 h-6" aria-hidden="true"></i>
       </div>
       <div class="space-y-1.5">
-        <h3 id="age-gate-title" class="font-display font-bold text-lg text-stone-100">Age Verification & Safety</h3>
-        <p class="text-xs text-stone-400 leading-relaxed">
+        <h3 id="age-gate-title" class="font-display font-extrabold text-lg text-stone-950">Age Verification & Safety</h3>
+        <p class="text-xs text-stone-600 leading-relaxed">
           In compliance with minor privacy standards (COPPA and GDPR-K), body movement scanning requires confirming you are at least 16 years of age, or have active parental or guardian supervision.
         </p>
       </div>
       <div class="space-y-2 pt-2">
         <button onclick="privacyManager.verifyAge(true)" 
-          class="w-full py-3 rounded-full bg-sunset-500 hover:bg-sunset-400 text-stone-950 font-bold text-xs transition shadow-lg shadow-sunset-500/20 focus-visible:ring-2 focus-visible:ring-sunset-400">
+          class="w-full py-3 rounded-full bg-stone-950 hover:bg-stone-850 text-white font-bold text-xs transition shadow-md focus-visible:ring-2 focus-visible:ring-teal-500">
           I am 16+ or have Parental Supervision
         </button>
         <button onclick="privacyManager.verifyAge(false)" 
-          class="w-full py-2.5 rounded-full bg-stone-800 hover:bg-stone-750 text-stone-300 font-medium text-xs transition focus-visible:ring-2 focus-visible:ring-sunset-500">
+          class="w-full py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs border border-stone-200 transition focus-visible:ring-2 focus-visible:ring-teal-500">
           I am under 16 without supervision
         </button>
       </div>
@@ -1158,29 +1158,29 @@
   </div>
 
   <!-- DATA DELETION & PRIVACY RIGHTS MODAL -->
-  <div id="data-deletion-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="data-deletion-title">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-stone-800">
-        <h3 id="data-deletion-title" class="font-display font-bold text-base text-stone-100 flex items-center space-x-2">
-          <i data-lucide="shield-alert" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+  <div id="data-deletion-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="data-deletion-title">
+    <div class="bg-white border border-stone-200/90 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-100">
+        <h3 id="data-deletion-title" class="font-display font-extrabold text-base text-stone-950 flex items-center space-x-2">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600" aria-hidden="true"></i>
           <span>Privacy Rights & Data Deletion</span>
         </h3>
         <button onclick="privacyManager.closeModal('data-deletion-modal')" 
-          class="p-1.5 rounded-full text-stone-400 hover:text-white" aria-label="Close dialog">
+          class="p-1.5 rounded-full bg-stone-100 text-stone-500 hover:text-stone-950 transition" aria-label="Close dialog">
           <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
         </button>
       </div>
 
-      <p class="text-xs text-stone-300 leading-relaxed">
+      <p class="text-xs text-stone-600 leading-relaxed">
         KineticScan 360 is built local-first. We do NOT maintain remote user databases or store your body scans in the cloud. However, you have complete control over all data stored on this browser:
       </p>
 
       <!-- Instant 1-Click Wipe -->
-      <div class="p-4 rounded-2xl bg-stone-950/70 border border-white/5 space-y-2 text-left">
-        <div class="text-xs font-bold text-stone-100">1-Click Local Data Purge</div>
-        <p class="text-[11px] text-stone-400">Permanently erases all saved scores, scan milestones, and stored preferences on this device.</p>
+      <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2 text-left">
+        <div class="text-xs font-bold text-rose-950">1-Click Local Data Purge</div>
+        <p class="text-[11px] text-rose-800">Permanently erases all saved scores, scan milestones, and stored preferences on this device.</p>
         <button onclick="privacyManager.purgeAllLocalData()" 
-          class="mt-1 px-4 py-2 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25 transition">
+          class="mt-1 px-4 py-2 rounded-full text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-sm transition">
           Purge All Local Data Now
         </button>
       </div>
@@ -1188,12 +1188,12 @@
       <!-- Formal Request Form -->
       <form onsubmit="privacyManager.submitDeletionRequest(event)" class="space-y-3 pt-2">
         <div class="space-y-1">
-          <label for="deletion-email-input" class="text-xs font-medium text-stone-300">Request Subject Access or Deletion Confirmation:</label>
+          <label for="deletion-email-input" class="text-xs font-semibold text-stone-700">Request Subject Access or Deletion Confirmation:</label>
           <input type="email" id="deletion-email-input" placeholder="Enter your email" required
-            class="w-full px-4 py-2 rounded-full bg-stone-950 border border-stone-800 text-xs text-stone-200 placeholder-stone-500 focus-visible:ring-2 focus-visible:ring-sunset-500">
+            class="w-full px-4 py-2.5 rounded-full bg-stone-50 border border-stone-300 text-xs text-stone-900 placeholder-stone-400 focus-visible:ring-2 focus-visible:ring-teal-500">
         </div>
         <button type="submit" 
-          class="w-full py-2.5 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-200 font-semibold text-xs transition">
+          class="w-full py-2.5 rounded-full bg-stone-950 hover:bg-stone-850 text-white font-bold text-xs transition shadow-sm">
           Confirm Deletion Request
         </button>
       </form>
@@ -1203,38 +1203,38 @@
   </div>
 
   <!-- RAW BIOMETRIC TELEMETRY MODAL -->
-  <div id="raw-telemetry-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="raw-telemetry-title">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl max-w-3xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between pb-3 border-b border-stone-800 flex-shrink-0">
-        <h3 id="raw-telemetry-title" class="font-display font-bold text-base text-stone-100 flex items-center space-x-2">
-          <i data-lucide="binary" class="w-4 h-4 text-sunset-400" aria-hidden="true"></i>
+  <div id="raw-telemetry-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="raw-telemetry-title">
+    <div class="bg-white border border-stone-200/90 rounded-3xl max-w-3xl w-full p-6 sm:p-7 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-100 flex-shrink-0">
+        <h3 id="raw-telemetry-title" class="font-display font-extrabold text-base text-stone-950 flex items-center space-x-2">
+          <i data-lucide="binary" class="w-4 h-4 text-teal-600" aria-hidden="true"></i>
           <span>Live Biometric Landmark Telemetry (33 Points)</span>
         </h3>
         <button onclick="app.closeRawTelemetryModal()" 
-          class="p-1.5 rounded-full text-stone-400 hover:text-white" aria-label="Close dialog">
+          class="p-1.5 rounded-full bg-stone-100 text-stone-500 hover:text-stone-950 transition" aria-label="Close dialog">
           <i data-lucide="x" class="w-4 h-4" aria-hidden="true"></i>
         </button>
       </div>
 
-      <div class="space-y-2 text-xs text-stone-300 leading-relaxed flex-shrink-0">
+      <div class="space-y-2 text-xs text-stone-600 leading-relaxed flex-shrink-0">
         <p>
-          Every score and angular deviation in KineticScan 360 is derived directly from empirical 3D coordinate vectors returned by MediaPipe Pose running in your browser's WebAssembly sandbox. Below is the raw mathematical telemetry currently stored for your active scan milestone (<span id="telemetry-active-angle" class="font-bold text-sunset-400">0°</span>).
+          Every score and angular deviation in KineticScan 360 is derived directly from empirical 3D coordinate vectors returned by MediaPipe Pose running in your browser's WebAssembly sandbox. Below is the raw mathematical telemetry currently stored for your active scan milestone (<span id="telemetry-active-angle" class="font-bold text-teal-700">0°</span>).
         </p>
         <div class="flex flex-wrap items-center gap-2 pt-1">
           <button onclick="app.downloadRawTelemetryJson()" 
-            class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-sunset-500/15 hover:bg-sunset-500/25 text-sunset-300 border border-sunset-500/30 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-sunset-500">
-            <i data-lucide="download" class="w-3.5 h-3.5 text-sunset-400" aria-hidden="true"></i>
+            class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200/80 transition flex items-center space-x-1.5 focus-visible:ring-2 focus-visible:ring-teal-500">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-teal-700" aria-hidden="true"></i>
             <span>Export Raw Telemetry (.json)</span>
           </button>
-          <span class="text-[11px] text-stone-500">Includes exact (x, y, z, visibility) coordinates and vector trigonometry.</span>
+          <span class="text-[11px] text-stone-400">Includes exact (x, y, z, visibility) coordinates and vector trigonometry.</span>
         </div>
       </div>
 
       <!-- Scrollable Telemetry Table -->
-      <div class="overflow-y-auto flex-1 rounded-2xl bg-stone-950/80 border border-white/5 p-3 text-xs font-mono">
+      <div class="overflow-y-auto flex-1 rounded-2xl bg-stone-50 border border-stone-200/90 p-3 text-xs font-mono">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="border-b border-stone-800 text-[10px] uppercase text-stone-400 tracking-wider">
+            <tr class="border-b border-stone-200 text-[10px] uppercase text-stone-500 font-bold tracking-wider">
               <th class="py-2 px-2">Idx</th>
               <th class="py-2 px-2">Landmark Joint</th>
               <th class="py-2 px-2">X (Norm)</th>
@@ -1243,19 +1243,19 @@
               <th class="py-2 px-2">Confidence</th>
             </tr>
           </thead>
-          <tbody id="telemetry-table-body" class="divide-y divide-stone-900 text-stone-300 text-[11px]">
+          <tbody id="telemetry-table-body" class="divide-y divide-stone-200 text-stone-800 text-[11px]">
             <!-- Rendered dynamically -->
           </tbody>
         </table>
       </div>
 
       <!-- Mathematical Vector Breakdown -->
-      <div id="telemetry-math-breakdown" class="p-3.5 rounded-2xl bg-stone-950/60 border border-white/5 text-[11px] text-stone-300 space-y-1.5 flex-shrink-0">
-        <div class="font-bold text-stone-200 text-xs flex items-center justify-between">
+      <div id="telemetry-math-breakdown" class="p-3.5 rounded-2xl bg-teal-50/60 border border-teal-200/70 text-[11px] text-stone-700 space-y-1.5 flex-shrink-0">
+        <div class="font-bold text-stone-900 text-xs flex items-center justify-between">
           <span>Trigonometric Formulas Applied</span>
-          <span class="text-sunset-400 font-mono text-[10px]">Dot Product: u · v = |u| |v| cos(θ)</span>
+          <span class="text-teal-800 font-mono text-[10px]">Dot Product: u · v = |u| |v| cos(θ)</span>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] text-stone-400">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] text-stone-600">
           <div>• Craniovertebral Angle (CVA): atan2(Δy, Δx) of Tragus to C7/Acromion</div>
           <div>• Pelvic Tilt / Symmetry: atan2(Δy, Δx) across Bilateral ASIS/Hips</div>
           <div>• Genu Valgus (Q-Angle): acos((v_hip_knee · v_knee_ankle) / (|v1|·|v2|))</div>
