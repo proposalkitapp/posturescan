@@ -633,10 +633,11 @@ class AppController {
     const endAngle = Math.PI * 2.1;
     const totalAngle = endAngle - startAngle;
 
+    // Clean stone-200 light background track
     ctx.save();
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-    ctx.strokeStyle = '#292524';
+    ctx.strokeStyle = '#e7e5e4';
     ctx.lineWidth = 14;
     ctx.lineCap = 'round';
     ctx.stroke();
@@ -645,10 +646,11 @@ class AppController {
     const pct = Math.max(0, Math.min(1, score / 100));
     const activeEndAngle = startAngle + totalAngle * pct;
 
+    // Vibrant teal to emerald active stroke gradient
     const grad = ctx.createLinearGradient(centerX - radius, centerY, centerX + radius, centerY - radius);
-    grad.addColorStop(0, '#c2410c');
-    grad.addColorStop(0.5, '#ea580c');
-    grad.addColorStop(1, '#fdba74');
+    grad.addColorStop(0, '#0d9488');
+    grad.addColorStop(0.5, '#14b8a6');
+    grad.addColorStop(1, '#10b981');
 
     ctx.save();
     ctx.beginPath();
@@ -664,7 +666,7 @@ class AppController {
 
     ctx.save();
     ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = 'rgba(253, 186, 116, 0.6)';
+    ctx.shadowColor = 'rgba(13, 148, 136, 0.4)';
     ctx.shadowBlur = 8;
     ctx.beginPath();
     ctx.arc(pillX, pillY, 7, 0, Math.PI * 2);
@@ -681,9 +683,9 @@ class AppController {
       const tab = document.getElementById(`tab-angle-${deg}`);
       if (tab) {
         if (deg === angle) {
-          tab.className = 'px-3.5 py-1.5 rounded-full bg-sunset-500 text-stone-950 font-bold transition-all';
+          tab.className = 'px-3.5 py-1.5 rounded-full bg-stone-950 text-white font-bold transition shadow-xs';
         } else {
-          tab.className = 'px-3.5 py-1.5 rounded-full text-stone-400 hover:text-stone-200 transition-all';
+          tab.className = 'px-3.5 py-1.5 rounded-full text-stone-600 hover:text-stone-950 font-semibold transition';
         }
       }
     });
@@ -711,28 +713,28 @@ class AppController {
       if (planeTitle) planeTitle.innerText = `Sagittal Profile Stack (${sideName} Side - ${angle}°)`;
       if (vectorList) {
         vectorList.innerHTML = `
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-xs">
             <div>
-              <div class="text-xs font-bold text-stone-200">Forward Head Angle (CVA)</div>
-              <div class="text-[11px] text-stone-400">Tragus relative to shoulder acromion</div>
+              <div class="text-xs font-bold text-stone-900">Forward Head Angle (CVA)</div>
+              <div class="text-[11px] text-stone-500">Tragus relative to shoulder acromion</div>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.forwardHead > 12 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.forwardHead}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.forwardHead > 12 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">${m.forwardHead}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-xs">
             <div>
-              <div class="text-xs font-bold text-stone-200">Thoracic Spine Curvature</div>
-              <div class="text-[11px] text-stone-400">Mid-back kyphosis deviation</div>
+              <div class="text-xs font-bold text-stone-900">Thoracic Spine Curvature</div>
+              <div class="text-[11px] text-stone-500">Mid-back kyphosis deviation</div>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.thoracicTilt > 8 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.thoracicTilt}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.thoracicTilt > 8 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">${m.thoracicTilt}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-xs">
             <div>
-              <div class="text-xs font-bold text-stone-200">Pelvic Girdle Tilt Vector</div>
-              <div class="text-[11px] text-stone-400">ASIS to PSIS deviation from horizontal</div>
+              <div class="text-xs font-bold text-stone-900">Pelvic Girdle Tilt Vector</div>
+              <div class="text-[11px] text-stone-500">ASIS to PSIS deviation from horizontal</div>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.pelvicDev > 8 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.pelvicDev}° APT</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.pelvicDev > 8 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">${m.pelvicDev}° APT</span>
           </div>
         `;
       }
@@ -747,28 +749,28 @@ class AppController {
       if (planeTitle) planeTitle.innerText = `Coronal Alignment (${planeName} - ${angle}°)`;
       if (vectorList) {
         vectorList.innerHTML = `
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-xs">
             <div>
-              <div class="text-xs font-bold text-stone-200">Bilateral Shoulder Delta</div>
-              <div class="text-[11px] text-stone-400">Horizontal tilt between clavicles</div>
+              <div class="text-xs font-bold text-stone-900">Bilateral Shoulder Delta</div>
+              <div class="text-[11px] text-stone-500">Horizontal tilt between clavicles</div>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.shoulderAsymmetry > 2.5 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.shoulderAsymmetry}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.shoulderAsymmetry > 2.5 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">${m.shoulderAsymmetry}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-xs">
             <div>
-              <div class="text-xs font-bold text-stone-200">Pelvic Crest Symmetry</div>
-              <div class="text-[11px] text-stone-400">Left vs right iliac crest elevation</div>
+              <div class="text-xs font-bold text-stone-900">Pelvic Crest Symmetry</div>
+              <div class="text-[11px] text-stone-500">Left vs right iliac crest elevation</div>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.pelvicAsymmetry > 2.5 ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.pelvicAsymmetry}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.pelvicAsymmetry > 2.5 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">${m.pelvicAsymmetry}°</span>
           </div>
 
-          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-900/70 border border-white/5">
+          <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white border border-stone-200/90 shadow-xs">
             <div>
-              <div class="text-xs font-bold text-stone-200">Knee Tracking Alignment</div>
-              <div class="text-[11px] text-stone-400">Medial angle deviation relative to vertical</div>
+              <div class="text-xs font-bold text-stone-900">Knee Tracking Alignment</div>
+              <div class="text-[11px] text-stone-500">Medial angle deviation relative to vertical</div>
             </div>
-            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.valgusAngle > 5.5 ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'}">${m.valgusAngle}°</span>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full ${m.valgusAngle > 5.5 ? 'bg-rose-50 text-rose-800 border border-rose-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">${m.valgusAngle}°</span>
           </div>
         `;
       }
@@ -786,22 +788,22 @@ class AppController {
     if (!container || !drills) return;
 
     container.innerHTML = drills.map((drill, idx) => `
-      <div class="bg-stone-900/70 rounded-3xl p-5 border border-white/5 flex flex-col justify-between space-y-4 hover:border-sunset-500/30 transition-all">
+      <div class="bg-white rounded-3xl p-6 border border-stone-200/90 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4 hover:border-teal-500/40">
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sunset-500/15 text-sunset-300 border border-sunset-500/20">Protocol 0${idx + 1}</span>
-            <span class="text-[11px] text-stone-400 font-medium">${drill.frequency}</span>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-200/80">Protocol 0${idx + 1}</span>
+            <span class="text-[11px] text-stone-500 font-medium">${drill.frequency}</span>
           </div>
           <div>
-            <h4 class="font-display font-bold text-stone-100 text-sm sm:text-base">${drill.name}</h4>
-            <div class="text-[11px] text-sunset-400 font-semibold mt-0.5">${drill.target}</div>
+            <h4 class="font-display font-bold text-stone-950 text-sm sm:text-base">${drill.name}</h4>
+            <div class="text-[11px] text-teal-700 font-semibold mt-0.5">${drill.target}</div>
           </div>
-          <p class="text-xs text-stone-300 leading-relaxed">${drill.impact}</p>
+          <p class="text-xs text-stone-600 leading-relaxed">${drill.impact}</p>
         </div>
 
-        <div class="space-y-1.5 pt-3 border-t border-stone-800">
+        <div class="space-y-1.5 pt-3 border-t border-stone-100">
           <div class="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Coach Execution Cue</div>
-          <div class="text-xs text-stone-300 italic">"${drill.instructions[1] || drill.instructions[0]}"</div>
+          <div class="text-xs text-stone-700 italic">"${drill.instructions[1] || drill.instructions[0]}"</div>
         </div>
       </div>
     `).join('');
