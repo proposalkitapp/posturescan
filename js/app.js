@@ -531,10 +531,10 @@ class AppController {
     if (ratingBadge) {
       ratingBadge.innerText = res.rating;
       ratingBadge.className = res.compositeScore >= 85
-        ? 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+        ? 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200'
         : res.compositeScore >= 75
-          ? 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30'
-          : 'px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30';
+          ? 'px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200'
+          : 'px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200';
     }
 
     if (scoreTransfer) scoreTransfer.innerText = `${res.metrics.forceTransferScore}%`;
@@ -543,9 +543,9 @@ class AppController {
     if (barBalance) barBalance.style.width = `${res.metrics.bilateralBalanceScore}%`;
 
     const getSeverityBadgeClass = (severity) => {
-      if (severity === 'Optimal') return 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25';
-      if (severity === 'Mild') return 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/25';
-      return 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/25';
+      if (severity === 'Optimal') return 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200';
+      if (severity === 'Mild') return 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200';
+      return 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-800 border border-rose-200';
     };
 
     const m = res.metrics;
@@ -568,8 +568,8 @@ class AppController {
     }
     if (loadCervical) {
       loadCervical.innerHTML = m.extraNeckLoadLbs > 0
-        ? `<i data-lucide="scale" class="w-3.5 h-3.5" aria-hidden="true"></i><span>Extra neck strain: +${m.extraNeckLoadLbs} lbs / ${m.extraNeckLoadKg} kg</span>`
-        : `<i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400" aria-hidden="true"></i><span class="text-emerald-400">Neutral cervical gravity line</span>`;
+        ? `<i data-lucide="scale" class="w-3.5 h-3.5 text-amber-700" aria-hidden="true"></i><span class="text-stone-700 font-medium">Extra neck strain: <strong class="text-stone-950">+${m.extraNeckLoadLbs} lbs / ${m.extraNeckLoadKg} kg</strong></span>`
+        : `<i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600" aria-hidden="true"></i><span class="text-emerald-700 font-medium">Neutral cervical gravity line</span>`;
     }
 
     // 2. Thoracic Card (Cobb Proxy & Kyphosis)
