@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en" class="scroll-smooth overflow-x-hidden">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -60,7 +60,7 @@
 
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="bg-[#faf8f5] text-stone-900 min-h-screen flex flex-col font-sans selection:bg-teal-500 selection:text-white antialiased relative">
+<body class="bg-[#faf8f5] text-stone-900 min-h-screen flex flex-col font-sans selection:bg-teal-500 selection:text-white antialiased relative overflow-x-hidden">
 
   <!-- Accessibility Skip Link -->
   <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 px-4 py-2 bg-stone-950 text-white font-bold rounded-lg shadow-lg">
@@ -1041,24 +1041,24 @@
 
   </main>
 
-  <!-- FLOATING MINIMALIST BOTTOM DOCK (Orbix Studio / Aivo Style) -->
+  <!-- FLOATING MINIMALIST BOTTOM DOCK (Clean Luxury Pill Dock) -->
   <nav id="bottom-dock" class="fixed bottom-5 inset-x-0 z-30 flex justify-center pointer-events-none" aria-label="Quick Navigation">
-    <div class="bg-stone-900/90 backdrop-blur-2xl border border-white/10 rounded-full px-4 py-2 shadow-2xl flex items-center space-x-5 pointer-events-auto">
+    <div class="bg-stone-950/90 backdrop-blur-2xl border border-stone-800 rounded-full px-4 py-2 shadow-2xl flex items-center space-x-5 pointer-events-auto">
       <button id="dock-btn-home" onclick="app.navigate('home')" 
-        class="w-10 h-10 rounded-full flex items-center justify-center transition-all bg-sunset-500 text-stone-950 shadow-lg shadow-sunset-500/30 focus-visible:ring-2 focus-visible:ring-sunset-400" 
+        class="w-10 h-10 rounded-full flex items-center justify-center transition-all bg-teal-600 text-white shadow-lg shadow-teal-600/30 focus-visible:ring-2 focus-visible:ring-teal-500" 
         aria-label="Dashboard Overview">
         <i data-lucide="home" class="w-4 h-4" aria-hidden="true"></i>
       </button>
 
-      <!-- Center Action Button (Glows in warm amber) -->
+      <!-- Center Action Button (Teal / Emerald Glow) -->
       <button id="dock-btn-scan" onclick="app.startScanFlow()" 
-        class="w-12 h-12 rounded-full flex items-center justify-center transition-all bg-gradient-to-tr from-sunset-600 via-sunset-500 to-amber-400 text-stone-950 shadow-xl shadow-sunset-500/40 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-sunset-400" 
+        class="w-12 h-12 rounded-full flex items-center justify-center transition-all bg-gradient-to-tr from-teal-700 via-teal-600 to-emerald-500 text-white shadow-xl shadow-teal-900/40 hover:scale-105 active:scale-95 focus-visible:ring-2 focus-visible:ring-teal-400" 
         aria-label="Start Automatic 360 Scan">
         <i data-lucide="scan" class="w-5 h-5 stroke-[2.5]" aria-hidden="true"></i>
       </button>
 
       <button id="dock-btn-results" onclick="app.navigate('results')" 
-        class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-stone-400 hover:text-stone-100 hover:bg-stone-800/60 focus-visible:ring-2 focus-visible:ring-sunset-500" 
+        class="w-10 h-10 rounded-full flex items-center justify-center transition-all text-stone-400 hover:text-stone-100 hover:bg-stone-800/60 focus-visible:ring-2 focus-visible:ring-teal-500" 
         aria-label="View Movement Report">
         <i data-lucide="bar-chart-2" class="w-4 h-4" aria-hidden="true"></i>
       </button>

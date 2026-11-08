@@ -176,7 +176,7 @@ class AppController {
       const btn = document.getElementById(`dock-btn-${v}`);
       if (btn) {
         if (v === view) {
-          btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all bg-sunset-500 text-stone-950 shadow-lg shadow-sunset-500/30';
+          btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all bg-teal-600 text-white shadow-lg shadow-teal-600/30';
         } else {
           btn.className = 'w-10 h-10 rounded-full flex items-center justify-center transition-all text-stone-400 hover:text-stone-100 hover:bg-stone-800/60';
         }
